@@ -51,7 +51,7 @@ class FortniteBot(commands.Bot):
         logging.info(f'Owner(s): {" ".join(owners)}')
 
         logging.info('Syncing app commands...')
-        '''self.app_commands = await self.tree.sync()'''
+        self.app_commands = await self.tree.sync()
         logging.info('Done!')
 
     def run_bot(self) -> None:
