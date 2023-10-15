@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from weakref import ref, ReferenceType
 
 from core.errors import Unauthorized
@@ -9,17 +9,17 @@ from core.account import FullEpicAccount
 
 if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
+    from core.bot import FortniteBot
 
 from dateutil import parser
 
 
 class AuthSession:
 
-    ACCOUNT_CACHE_DURATION: float = 900
-
     __slots__ = (
         '__weakref__',
         'http_client',
+        'bot',
         'discord_id',
         'epic_id',
         'access_token',
@@ -33,6 +33,8 @@ class AuthSession:
 
     def __init__(self, http_client: FortniteHTTPClient, discord_id: int, data: dict) -> None:
         self.http_client: FortniteHTTPClient = http_client
+        self.bot: FortniteBot = http_client.bot
+
         self.discord_id: int = discord_id
         self._renew_data(data)
 
@@ -58,7 +60,7 @@ class AuthSession:
         self.refresh_expires: datetime = parser.parse(data.get('refresh_expires_at'))
 
     def _set_cached_account_expiration(self) -> None:
-        self._cached_full_account_expires: datetime = datetime.utcnow() + timedelta(seconds=self.ACCOUNT_CACHE_DURATION)
+        self._cached_full_account_expires: datetime = datetime.utcnow() + self.bot.ACCOUNT_CACHE_DURATION
 
     async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> dict:
         headers = {'Authorization': f'bearer {self.access_token}'}

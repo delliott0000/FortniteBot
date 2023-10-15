@@ -1,10 +1,18 @@
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
 import os
 import logging
 import asyncio
+from datetime import datetime, timedelta
 
 from resources.config import TOKEN, OWNER_IDS
+from core.cache import PartialAccountCacheEntry
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
+
+if TYPE_CHECKING:
+    from core.account import PartialEpicAccount
 
 from discord.ext import commands
 from discord import (
@@ -26,6 +34,8 @@ if __discord__ != '2.3.2':
 
 class FortniteBot(commands.Bot):
 
+    ACCOUNT_CACHE_DURATION: timedelta = timedelta(seconds=900)
+
     def __init__(self) -> None:
 
         intents = Intents.none()
@@ -42,6 +52,26 @@ class FortniteBot(commands.Bot):
 
         self.http_client: FortniteHTTPClient | None = None
         self.database_client: DatabaseClient | None = None
+
+        self._partial_epic_account_cache: dict[str, PartialAccountCacheEntry] = {}
+
+    def get_partial_account(self, account_id: str) -> PartialEpicAccount | None:
+        entry = self._partial_epic_account_cache.get(account_id)
+        if entry:
+            return entry.get('account')
+
+    def cache_partial_account(self, account: PartialEpicAccount) -> None:
+        if account.id not in self._partial_epic_account_cache:
+            self._partial_epic_account_cache[account.id] = PartialAccountCacheEntry(
+                account=account,
+                expires=datetime.utcnow() + self.ACCOUNT_CACHE_DURATION
+            )
+
+    def remove_partial_account(self, account_id: str) -> None:
+        try:
+            self._partial_epic_account_cache.pop(account_id)
+        except KeyError:
+            pass
 
     async def setup_hook(self) -> None:
         user = self.user
