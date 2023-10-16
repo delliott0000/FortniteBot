@@ -5,7 +5,7 @@ from datetime import datetime
 from weakref import ref, ReferenceType
 
 from core.errors import Unauthorized
-from core.account import FullEpicAccount
+from core.account import PartialEpicAccount, FullEpicAccount
 
 if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
@@ -100,3 +100,51 @@ class AuthSession:
             self._cached_full_account = ref(account)
             self._set_cached_account_expiration()
         return self._cached_full_account()
+
+    async def fetch_account(
+            self,
+            display: str | None = None,
+            account_id: str | None = None
+    ) -> PartialEpicAccount:
+        account = self.bot.get_partial_account(display=display, account_id=account_id)
+        if account is not None:
+            return account
+
+        url_formatter = 'displayName/' if account_id is None else ''
+        lookup = account_id or display
+
+        data = await self.access_request(
+            'get',
+            self.http_client.ACCOUNT_REQUESTS_URL.format(url_formatter + lookup)
+        )
+
+        account = PartialEpicAccount(self, data)
+        self.bot.cache_partial_account(account)
+
+        return account
+
+    async def fetch_accounts(self, *account_ids: str) -> list[PartialEpicAccount]:
+        account_list: list[PartialEpicAccount] = []
+        _account_ids: list[str] = list(account_ids)
+
+        for account_id in account_ids:
+            account = self.bot.get_partial_account(account_id=account_id)
+            if account is not None:
+                account_list.append(account)
+                _account_ids.remove(account_id)
+
+        if _account_ids:
+            data = await self.access_request(
+                'get',
+                self.http_client.ACCOUNT_REQUESTS_URL.format(''),
+                params=[('accountId', _account_id) for _account_id in _account_ids]
+            )
+
+            # Note: here `data` is actually a `list[dict]`, not a `dict`
+            # To-do: Type-hint improvements on HTTP-related methods
+            for entry in data:
+                account = PartialEpicAccount(self, entry)
+                self.bot.cache_partial_account(account)
+                account_list.append(account)
+
+        return account_list
