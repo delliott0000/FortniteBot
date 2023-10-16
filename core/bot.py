@@ -59,6 +59,10 @@ class FortniteBot(commands.Bot):
 
         self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, )
 
+    @property
+    def now(self) -> datetime:
+        return datetime.utcnow()
+
     def get_partial_account(
             self,
             display: str | None = None,
@@ -76,7 +80,7 @@ class FortniteBot(commands.Bot):
         if account.id not in self._partial_epic_account_cache:
             self._partial_epic_account_cache[account.id] = PartialAccountCacheEntry(
                 account=account,
-                expires=datetime.utcnow() + self.ACCOUNT_CACHE_DURATION
+                expires=self.now + self.ACCOUNT_CACHE_DURATION
             )
             if account.display is not self.UNKNOWN_STR:
                 self._partial_epic_account_cache[account.display] = self._partial_epic_account_cache[account.id]
@@ -96,7 +100,7 @@ class FortniteBot(commands.Bot):
         account_ids: list[str] = []
 
         for account_id in self._partial_epic_account_cache:
-            if self._partial_epic_account_cache[account_id]['expires'] <= datetime.utcnow():
+            if self._partial_epic_account_cache[account_id]['expires'] <= self.now:
                 account_ids.append(account_id)
 
         for _account_id in account_ids:

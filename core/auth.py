@@ -46,11 +46,11 @@ class AuthSession:
 
     @property
     def is_active(self) -> bool:
-        return not self._killed and self.access_expires > datetime.utcnow()
+        return not self._killed and self.access_expires > self.bot.now
 
     @property
     def is_expired(self) -> bool:
-        return self._killed or self.refresh_expires < datetime.utcnow()
+        return self._killed or self.refresh_expires < self.bot.now
 
     def _renew_data(self, data: dict) -> None:
         self.epic_id: str = data.get('account_id')
@@ -60,7 +60,7 @@ class AuthSession:
         self.refresh_expires: datetime = parser.parse(data.get('refresh_expires_at'))
 
     def _set_cached_account_expiration(self) -> None:
-        self._cached_full_account_expires: datetime = datetime.utcnow() + self.bot.ACCOUNT_CACHE_DURATION
+        self._cached_full_account_expires: datetime = self.bot.now + self.bot.ACCOUNT_CACHE_DURATION
 
     async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> dict:
         headers = {'Authorization': f'bearer {self.access_token}'}
@@ -94,7 +94,7 @@ class AuthSession:
         self._killed = True
 
     async def account(self) -> FullEpicAccount:
-        if self._cached_full_account is None or self._cached_full_account_expires < datetime.utcnow():
+        if self._cached_full_account is None or self._cached_full_account_expires < self.bot.now:
             data = await self.access_request('get', self.http_client.BASE_EPIC_URL + '/public/account/' + self.epic_id)
             account = FullEpicAccount(self, data)
             self._cached_full_account = ref(account)
