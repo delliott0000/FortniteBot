@@ -35,6 +35,7 @@ if __discord__ != '2.3.2':
 class FortniteBot(commands.Bot):
 
     ACCOUNT_CACHE_DURATION: timedelta = timedelta(seconds=900)
+    UNKNOWN_STR: str = '[UNKNOWN]'
 
     def __init__(self) -> None:
 

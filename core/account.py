@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from types import UnionType
 from datetime import datetime
 from weakref import ref, ReferenceType
 
@@ -9,10 +8,6 @@ if TYPE_CHECKING:
     from core.auth import AuthSession
 
 from dateutil import parser
-
-
-UNKNOWN: str = '`[UNKNOWN]`'
-MAYBE_DT: UnionType = datetime | None
 
 
 class PartialEpicAccount:
@@ -23,9 +18,9 @@ class PartialEpicAccount:
         'display'
     )
 
-    def __init__(self, data: dict) -> None:
+    def __init__(self, auth_session: AuthSession, data: dict) -> None:
         self.id: str = data.get('id') or data.get('accountId')
-        self.display: str = data.get('displayName', UNKNOWN)
+        self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
 
 
 class FullEpicAccount(PartialEpicAccount):
@@ -47,26 +42,27 @@ class FullEpicAccount(PartialEpicAccount):
     )
 
     def __init__(self, auth_session: AuthSession, data: dict) -> None:
-        super().__init__(data)
+        super().__init__(auth_session, data)
+        unknown = auth_session.bot.UNKNOWN_STR
 
         self._auth_session: ReferenceType[AuthSession] = ref(auth_session)
 
         self.display_changes: int = data.get('numberOfDisplayNameChanges', 0)
         self.can_update_display: bool | None = data.get('canUpdateDisplayName')
 
-        self.real_name: str = data.get('name', UNKNOWN) + ' ' + data.get('lastName', UNKNOWN)
-        self.language: str = data.get('preferredLanguage', UNKNOWN).capitalize()
-        self.country: str = data.get('country', UNKNOWN)
+        self.real_name: str = data.get('name', unknown) + ' ' + data.get('lastName', unknown)
+        self.language: str = data.get('preferredLanguage', unknown).capitalize()
+        self.country: str = data.get('country', unknown)
 
-        self.email: str = data.get('email', UNKNOWN)
+        self.email: str = data.get('email', unknown)
         self.verified: bool | None = data.get('emailVerified')
 
         self.failed_logins: int = data.get('failedLoginAttempts', 0)
         self.tfa_enabled: bool | None = data.get('tfaEnabled')
 
-        self.display_last_updated: MAYBE_DT = None
-        self.date_of_birth: MAYBE_DT = None
-        self.last_login: MAYBE_DT = None
+        self.display_last_updated: datetime | None = None
+        self.date_of_birth: datetime | None = None
+        self.last_login: datetime | None = None
 
         for __attr in (
             ('display_last_updated', 'lastDisplayNameChange'),
