@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import logging
 from datetime import datetime
 from weakref import ref, ReferenceType
 
@@ -43,6 +44,12 @@ class AuthSession:
 
         self._cached_full_account: ReferenceType[FullEpicAccount] | None = None
         self._set_cached_account_expiration()
+
+        self.bot.cache_auth_session(self)
+        logging.info(f'Auth Session [{self.access_token}] created.')
+
+    def __del__(self) -> None:
+        logging.info(f'Auth Session [{self.access_token}] destroyed.')
 
     @property
     def is_active(self) -> bool:
