@@ -61,6 +61,15 @@ class FortniteBot(commands.Bot):
 
         self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, self.manage_auth_cache)
 
+    async def __aexit__(self, *_) -> None:
+        for auth_session in self._auth_session_cache.values():
+            # noinspection PyBroadException
+            try:
+                await auth_session.kill()
+            except Exception:
+                continue
+        return await super().__aexit__(*_)
+
     @property
     def now(self) -> datetime:
         return datetime.utcnow()
@@ -152,19 +161,20 @@ class FortniteBot(commands.Bot):
     def run_bot(self) -> None:
 
         async def _runner():
-            async with self, FortniteHTTPClient(self) as self.http_client, DatabaseClient(self) as self.database_client:
-                for filename in os.listdir('./ext'):
-                    if filename.endswith('.py'):
-                        try:
-                            await self.load_extension(f'ext.{filename[:-3]}')
-                        except (commands.ExtensionFailed, commands.NoEntryPointError) as extension_error:
-                            logging.error(f'Extension {filename} could not be loaded: {extension_error}')
-                try:
-                    await self.start(TOKEN)
-                except LoginFailure:
-                    logging.fatal('Invalid token passed.')
-                except PrivilegedIntentsRequired:
-                    logging.fatal('Intents are being requested that have not been enabled in the developer portal.')
+            async with FortniteHTTPClient(self) as self.http_client, DatabaseClient(self) as self.database_client:
+                async with self:
+                    for filename in os.listdir('./ext'):
+                        if filename.endswith('.py'):
+                            try:
+                                await self.load_extension(f'ext.{filename[:-3]}')
+                            except (commands.ExtensionFailed, commands.NoEntryPointError) as extension_error:
+                                logging.error(f'Extension {filename} could not be loaded: {extension_error}')
+                    try:
+                        await self.start(TOKEN)
+                    except LoginFailure:
+                        logging.fatal('Invalid token passed.')
+                    except PrivilegedIntentsRequired:
+                        logging.fatal('Intents are being requested that have not been enabled in the developer portal.')
 
         try:
             asyncio.run(_runner())
