@@ -1,9 +1,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from base64 import b64encode
 import logging
 import asyncio
+from base64 import b64encode
 
 from core.auth import AuthSession
 from core.errors import (
