@@ -51,8 +51,9 @@ class FortniteHTTPClient:
     BASE_FORT_URL: str = 'https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api'
     BASE_FRIENDS_URL: str = 'https://friends-public-service-prod.ol.epicgames.com/friends/api/v1'
 
-    # Used by us to exchange to user's authorization code for an access token
-    # Also used to renew existing access tokens
+    ACCOUNT_REQUESTS_URL: str = BASE_EPIC_URL + '/public/account/{0}'
+
+    # Used to exchange the user's authorization code for a session, and to keep existing sessions alive
     AUTH_EXCHANGE_URL: str = BASE_EPIC_URL + '/oauth/token'
     AUTH_EXCHANGE_SECRET: str = b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()
 

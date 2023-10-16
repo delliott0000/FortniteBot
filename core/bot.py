@@ -64,9 +64,12 @@ class FortniteBot(commands.Bot):
             display: str | None = None,
             account_id: str | None = None
     ) -> PartialEpicAccount | None:
-        if lookup := account_id or display is None:
+        lookup = account_id or display
+        if lookup is None:
             raise FortniteException('An Epic ID or display name is required.')
-        elif entry := self._partial_epic_account_cache.get(lookup) is not None:
+
+        entry = self._partial_epic_account_cache.get(lookup)
+        if entry is not None:
             return entry.get('account')
 
     def cache_partial_account(self, account: PartialEpicAccount) -> None:
