@@ -123,7 +123,10 @@ class AuthSession:
 
         return account
 
-    async def fetch_accounts(self, *account_ids: str) -> list[PartialEpicAccount]:
+    async def fetch_accounts(
+            self,
+            *account_ids: str
+    ) -> list[PartialEpicAccount]:
         account_list: list[PartialEpicAccount] = []
         _account_ids: list[str] = list(account_ids)
 
