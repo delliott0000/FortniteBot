@@ -8,13 +8,14 @@ from datetime import datetime, timedelta
 
 from resources.config import TOKEN, OWNER_IDS
 from core.cache import PartialAccountCacheEntry
+from core.errors import FortniteException
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
 
 if TYPE_CHECKING:
     from core.account import PartialEpicAccount
 
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import (
     __version__ as __discord__,
     Intents,
@@ -56,9 +57,16 @@ class FortniteBot(commands.Bot):
 
         self._partial_epic_account_cache: dict[str, PartialAccountCacheEntry] = {}
 
-    def get_partial_account(self, account_id: str) -> PartialEpicAccount | None:
-        entry = self._partial_epic_account_cache.get(account_id)
-        if entry:
+        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, )
+
+    def get_partial_account(
+            self,
+            display: str | None = None,
+            account_id: str | None = None
+    ) -> PartialEpicAccount | None:
+        if lookup := account_id or display is None:
+            raise FortniteException('An Epic ID or display name is required.')
+        elif entry := self._partial_epic_account_cache.get(lookup) is not None:
             return entry.get('account')
 
     def cache_partial_account(self, account: PartialEpicAccount) -> None:
@@ -67,12 +75,29 @@ class FortniteBot(commands.Bot):
                 account=account,
                 expires=datetime.utcnow() + self.ACCOUNT_CACHE_DURATION
             )
+            if account.display is not self.UNKNOWN_STR:
+                self._partial_epic_account_cache[account.display] = self._partial_epic_account_cache[account.id]
 
     def remove_partial_account(self, account_id: str) -> None:
         try:
-            self._partial_epic_account_cache.pop(account_id)
+            cache_entry = self._partial_epic_account_cache.pop(account_id)
         except KeyError:
-            pass
+            return
+        try:
+            self._partial_epic_account_cache.pop(cache_entry['account'].display)
+        except (KeyError, AttributeError):
+            return
+
+    @tasks.loop(minutes=1)
+    async def manage_partial_cache(self) -> None:
+        account_ids: list[str] = []
+
+        for account_id in self._partial_epic_account_cache:
+            if self._partial_epic_account_cache[account_id]['expires'] <= datetime.utcnow():
+                account_ids.append(account_id)
+
+        for _account_id in account_ids:
+            self.remove_partial_account(_account_id)
 
     async def setup_hook(self) -> None:
         user = self.user
@@ -84,6 +109,10 @@ class FortniteBot(commands.Bot):
         logging.info('Syncing app commands...')
         self.app_commands = await self.tree.sync()
         logging.info('Done!')
+
+        for task in self._tasks:
+            task.add_exception_type(Exception)
+            task.start()
 
     def run_bot(self) -> None:
 
