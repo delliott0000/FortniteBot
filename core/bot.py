@@ -7,12 +7,13 @@ import asyncio
 from datetime import datetime, timedelta
 
 from resources.config import TOKEN, OWNER_IDS
+from core.errors import FortniteException, HTTPException
 from core.cache import PartialAccountCacheEntry
-from core.errors import FortniteException
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
 
 if TYPE_CHECKING:
+    from core.auth import AuthSession
     from core.account import PartialEpicAccount
 
 from discord.ext import commands, tasks
@@ -56,8 +57,9 @@ class FortniteBot(commands.Bot):
         self.database_client: DatabaseClient | None = None
 
         self._partial_account_cache: dict[str, PartialAccountCacheEntry] = {}
+        self._auth_session_cache: dict[int, AuthSession] = {}
 
-        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, )
+        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, self.manage_auth_cache)
 
     @property
     def now(self) -> datetime:
@@ -105,6 +107,32 @@ class FortniteBot(commands.Bot):
 
         for _account_id in account_ids:
             self.remove_partial_account(_account_id)
+
+    def get_auth_session(self, discord_id: int) -> AuthSession | None:
+        return self._auth_session_cache.get(discord_id)
+
+    def cache_auth_session(self, auth_session: AuthSession) -> None:
+        if auth_session.discord_id not in self._auth_session_cache:
+            self._auth_session_cache[auth_session.discord_id] = auth_session
+
+    def remove_auth_session(self, discord_id: int) -> None:
+        try:
+            self._auth_session_cache.pop(discord_id)
+        except KeyError:
+            pass
+
+    @tasks.loop(minutes=1)
+    async def manage_auth_cache(self) -> None:
+        for discord_id, auth_session in self._auth_session_cache.items():
+            if auth_session.refresh_expires - self.ACCOUNT_CACHE_DURATION <= self.now:
+
+                try:
+                    await auth_session.renew()
+                    logging.info(f'Auth Session [{auth_session.access_token}] renewed.')
+                    continue
+                except HTTPException:
+                    await auth_session.kill()
+                    self.remove_auth_session(discord_id)
 
     async def setup_hook(self) -> None:
         user = self.user
