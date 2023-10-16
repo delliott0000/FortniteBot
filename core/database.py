@@ -14,11 +14,11 @@ class DatabaseClient:
 
     FORMAT: str = \
         'CREATE TABLE IF NOT EXISTS user_data (' \
-        'discord_id INTEGER, ' \
-        'blacklisted INTEGER, ' \
-        'premium INTEGER, ' \
-        'premium_until INTEGER, ' \
-        'stay_signed_in INTEGER)'
+        'discord_id INTEGER, '                   \
+        'blacklisted INTEGER, '                  \
+        'premium INTEGER, '                      \
+        'premium_until INTEGER'                  \
+        ')'
 
     __slots__ = (
         'bot',
