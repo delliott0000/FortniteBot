@@ -55,7 +55,7 @@ class FortniteBot(commands.Bot):
         self.http_client: FortniteHTTPClient | None = None
         self.database_client: DatabaseClient | None = None
 
-        self._partial_epic_account_cache: dict[str, PartialAccountCacheEntry] = {}
+        self._partial_account_cache: dict[str, PartialAccountCacheEntry] = {}
 
         self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, )
 
@@ -72,26 +72,26 @@ class FortniteBot(commands.Bot):
         if lookup is None:
             raise FortniteException('An Epic ID or display name is required.')
 
-        entry = self._partial_epic_account_cache.get(lookup)
+        entry = self._partial_account_cache.get(lookup)
         if entry is not None:
             return entry.get('account')
 
     def cache_partial_account(self, account: PartialEpicAccount) -> None:
-        if account.id not in self._partial_epic_account_cache:
-            self._partial_epic_account_cache[account.id] = PartialAccountCacheEntry(
+        if account.id not in self._partial_account_cache:
+            self._partial_account_cache[account.id] = PartialAccountCacheEntry(
                 account=account,
                 expires=self.now + self.ACCOUNT_CACHE_DURATION
             )
             if account.display is not self.UNKNOWN_STR:
-                self._partial_epic_account_cache[account.display] = self._partial_epic_account_cache[account.id]
+                self._partial_account_cache[account.display] = self._partial_account_cache[account.id]
 
     def remove_partial_account(self, account_id: str) -> None:
         try:
-            cache_entry = self._partial_epic_account_cache.pop(account_id)
+            cache_entry = self._partial_account_cache.pop(account_id)
         except KeyError:
             return
         try:
-            self._partial_epic_account_cache.pop(cache_entry['account'].display)
+            self._partial_account_cache.pop(cache_entry['account'].display)
         except (KeyError, AttributeError):
             return
 
@@ -99,8 +99,8 @@ class FortniteBot(commands.Bot):
     async def manage_partial_cache(self) -> None:
         account_ids: list[str] = []
 
-        for account_id in self._partial_epic_account_cache:
-            if self._partial_epic_account_cache[account_id]['expires'] <= self.now:
+        for account_id, cache_entry in self._partial_account_cache.items():
+            if cache_entry['expires'] <= self.now:
                 account_ids.append(account_id)
 
         for _account_id in account_ids:
