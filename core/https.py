@@ -59,23 +59,23 @@ class FortniteHTTPClient:
 
     __slots__ = (
         'bot',
-        '__session'
+        '_session'
     )
 
     def __init__(self, bot: FortniteBot) -> None:
         self.bot: FortniteBot = bot
-        self.__session: ClientSession | None = None
+        self._session: ClientSession | None = None
 
     async def __aenter__(self) -> FortniteHTTPClient:
-        self.__session = ClientSession()
+        self._session = ClientSession()
         return self
 
     async def __aexit__(self, *_) -> bool:
-        await self.__session.close()
+        await self._session.close()
         return False
 
     async def request(self, method: str, url: str, retries: int = -1, **kwargs) -> dict:
-        async with self.__session.request(method, url, **kwargs) as resp:
+        async with self._session.request(method, url, **kwargs) as resp:
             logging.info(f'({resp.status}) {method.upper() + "      "[:6 - len(method)]} {url}')
 
             data = await response_to_json(resp)

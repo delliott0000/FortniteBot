@@ -63,10 +63,9 @@ class FortniteBot(commands.Bot):
 
     async def __aexit__(self, *_) -> None:
         for auth_session in self._auth_session_cache.values():
-            # noinspection PyBroadException
             try:
                 await auth_session.kill()
-            except Exception:
+            except HTTPException:
                 continue
         return await super().__aexit__(*_)
 
