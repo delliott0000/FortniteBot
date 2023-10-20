@@ -1,15 +1,17 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Any
+from typing import Any, Literal
+from weakref import ref, ReferenceType
 
 from resources.lookup import lookup
 from resources.emojis import emojis
 from fortnite.base import BaseEntity
-from core.errors import UnknownTemplateID
+from core.errors import UnknownTemplateID, ItemIsReadOnly
 
 if TYPE_CHECKING:
     from fortnite.base import MaybeAccount
+    from core.auth import AuthSession
 
 
 class SaveTheWorldItem(BaseEntity):
@@ -47,3 +49,118 @@ class SaveTheWorldItem(BaseEntity):
     @property
     def emoji(self) -> str:
         return emojis['resources'].get(self.name) or emojis['rarities'][self.rarity]
+
+
+class Recyclable(SaveTheWorldItem):
+
+    def _auth_check(self) -> AuthSession:
+        try:
+            return self.account.auth_session
+        except AttributeError:
+            raise ItemIsReadOnly(self.item_id, self.template_id)
+
+    async def recycle(self) -> dict:
+        auth_session = self._auth_check()
+
+        data = await auth_session.profile_operation(
+            route='client',
+            operation='RecycleItem',
+            json={
+                'targetItemId':
+                    self.item_id
+            }
+        )
+
+        return data
+
+
+class Upgradable(Recyclable):
+
+    __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
+
+    async def upgrade(self, new_level: int, new_tier: int, conversion_index: int = -1) -> dict:
+        auth_session = self._auth_check()
+
+        data = await auth_session.profile_operation(
+            route='client',
+            operation='UpgradeItemBulk',
+            json={
+                'targetItemId':
+                    self.item_id,
+                'desiredLevel':
+                    new_tier,
+                'desiredTier':
+                    self.__tier_mapping__.get(new_tier, 'v'),
+                'conversionRecipeIndexChoice':
+                    conversion_index
+            }
+        )
+
+        self.level = new_level
+        self.tier = new_tier
+
+        if isinstance(self, Schematic) and self.tier > 3 and conversion_index == 1:
+            self.template_id = self.template_id.replace('_ore_', '_crystal_')
+
+        return data
+
+
+class Schematic(Upgradable):
+
+    __index_mapping__: dict[str, int] = {'Crystal': 1, 'Ore': 0}
+
+    def __init__(
+        self,
+        account: MaybeAccount,
+        item_id: str,
+        template_id: str,
+        attributes: dict[str, Any]
+    ) -> None:
+        try:
+            super().__init__(account, item_id, template_id, attributes)
+        except UnknownTemplateID:
+            super().__init__(account, item_id, template_id.replace('_crystal_', '_ore_'), attributes)
+
+        self.perks: list[SchematicPerk] = [
+            SchematicPerk(self, perk_id) for perk_id in attributes.get('alterations', [])
+        ]
+
+    @property
+    def power_level(self) -> int:
+        return lookup['Item Power Levels']['Other'][self.rarity][str(self.tier)][str(self.level)]
+
+    @property
+    def material(self) -> str | None:
+        if self.tier == 4 and '_ore_' in self.template_id:
+            return 'Obsidian'
+        elif self.tier == 4:
+            return 'Shadow Shard'
+        elif self.tier == 5 and '_ore_' in self.template_id:
+            return 'Brightcore'
+        elif self.tier == 5:
+            return 'Sunbeam'
+
+    def conversion_index(self, target_material: Literal['Crystal', 'Ore'], target_tier: int) -> int:
+        if self.tier <= 3 and target_tier > 3:
+            return self.__index_mapping__.get(target_material, 1)
+        return -1
+
+
+class SchematicPerk:
+
+    def __init__(
+            self,
+            item: Schematic,
+            perk_id: str
+    ) -> None:
+        self._item: ReferenceType[Schematic] = ref(item)
+        self.perk_id: str = perk_id
+
+        try:
+            self.rarity: str = ['common', 'uncommon', 'rare', 'epic', 'legendary'][int(perk_id[-1]) - 1]
+        except (ValueError, IndexError):
+            self.rarity: str = 'common'
+
+    @property
+    def item(self) -> Schematic:
+        return self._item()
