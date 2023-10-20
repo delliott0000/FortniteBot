@@ -105,12 +105,12 @@ class DatabaseClient:
         await self.connection.commit()
         return until
 
-    async def get_premium_states(self) -> list[tuple[int, datetime | None]]:
+    async def get_premium_states(self) -> list[tuple[int, datetime]]:
         cursor: Cursor = await self.connection.execute(
-            'SELECT discord_id, premium_until FROM user_data'
+            'SELECT discord_id, premium_until FROM user_data WHERE premium_until != 0'
         )
         records = await cursor.fetchall()
-        return [(record[0], (self._int_to_datetime(record[1])) if record[1] else None) for record in records]
+        return [(record[0], self._int_to_datetime(record[1])) for record in records]
 
     async def expire_premium(self, discord_id: int) -> None:
         await self.connection.execute(

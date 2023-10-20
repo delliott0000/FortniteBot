@@ -149,9 +149,7 @@ class FortniteBot(commands.Bot):
     async def manage_data_base(self) -> None:
         now = self.now
         for discord_id, premium_until in await self.database_client.get_premium_states():
-            if premium_until is None:
-                continue
-            elif premium_until < now:
+            if premium_until < now:
                 await self.database_client.expire_premium(discord_id)
 
     async def setup_hook(self) -> None:
