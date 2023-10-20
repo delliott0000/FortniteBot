@@ -11,6 +11,12 @@ if TYPE_CHECKING:
 
 class BaseEntity:
 
+    __slots__ = (
+        '_account',
+        'item_id',
+        'template_id'
+    )
+
     def __init__(
             self,
             account: MaybeAccount,

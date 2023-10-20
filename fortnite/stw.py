@@ -16,6 +16,15 @@ if TYPE_CHECKING:
 
 class SaveTheWorldItem(BaseEntity):
 
+    __slots__ = (
+        'name',
+        'rarity',
+        'type',
+        'level',
+        'favourite',
+        'tier'
+    )
+
     def __init__(
             self,
             account: MaybeAccount,
@@ -107,6 +116,10 @@ class Upgradable(Recyclable):
 
 class Schematic(Upgradable):
 
+    __slots__ = (
+        'perks',
+    )
+
     __index_mapping__: dict[str, int] = {'Crystal': 1, 'Ore': 0}
 
     def __init__(
@@ -147,6 +160,12 @@ class Schematic(Upgradable):
 
 
 class SchematicPerk:
+
+    __slots__ = (
+        '_item',
+        'perk_id',
+        'rarity'
+    )
 
     def __init__(
             self,
