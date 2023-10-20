@@ -64,7 +64,7 @@ class FortniteItemException(FortniteException):
         self.template_id: str = template_id
 
     def __str__(self) -> str:
-        return f'Error with item {self.item_id} (TID: {self.template_id})'
+        return f'Exception raised by item {self.item_id} (TID: {self.template_id})'
 
 
 class UnknownTemplateID(FortniteItemException):
@@ -81,3 +81,9 @@ class MalformedItemAttributes(FortniteItemException):
 
     def __str__(self) -> str:
         return super().__str__() + ' - Malformed Item Attributes'
+
+
+class ItemIsReadOnly(FortniteItemException):
+
+    def __str__(self) -> str:
+        return super().__str__() + ' - Item is not tied to an `AuthSession` so it can not be edited.'
