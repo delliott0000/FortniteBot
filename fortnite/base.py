@@ -6,8 +6,7 @@ from weakref import ref
 if TYPE_CHECKING:
     from core.account import PartialEpicAccount, FullEpicAccount
 
-    Account = PartialEpicAccount | FullEpicAccount
-    MaybeAccount = Account | None
+    MaybeAccount = PartialEpicAccount | FullEpicAccount | None
 
 
 class BaseEntity:
