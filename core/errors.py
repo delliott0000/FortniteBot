@@ -1,3 +1,5 @@
+from typing import Any
+
 from aiohttp import ClientResponse
 
 
@@ -53,3 +55,29 @@ class TooManyRequests(HTTPException):
 class ServerError(HTTPException):
 
     pass
+
+
+class FortniteItemException(FortniteException):
+
+    def __init__(self, item_id: str, template_id: str) -> None:
+        self.item_id: str = item_id
+        self.template_id: str = template_id
+
+    def __str__(self) -> str:
+        return f'Error with item {self.item_id} (TID: {self.template_id})'
+
+
+class UnknownTemplateID(FortniteItemException):
+
+    def __str__(self) -> str:
+        return super().__str__() + ' - Unknown Template ID'
+
+
+class MalformedItemAttributes(FortniteItemException):
+
+    def __init__(self, item_id: str, template_id: str, attributes: dict[str, Any]) -> None:
+        super().__init__(item_id, template_id)
+        self.attributes: dict[str, Any] = attributes
+
+    def __str__(self) -> str:
+        return super().__str__() + ' - Malformed Item Attributes'
