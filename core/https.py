@@ -52,6 +52,7 @@ class FortniteHTTPClient:
     BASE_FRIENDS_URL: str = 'https://friends-public-service-prod.ol.epicgames.com/friends/api/v1'
 
     ACCOUNT_REQUESTS_URL: str = BASE_EPIC_URL + '/public/account/{0}'
+    PROFILE_REQUESTS_URL: str = BASE_FORT_URL + '/game/v2/profile/{0}/{1}/{2}?profileId={3}'
 
     # Used to exchange the user's authorization code for a session, and to keep existing sessions alive
     AUTH_EXCHANGE_URL: str = BASE_EPIC_URL + '/oauth/token'

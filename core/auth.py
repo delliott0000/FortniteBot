@@ -69,6 +69,14 @@ class AuthSession:
     def _set_cached_account_expiration(self) -> None:
         self._cached_full_account_expires: datetime = self.bot.now + self.bot.ACCOUNT_CACHE_DURATION
 
+    async def renew(self) -> None:
+        # Do nothing if access token is already active
+        if self.is_active is True:
+            return
+
+        data = await self.http_client.renew_auth_session(self.refresh_token)
+        self._renew_data(data)
+
     async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> dict:
         headers = {'Authorization': f'bearer {self.access_token}'}
 
@@ -82,14 +90,6 @@ class AuthSession:
 
             await self.renew()
             return await self.access_request(method, url, retry=True, **kwargs)
-
-    async def renew(self) -> None:
-        # Do nothing if access token is already active
-        if self.is_active is True:
-            return
-
-        data = await self.http_client.renew_auth_session(self.refresh_token)
-        self._renew_data(data)
 
     async def kill(self) -> None:
         try:
@@ -158,3 +158,21 @@ class AuthSession:
                 account_list.append(account)
 
         return account_list
+
+    async def profile_operation(
+            self,
+            method: str = 'post',
+            epic_id: str | None = None,
+            route: str = 'public',
+            operation: str = 'QueryPublicProfile',
+            profile_id: str = 'campaign',
+            json: dict | None = None
+    ) -> dict:
+        epic_id = epic_id or self.epic_id
+        json = json or {}
+
+        return await self.access_request(
+            method,
+            self.http_client.PROFILE_REQUESTS_URL.format(epic_id, route, operation, profile_id),
+            json=json
+        )
