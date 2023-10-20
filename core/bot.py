@@ -59,9 +59,12 @@ class FortniteBot(commands.Bot):
         self._partial_account_cache: dict[str, PartialAccountCacheEntry] = {}
         self._auth_session_cache: dict[int, AuthSession] = {}
 
-        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, self.manage_auth_cache)
+        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, self.manage_auth_cache, self.manage_data_base)
 
     async def __aexit__(self, *_) -> None:
+        for task in self._tasks:
+            task.cancel()
+            task.clear_exception_types()
         for auth_session in self._auth_session_cache.values():
             try:
                 await auth_session.kill()
@@ -141,6 +144,15 @@ class FortniteBot(commands.Bot):
                 except HTTPException:
                     await auth_session.kill()
                     self.remove_auth_session(discord_id)
+
+    @tasks.loop(minutes=1)
+    async def manage_data_base(self) -> None:
+        now = self.now
+        for discord_id, premium_until in await self.database_client.get_premium_states():
+            if premium_until is None:
+                continue
+            elif premium_until < now:
+                await self.database_client.expire_premium(discord_id)
 
     async def setup_hook(self) -> None:
         user = self.user
