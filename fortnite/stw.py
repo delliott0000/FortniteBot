@@ -165,3 +165,25 @@ class SchematicPerk:
     @property
     def schematic(self) -> Schematic:
         return self._schematic()
+
+
+class SurvivorBase(Upgradable):
+
+    __slots__ = (
+        'personality',
+        'squad_index',
+        'squad_id',
+        'squad_name'
+    )
+
+    def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
+        super().__init__(account, item_id, template_id, attributes)
+
+        try:
+            self.personality: str = attributes['personality'].split('.')[-1][2:]
+            self.squad_index: int = attributes['squad_slot_idx']
+        except KeyError:
+            raise MalformedItemAttributes(item_id, template_id, attributes)
+
+        self.squad_id: str | None = attributes.get('squad_id')
+        self.squad_name: str | None = lookup['Survivor Squads'].get(self.squad_id)
