@@ -187,6 +187,13 @@ class SchematicPerk:
 
 class SurvivorBase(Upgradable):
 
+    __slots__ = (
+        'personality',
+        'squad_index',
+        'squad_id',
+        'squad_name'
+    )
+
     def __init__(
         self,
         account: MaybeAccount,
@@ -207,6 +214,11 @@ class SurvivorBase(Upgradable):
 
 
 class Survivor(SurvivorBase):
+
+    __slots__ = (
+        'set_bonus_type',
+        'set_bonus_data'
+    )
 
     def __init__(
         self,
@@ -229,6 +241,10 @@ class Survivor(SurvivorBase):
 
 
 class LeadSurvivor(SurvivorBase):
+
+    __slots__ = (
+        'preferred_squad_name',
+    )
 
     def __init__(
         self,
