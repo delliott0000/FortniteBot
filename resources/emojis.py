@@ -1,7 +1,4 @@
-from typing import Any
-
-
-emojis: dict[str, Any] = {
+emojis = {
     'check': '<:Checkmark:1086354772661125200>',
     'cross': '<:Crossmark:1086355126534557706>',
     'id': '<:item_id:1110261871543595159>',

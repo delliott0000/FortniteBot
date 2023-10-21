@@ -1,7 +1,4 @@
-from typing import Any
-
-
-lookup: dict[str, Any] = {
+lookup = {
   "author": "This file was made by PRO100KatYT and modified for use by Delliott.",
   "Daily Rewards": {
     "1": {
