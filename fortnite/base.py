@@ -4,8 +4,10 @@ from typing import TYPE_CHECKING
 from weakref import ref
 
 if TYPE_CHECKING:
+    from typing import Any
     from core.account import PartialEpicAccount, FullEpicAccount
 
+    Attributes = dict[str, Any]
     MaybeAccount = PartialEpicAccount | FullEpicAccount | None
 
 

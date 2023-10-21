@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Any, Literal
+from typing import Literal
 from weakref import ref, ReferenceType
 
 from resources.lookup import lookup
@@ -10,7 +10,7 @@ from fortnite.base import BaseEntity
 from core.errors import UnknownTemplateID, ItemIsReadOnly
 
 if TYPE_CHECKING:
-    from fortnite.base import MaybeAccount
+    from fortnite.base import MaybeAccount, Attributes
     from core.auth import AuthSession
 
 
@@ -30,7 +30,7 @@ class SaveTheWorldItem(BaseEntity):
             account: MaybeAccount,
             item_id: str,
             template_id: str,
-            attributes: dict[str, Any]
+            attributes: Attributes
     ) -> None:
         super().__init__(account, item_id, template_id)
 
@@ -127,7 +127,7 @@ class Schematic(Upgradable):
         account: MaybeAccount,
         item_id: str,
         template_id: str,
-        attributes: dict[str, Any]
+        attributes: Attributes
     ) -> None:
         try:
             super().__init__(account, item_id, template_id, attributes)
