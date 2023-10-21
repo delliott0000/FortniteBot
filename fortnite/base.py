@@ -20,10 +20,10 @@ class BaseEntity:
     )
 
     def __init__(
-            self,
-            account: MaybeAccount,
-            item_id: str,
-            template_id: str
+        self,
+        account: MaybeAccount,
+        item_id: str,
+        template_id: str
     ) -> None:
         try:
             self._account = ref(account)

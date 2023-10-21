@@ -109,9 +109,9 @@ class AuthSession:
         return self._cached_full_account()
 
     async def fetch_account(
-            self,
-            display: str | None = None,
-            account_id: str | None = None
+        self,
+        display: str | None = None,
+        account_id: str | None = None
     ) -> PartialEpicAccount:
         account = self.bot.get_partial_account(display=display, account_id=account_id)
         if account is not None:
@@ -131,8 +131,8 @@ class AuthSession:
         return account
 
     async def fetch_accounts(
-            self,
-            *account_ids: str
+        self,
+        *account_ids: str
     ) -> list[PartialEpicAccount]:
         account_list: list[PartialEpicAccount] = []
         _account_ids: list[str] = list(account_ids)
@@ -160,13 +160,13 @@ class AuthSession:
         return account_list
 
     async def profile_operation(
-            self,
-            method: str = 'post',
-            epic_id: str | None = None,
-            route: str = 'public',
-            operation: str = 'QueryPublicProfile',
-            profile_id: str = 'campaign',
-            json: dict | None = None
+        self,
+        method: str = 'post',
+        epic_id: str | None = None,
+        route: str = 'public',
+        operation: str = 'QueryPublicProfile',
+        profile_id: str = 'campaign',
+        json: dict | None = None
     ) -> dict:
         epic_id = epic_id or self.epic_id
         json = json or {}

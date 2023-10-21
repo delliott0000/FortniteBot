@@ -26,11 +26,11 @@ class SaveTheWorldItem(BaseEntity):
     )
 
     def __init__(
-            self,
-            account: MaybeAccount,
-            item_id: str,
-            template_id: str,
-            attributes: Attributes
+        self,
+        account: MaybeAccount,
+        item_id: str,
+        template_id: str,
+        attributes: Attributes
     ) -> None:
         super().__init__(account, item_id, template_id)
 
@@ -168,9 +168,9 @@ class SchematicPerk:
     )
 
     def __init__(
-            self,
-            item: Schematic,
-            perk_id: str
+        self,
+        item: Schematic,
+        perk_id: str
     ) -> None:
         self._item: ReferenceType[Schematic] = ref(item)
         self.perk_id: str = perk_id
