@@ -150,14 +150,14 @@ class SchematicPerk:
 
     __slots__ = (
         '_schematic',
-        'perk_id',
+        'id',
         'rarity',
         'description'
     )
 
     def __init__(self, schematic: Schematic, perk_id: str) -> None:
         self._schematic: ReferenceType[Schematic] = ref(schematic)
-        self.perk_id: str = perk_id
+        self.id: str = perk_id
 
         try:
             self.rarity: str = ['common', 'uncommon', 'rare', 'epic', 'legendary'][int(perk_id[-1]) - 1]
@@ -191,3 +191,43 @@ class SurvivorBase(Upgradable):
 
         self.squad_id: str | None = attributes.get('squad_id')
         self.squad_name: str | None = lookup['Survivor Squads'].get(self.squad_id)
+
+
+class Survivor(SurvivorBase):
+
+    __slots__ = (
+        'set_bonus_type',
+        'set_bonus_data'
+    )
+
+    def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
+        super().__init__(account, item_id, template_id, attributes)
+
+        try:
+            self.set_bonus_type: str = attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
+            self.set_bonus_data: dict[str, str | int | None] = lookup['Set Bonuses'][self.set_bonus_type]
+        except KeyError:
+            raise MalformedItemAttributes(item_id, template_id, attributes)
+
+    @property
+    def base_power_level(self) -> int:
+        return lookup['Item Power Levels']['Survivor'][self.rarity][str(self.tier)][str(self.level)]
+
+
+class LeadSurvivor(SurvivorBase):
+
+    __slots__ = (
+        'preferred_squad_name',
+    )
+
+    def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
+        super().__init__(account, item_id, template_id, attributes)
+
+        try:
+            self.preferred_squad_name: str = lookup['Leads Preferred Squad'][attributes['managerSynergy']]
+        except KeyError:
+            raise MalformedItemAttributes(item_id, template_id, attributes)
+
+    @property
+    def base_power_level(self) -> int:
+        return lookup['Item Power Levels']['Lead Survivor'][self.rarity][str(self.tier)][str(self.level)]
