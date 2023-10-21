@@ -55,6 +55,10 @@ class SaveTheWorldItem(BaseEntity):
 
 class Recyclable(AccountBoundMixin, SaveTheWorldItem):
 
+    __slots__ = (
+        '_account',
+    )
+
     @property
     def auth_checker(self) -> AuthSession:
         try:
