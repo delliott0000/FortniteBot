@@ -60,7 +60,7 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
         try:
             return self.account.auth_session
         except AttributeError:
-            raise ItemIsReadOnly(self.item_id, self.template_id)
+            raise ItemIsReadOnly(self)
 
     async def recycle(self) -> dict:
         data = await self.auth_checker.profile_operation(
