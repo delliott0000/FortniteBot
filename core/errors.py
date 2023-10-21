@@ -1,4 +1,8 @@
-from typing import Any
+from __future__ import annotations
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from fortnite.base import Attributes
 
 from aiohttp import ClientResponse
 
@@ -75,9 +79,9 @@ class UnknownTemplateID(FortniteItemException):
 
 class MalformedItemAttributes(FortniteItemException):
 
-    def __init__(self, item_id: str, template_id: str, attributes: dict[str, Any]) -> None:
+    def __init__(self, item_id: str, template_id: str, attributes: Attributes) -> None:
         super().__init__(item_id, template_id)
-        self.attributes: dict[str, Any] = attributes
+        self.attributes: Attributes = attributes
 
     def __str__(self) -> str:
         return super().__str__() + ' - Malformed Item Attributes'
