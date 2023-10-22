@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Literal
+from typing import Literal, TypedDict, get_args
 from weakref import ref
 
 from resources.lookup import lookup
@@ -13,6 +13,31 @@ if TYPE_CHECKING:
     from weakref import ReferenceType
     from fortnite.base import Account, Attributes
     from core.auth import AuthSession
+
+
+FortType = Literal[
+    'Fortitude',
+    'Offense',
+    'Resistance',
+    'Tech']
+
+SetBonusType = Literal[
+    'TrapDurability',
+    'RangedDamage',
+    'MeleeDamage',
+    'TrapDamage',
+    'AbilityDamage',
+    'Fortitude',
+    'Resistance',
+    'ShieldRegen']
+
+
+class FortStats(TypedDict):
+
+    Fortitude: int
+    Offense: int
+    Resistance: int
+    Tech: int
 
 
 class SaveTheWorldItem(BaseEntity):
@@ -204,7 +229,8 @@ class Survivor(SurvivorBase):
         super().__init__(account, item_id, template_id, attributes)
 
         try:
-            self.set_bonus_type: str = attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
+            self.set_bonus_type: SetBonusType = \
+                attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
             self.set_bonus_data: dict[str, str | int | None] = lookup['Set Bonuses'][self.set_bonus_type]
         except KeyError:
             raise MalformedItemAttributes(item_id, template_id, attributes)
@@ -231,3 +257,103 @@ class LeadSurvivor(SurvivorBase):
     @property
     def base_power_level(self) -> int:
         return lookup['Item Power Levels']['Lead Survivor'][self.rarity][str(self.tier)][str(self.level)]
+
+
+class ActiveSetBonus:
+
+    __slots__ = (
+        'squad',
+        'name',
+        'points',
+        'fort_type',
+        'fort_stats'
+    )
+
+    def __init__(self, squad: SurvivorSquad, name: SetBonusType, points: int, fort_type: FortType | None) -> None:
+        self.squad: SurvivorSquad = squad
+        self.name: SetBonusType = name
+        self.points: int = points
+        self.fort_type: FortType | None = fort_type
+
+        self.fort_stats: FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
+        if self.fort_type is not None:
+            self.fort_stats[self.fort_type] += points
+
+
+class SurvivorSquad(AccountBoundMixin):
+
+    __slots__ = (
+        '_account',
+        'id',
+        'name',
+        'lead_survivor',
+        'survivors'
+    )
+
+    def __init__(
+        self,
+        account: Account,
+        squad_id: str,
+        lead_survivor: LeadSurvivor | None = None,
+        survivors: list[Survivor] | None = None
+    ) -> None:
+        super().__init__(account)
+
+        self.id: str = squad_id
+        self.name: str = lookup['Survivor Squads'][self.id]
+        self.lead_survivor: LeadSurvivor | None = lead_survivor
+        self.survivors: list[Survivor] = survivors.copy() if survivors is not None else []
+        self.survivors.sort(key=lambda survivor: survivor.squad_index)
+
+    @property
+    def active_set_bonuses(self) -> list[ActiveSetBonus]:
+        tally: dict[SetBonusType, int] = {_bonus_type: 0 for _bonus_type in get_args(SetBonusType)}
+
+        for survivor in self.survivors:
+            tally[survivor.set_bonus_type] += 1
+
+        active_set_bonuses = []
+
+        for bonus_type, count in tally.items():
+            name: SetBonusType = lookup['Set Bonuses'][bonus_type]['name']
+            points: int = lookup['Set Bonuses'][bonus_type]['bonus']
+            fort_type: FortType = lookup['Set Bonuses'][bonus_type]['bonus_type']
+
+            for _ in range(count // lookup['Set Bonuses'][bonus_type]['requirement']):
+                active_set_bonus = ActiveSetBonus(self, name, points, fort_type)
+                active_set_bonuses.append(active_set_bonus)
+
+        return active_set_bonuses
+
+    @property
+    def fort_stats(self) -> FortStats:
+        fort_stats: FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
+
+        for active_set_bonus in self.active_set_bonuses:
+            for fort_type, points in active_set_bonus.fort_stats.items():
+                fort_type: FortType
+                fort_stats[fort_type] += points
+
+        survivor_point_count: int = 0
+
+        if self.lead_survivor is not None:
+            if self.lead_survivor.preferred_squad_name == self.name:
+                survivor_point_count += self.lead_survivor.base_power_level * 2
+            else:
+                survivor_point_count += self.lead_survivor.base_power_level
+
+        for survivor in self.survivors:
+            pl = survivor.base_power_level
+            leader_bonus_increments: dict[str, tuple[int, int]] = lookup['Lead Bonus Increment']
+
+            if self.lead_survivor is not None and self.lead_survivor.personality == survivor.personality:
+                pl += leader_bonus_increments[self.lead_survivor.rarity][0]
+            elif self.lead_survivor is not None:
+                pl += leader_bonus_increments[self.lead_survivor.rarity][1]
+
+            survivor_point_count += pl
+
+        name_to_fort_type: FortType = lookup['Survivor Squads FORT'][self.name]
+        fort_stats[name_to_fort_type] += survivor_point_count
+
+        return fort_stats
