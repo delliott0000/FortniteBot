@@ -15,13 +15,13 @@ if TYPE_CHECKING:
     from core.auth import AuthSession
 
 
-FortType = Literal[
+_FortType = Literal[
     'Fortitude',
     'Offense',
     'Resistance',
     'Tech']
 
-SetBonusType = Literal[
+_SetBonusType = Literal[
     'TrapDurability',
     'RangedDamage',
     'MeleeDamage',
@@ -32,7 +32,7 @@ SetBonusType = Literal[
     'ShieldRegen']
 
 
-class FortStats(TypedDict):
+class _FortStats(TypedDict):
 
     Fortitude: int
     Offense: int
@@ -229,7 +229,7 @@ class Survivor(SurvivorBase):
         super().__init__(account, item_id, template_id, attributes)
 
         try:
-            self.set_bonus_type: SetBonusType = \
+            self.set_bonus_type: _SetBonusType = \
                 attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
             self.set_bonus_data: dict[str, str | int | None] = lookup['Set Bonuses'][self.set_bonus_type]
         except KeyError:
@@ -269,13 +269,13 @@ class ActiveSetBonus:
         'fort_stats'
     )
 
-    def __init__(self, squad: SurvivorSquad, name: SetBonusType, points: int, fort_type: FortType | None) -> None:
+    def __init__(self, squad: SurvivorSquad, name: _SetBonusType, points: int, fort_type: _FortType | None) -> None:
         self.squad: SurvivorSquad = squad
-        self.name: SetBonusType = name
+        self.name: _SetBonusType = name
         self.points: int = points
-        self.fort_type: FortType | None = fort_type
+        self.fort_type: _FortType | None = fort_type
 
-        self.fort_stats: FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
+        self.fort_stats: _FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
         if self.fort_type is not None:
             self.fort_stats[self.fort_type] += points
 
@@ -307,7 +307,7 @@ class SurvivorSquad(AccountBoundMixin):
 
     @property
     def active_set_bonuses(self) -> list[ActiveSetBonus]:
-        tally: dict[SetBonusType, int] = {_bonus_type: 0 for _bonus_type in get_args(SetBonusType)}
+        tally: dict[_SetBonusType, int] = {_bonus_type: 0 for _bonus_type in get_args(_SetBonusType)}
 
         for survivor in self.survivors:
             tally[survivor.set_bonus_type] += 1
@@ -315,9 +315,9 @@ class SurvivorSquad(AccountBoundMixin):
         active_set_bonuses = []
 
         for bonus_type, count in tally.items():
-            name: SetBonusType = lookup['Set Bonuses'][bonus_type]['name']
+            name: _SetBonusType = lookup['Set Bonuses'][bonus_type]['name']
             points: int = lookup['Set Bonuses'][bonus_type]['bonus']
-            fort_type: FortType = lookup['Set Bonuses'][bonus_type]['bonus_type']
+            fort_type: _FortType = lookup['Set Bonuses'][bonus_type]['bonus_type']
 
             for _ in range(count // lookup['Set Bonuses'][bonus_type]['requirement']):
                 active_set_bonus = ActiveSetBonus(self, name, points, fort_type)
@@ -326,12 +326,12 @@ class SurvivorSquad(AccountBoundMixin):
         return active_set_bonuses
 
     @property
-    def fort_stats(self) -> FortStats:
-        fort_stats: FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
+    def fort_stats(self) -> _FortStats:
+        fort_stats: _FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
 
         for active_set_bonus in self.active_set_bonuses:
             for fort_type, points in active_set_bonus.fort_stats.items():
-                fort_type: FortType
+                fort_type: _FortType
                 fort_stats[fort_type] += points
 
         survivor_point_count: int = 0
@@ -353,7 +353,7 @@ class SurvivorSquad(AccountBoundMixin):
 
             survivor_point_count += pl
 
-        name_to_fort_type: FortType = lookup['Survivor Squads FORT'][self.name]
+        name_to_fort_type: _FortType = lookup['Survivor Squads FORT'][self.name]
         fort_stats[name_to_fort_type] += survivor_point_count
 
         return fort_stats
