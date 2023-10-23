@@ -5390,11 +5390,6 @@ lookup = {
       "rarity": "legendary",
       "type": "hero"
     },
-    "Hero:hid_constructor_032_prokatto_sr_t01": {
-      "name": ",P.",
-      "rarity": "legendary",
-      "type": "hero"
-    },
     "Hero:hid_constructor_032_toyconstructor_sr_t01": {
       "name": "Sgt. Tank Gatling",
       "rarity": "legendary",
