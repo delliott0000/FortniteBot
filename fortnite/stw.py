@@ -357,3 +357,22 @@ class SurvivorSquad(AccountBoundMixin):
         fort_stats[name_to_fort_type] += survivor_point_count
 
         return fort_stats
+
+
+class MissionAlertReward(SaveTheWorldItem):
+
+    __slots__ = (
+        'quantity',
+    )
+
+    def __init__(self, template_id: str, quantity: int) -> None:
+        super().__init__(template_id, {})
+        self.quantity: int = quantity
+
+
+class AccountResource(AccountBoundMixin, MissionAlertReward):
+
+    __slots__ = (
+        '_account',
+        'item_id'
+    )
