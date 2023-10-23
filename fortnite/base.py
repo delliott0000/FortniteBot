@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from weakref import ref
+from abc import ABC
 
 if TYPE_CHECKING:
     from typing import Any
@@ -12,7 +13,9 @@ if TYPE_CHECKING:
     Attributes = dict[str, Any]
 
 
-class AccountBoundMixin:
+class AccountBoundMixin(ABC):
+
+    __slots__ = ()
 
     def __init__(self, account: Account, item_id: str, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -25,7 +28,7 @@ class AccountBoundMixin:
         return self._account()
 
 
-class BaseEntity:
+class BaseEntity(ABC):
 
     __slots__ = (
         'template_id',
