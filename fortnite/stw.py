@@ -31,6 +31,12 @@ _SetBonusType = Literal[
     'Resistance',
     'ShieldRegen']
 
+_HeroType = Literal[
+    'Commando',
+    'Constructor',
+    'Outlander',
+    'Ninja']
+
 
 class _FortStats(TypedDict):
 
@@ -408,3 +414,19 @@ class MissionAlert:
             self.power: int = int(split_power_data[0])
         except ValueError:
             self.power: int = 0
+
+
+class Hero(Upgradable):
+
+    __slots__ = (
+        'type',
+    )
+
+    def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
+        super().__init__(account, item_id, template_id, attributes)
+
+        self.type: _HeroType | None = next((ht for ht in get_args(_HeroType) if ht.lower() in self.template_id), None)
+
+    @property
+    def power_level(self) -> int:
+        return lookup['Item Power Levels']['Other'][self.rarity][str(self.tier)][str(self.level)]
