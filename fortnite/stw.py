@@ -376,3 +376,35 @@ class AccountResource(AccountBoundMixin, MissionAlertReward):
         '_account',
         'item_id'
     )
+
+
+class MissionAlert:
+
+    __slots__ = (
+        'name',
+        'theme',
+        'power',
+        'theater',
+        'four_player',
+        'alert_rewards'
+    )
+
+    def __init__(
+        self,
+        name: str,
+        theme: str,
+        theater: str,
+        power_data: str,
+        alert_rewards: list[MissionAlertReward] | None = None
+    ) -> None:
+        self.name: str = name
+        self.theme: str = theme
+        self.theater: str = theater
+        self.alert_rewards: list[MissionAlertReward] = alert_rewards or []
+
+        split_power_data: list[str] = power_data.split(' ')
+        self.four_player: bool = 'Players' in split_power_data
+        try:
+            self.power: int = int(split_power_data[0])
+        except ValueError:
+            self.power: int = 0
