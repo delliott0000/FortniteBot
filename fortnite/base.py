@@ -14,10 +14,11 @@ if TYPE_CHECKING:
 
 class AccountBoundMixin:
 
-    def __init__(self, account: Account, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, account: Account, item_id: str, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self._account: ReferenceType[Account] = ref(account)
+        self.item_id: str = item_id
 
     @property
     def account(self) -> Account:
@@ -27,12 +28,10 @@ class AccountBoundMixin:
 class BaseEntity:
 
     __slots__ = (
-        'item_id',
         'template_id',
         'raw_attributes'
     )
 
-    def __init__(self, item_id: str, template_id: str, attributes: Attributes) -> None:
-        self.item_id: str = item_id
+    def __init__(self, template_id: str, attributes: Attributes) -> None:
         self.template_id: str = template_id
         self.raw_attributes: Attributes = attributes.copy()

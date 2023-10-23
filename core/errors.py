@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from fortnite.base import Attributes, BaseEntity
+    from fortnite.base import BaseEntity
 
 from aiohttp import ClientResponse
 
@@ -63,35 +63,23 @@ class ServerError(HTTPException):
 
 class FortniteItemException(FortniteException):
 
-    def __init__(self, item_id: str, template_id: str) -> None:
-        self.item_id: str = item_id
-        self.template_id: str = template_id
-
-    def __str__(self) -> str:
-        return f'Exception raised by item {self.item_id} (TID: {self.template_id})'
+    def __init__(self, item: BaseEntity) -> None:
+        self.item: BaseEntity = item
 
 
 class UnknownTemplateID(FortniteItemException):
 
     def __str__(self) -> str:
-        return super().__str__() + ' - Unknown Template ID'
+        return 'Unknown Template ID: ' + self.item.template_id
 
 
 class MalformedItemAttributes(FortniteItemException):
 
-    def __init__(self, item_id: str, template_id: str, attributes: Attributes) -> None:
-        super().__init__(item_id, template_id)
-        self.attributes: Attributes = attributes.copy()
-
     def __str__(self) -> str:
-        return super().__str__() + ' - Malformed Item Attributes'
+        return 'Malformed item attributes: ' + str(self.item.raw_attributes)
 
 
 class ItemIsReadOnly(FortniteItemException):
 
-    def __init__(self, item: BaseEntity) -> None:
-        super().__init__(item.item_id, item.template_id)
-        self.item: BaseEntity = item
-
     def __str__(self) -> str:
-        return super().__str__() + ' - Item is not tied to an `AuthSession` so it can not be edited.'
+        return 'Item is not bound to an `AuthSession` so it is read-only'

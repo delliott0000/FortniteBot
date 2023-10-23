@@ -51,8 +51,8 @@ class SaveTheWorldItem(BaseEntity):
         'favourite'
     )
 
-    def __init__(self, item_id: str, template_id: str, attributes: Attributes) -> None:
-        super().__init__(item_id, template_id, attributes)
+    def __init__(self, template_id: str, attributes: Attributes) -> None:
+        super().__init__(template_id, attributes)
 
         for tid_variation in [
             template_id,
@@ -64,7 +64,7 @@ class SaveTheWorldItem(BaseEntity):
                 lookup_id = tid_variation
                 break
         else:
-            raise UnknownTemplateID(item_id, template_id)
+            raise UnknownTemplateID(self)
 
         self.name: str = lookup['Items'][lookup_id]['name']
         self.type: str = lookup['Item Types'][lookup['Items'][lookup_id]['type']]
@@ -82,6 +82,7 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
 
     __slots__ = (
         '_account',
+        'item_id'
     )
 
     @property
@@ -212,7 +213,7 @@ class SurvivorBase(Upgradable):
             self.personality: str = attributes['personality'].split('.')[-1][2:]
             self.squad_index: int = attributes['squad_slot_idx']
         except KeyError:
-            raise MalformedItemAttributes(item_id, template_id, attributes)
+            raise MalformedItemAttributes(self)
 
         self.squad_id: str | None = attributes.get('squad_id')
         self.squad_name: str | None = lookup['Survivor Squads'].get(self.squad_id)
@@ -233,7 +234,7 @@ class Survivor(SurvivorBase):
                 attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
             self.set_bonus_data: dict[str, str | int | None] = lookup['Set Bonuses'][self.set_bonus_type]
         except KeyError:
-            raise MalformedItemAttributes(item_id, template_id, attributes)
+            raise MalformedItemAttributes(self)
 
     @property
     def base_power_level(self) -> int:
@@ -252,7 +253,7 @@ class LeadSurvivor(SurvivorBase):
         try:
             self.preferred_squad_name: str = lookup['Leads Preferred Squad'][attributes['managerSynergy']]
         except KeyError:
-            raise MalformedItemAttributes(item_id, template_id, attributes)
+            raise MalformedItemAttributes(self)
 
     @property
     def base_power_level(self) -> int:
@@ -284,7 +285,7 @@ class SurvivorSquad(AccountBoundMixin):
 
     __slots__ = (
         '_account',
-        'id',
+        'item_id',
         'name',
         'lead_survivor',
         'survivors'
@@ -297,10 +298,9 @@ class SurvivorSquad(AccountBoundMixin):
         lead_survivor: LeadSurvivor | None = None,
         survivors: list[Survivor] | None = None
     ) -> None:
-        super().__init__(account)
+        super().__init__(account, squad_id)
 
-        self.id: str = squad_id
-        self.name: str = lookup['Survivor Squads'][self.id]
+        self.name: str = lookup['Survivor Squads'][squad_id]
         self.lead_survivor: LeadSurvivor | None = lead_survivor
         self.survivors: list[Survivor] = survivors.copy() if survivors is not None else []
         self.survivors.sort(key=lambda survivor: survivor.squad_index)
