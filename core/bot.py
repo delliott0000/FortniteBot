@@ -19,6 +19,8 @@ if TYPE_CHECKING:
 from discord.ext import commands, tasks
 from discord import (
     __version__ as __discord__,
+    Guild,
+    Colour,
     Intents,
     app_commands,
     LoginFailure,
@@ -75,6 +77,13 @@ class FortniteBot(commands.Bot):
     @property
     def now(self) -> datetime:
         return datetime.utcnow()
+
+    @staticmethod
+    def colour(guild: Guild | None) -> Colour:
+        try:
+            return guild.me.colour
+        except AttributeError:
+            return Colour(16777215)
 
     def get_partial_account(
             self,
