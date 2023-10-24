@@ -3,12 +3,12 @@ from core.bot import FortniteBot
 from discord import app_commands, Interaction
 
 
-_Int = Interaction[FortniteBot]
+FortniteInteraction = Interaction[FortniteBot]
 
 
 def is_not_blacklisted():
 
-    async def predicate(interaction: _Int) -> bool:
+    async def predicate(interaction: FortniteInteraction) -> bool:
         uid = interaction.user.id
 
         _blacklisted = await interaction.client.database_client.is_blacklisted(uid)
@@ -22,7 +22,7 @@ def is_not_blacklisted():
 
 def is_not_logged_in():
 
-    async def predicate(interaction: _Int) -> bool:
+    async def predicate(interaction: FortniteInteraction) -> bool:
         uid = interaction.user.id
 
         _logged_in = bool(interaction.client.get_auth_session(uid))
@@ -35,7 +35,7 @@ def is_not_logged_in():
 
 def is_logged_in():
 
-    async def predicate(interaction: _Int) -> bool:
+    async def predicate(interaction: FortniteInteraction) -> bool:
         uid = interaction.user.id
 
         _logged_in = bool(interaction.client.get_auth_session(uid))
@@ -48,7 +48,7 @@ def is_logged_in():
 
 def is_premium():
 
-    async def predicate(interaction: _Int) -> bool:
+    async def predicate(interaction: FortniteInteraction) -> bool:
         uid = interaction.user.id
 
         _premium = await interaction.client.database_client.is_premium(uid)
@@ -62,7 +62,7 @@ def is_premium():
 
 def non_premium_cooldown():
 
-    async def predicate(interaction: _Int) -> app_commands.Cooldown | None:
+    async def predicate(interaction: FortniteInteraction) -> app_commands.Cooldown | None:
         uid = interaction.user.id
 
         _premium = await interaction.client.database_client.is_premium(uid)
