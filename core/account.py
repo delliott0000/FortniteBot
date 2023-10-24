@@ -5,6 +5,7 @@ from datetime import datetime
 from weakref import ref, ReferenceType
 
 if TYPE_CHECKING:
+    from core.https import _Dict
     from core.auth import AuthSession
 
 from dateutil import parser
@@ -18,7 +19,7 @@ class PartialEpicAccount:
         'display'
     )
 
-    def __init__(self, auth_session: AuthSession, data: dict) -> None:
+    def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
         self.id: str = data.get('id') or data.get('accountId')
         self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
 
@@ -41,7 +42,7 @@ class FullEpicAccount(PartialEpicAccount):
         'last_login'
     )
 
-    def __init__(self, auth_session: AuthSession, data: dict) -> None:
+    def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
         super().__init__(auth_session, data)
         unknown = auth_session.bot.UNKNOWN_STR
 
