@@ -420,12 +420,22 @@ class Hero(Upgradable):
 
     __slots__ = (
         'type',
+        'support_perk_name',
+        'support_perk_desc',
+        'commander_perk_name',
+        'commander_perk_desc'
     )
 
     def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
         super().__init__(account, item_id, template_id, attributes)
 
         self.type: _HeroType | None = next((ht for ht in get_args(_HeroType) if ht.lower() in self.template_id), None)
+
+        perk_data: dict[str, str] = lookup['Hero Perks'].get(self.name, {})
+        self.support_perk_name: str | None = perk_data.get('support_perk_name')
+        self.support_perk_desc: str | None = perk_data.get('support_perk_desc')
+        self.commander_perk_name: str | None = None if self.support_perk_name is None else self.support_perk_name + ' +'
+        self.commander_perk_desc: str | None = perk_data.get('commander_perk_desc')
 
     @property
     def power_level(self) -> int:

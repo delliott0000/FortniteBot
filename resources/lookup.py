@@ -12716,5 +12716,1167 @@ lookup = {
         '_EliminateAndCollect': 'Eliminate And Collect',
         '_RefuelTheBase_': 'Refuel Homebase',
         '_BuildtheRadarGrid': 'Build The Radar Grid'
+    },
+  "Hero Perks": {
+    "Guardian Penny": {
+      "support_perk_name": "Hardware Crit Rating",
+      "support_perk_desc": "Increases hardware critical rating by 17",
+      "commander_perk_desc": "Increases hardware critical rating by 50"
+    },
+    "Buccaneer Ramirez": {
+      "support_perk_name": "Hand Cannons",
+      "support_perk_desc": "Every 10 Lefty and Righty shots spawn a Cannon Ball, dealing 51 base Physical damage.",
+      "commander_perk_desc": "Every 5 Lefty and Righty shots spawn a Cannon Ball, dealing 51 base Physical damage."
+    },
+    "Anti-Cuddle Sarah": {
+      "support_perk_name": "Rapid Charge",
+      "support_perk_desc": "Melee weapon eliminations grant 7.5 energy",
+      "commander_perk_desc": "Melee weapon eliminations grant 22.5 energy"
+    },
+    "Cyberclops": {
+      "support_perk_name": "Plasma Arc",
+      "support_perk_desc": "Energy Damage has a 20% chance to zap nearby enemies for 58% of damage dealt.",
+      "commander_perk_desc": "Energy Damage has a 20% chance to zap nearby enemies for 116% of damage dealt. Additionally T.E.D.D.Y. deals Energy Damage."
+    },
+    "Rescue Trooper Ramirez": {
+      "support_perk_name": "Assault Damage",
+      "support_perk_desc": "Increases Assault Damage by 17%",
+      "commander_perk_desc": "Increases Assault Damage by 50%"
+    },
+    "Guardian Knox": {
+      "support_perk_name": "Hardware Crit Rating",
+      "support_perk_desc": "Increases hardware critical rating by 17",
+      "commander_perk_desc": "Increases hardware critical rating by 50"
+    },
+    "Catstructor Penny": {
+      "support_perk_name": "Rushed Rush",
+      "support_perk_desc": "Decreases Bull Rush cooldown by 27%",
+      "commander_perk_desc": "Decreases Bull Rush cooldown by 67%"
+    },
+    "Undercover Buzz": {
+      "support_perk_name": "Gadgeteer",
+      "support_perk_desc": "Decreases gadget cooldowns by 20%",
+      "commander_perk_desc": "Decreases gadget cooldowns by 50%"
+    },
+    "Trailblazer Jess": {
+      "support_perk_name": "Bearserker",
+      "support_perk_desc": "Increases T.E.D.D.Y. damage by 30%",
+      "commander_perk_desc": "Increases T.E.D.D.Y. damage by 46% and fire rate by 25%"
+    },
+    "Deadly Blade Crash": {
+      "support_perk_name": "Corrosive Strikes",
+      "support_perk_desc": "Melee critical hits apply 30% snare and affliction which deals 37% of damage dealt each second for 3 seconds",
+      "commander_perk_desc": "Melee critical hits apply 30% snare and affliction which deals 87% of damage dealt each second for 3 seconds"
+    },
+    "Pathfinder Jess": {
+      "support_perk_name": "Work, Work",
+      "support_perk_desc": "Increases pickaxe damage by 17%",
+      "commander_perk_desc": "Increases pickaxe damage by 50%"
+    },
+    "Wukong": {
+      "support_perk_name": "Explosive Rounds",
+      "support_perk_desc": "Every 6 ranged weapon eliminations, trigger an explosion which deals 37 base damage in a 1 tile radius",
+      "commander_perk_desc": "Every 6 ranged weapon eliminations, trigger an explosion which deals 111 base damage in a 1 tile radius"
+    },
+    "Kyle the 13th": {
+      "support_perk_name": "Im Just Not User-Friendly",
+      "support_perk_desc": "D.E.C.O.Y. reflects 15 base damage back at enemies that melee attack it",
+      "commander_perk_desc": "D.E.C.O.Y. reflects 45 base damage back at enemies that melee attack it"
+    },
+    "Berserker Renegade": {
+      "support_perk_name": "Short Fuse",
+      "support_perk_desc": "When your shields depletes, reset Shockwave cooldown. Effect can occur once every 20 seconds",
+      "commander_perk_desc": "When your shields depletes, reset Shockwave cooldown. Next use of Shockwave costs 0 energy. Effect can occur once every 12 seconds"
+    },
+    "Centurion Hawk": {
+      "support_perk_name": "Mighty Roar",
+      "support_perk_desc": "Increases War Cry radius by 25%",
+      "commander_perk_desc": "Increases War Cry radius by 75%"
+    },
+    "Skull Ranger Ramirez": {
+      "support_perk_name": "Locked And Reloaded",
+      "support_perk_desc": "After reloading, increases weapon damage by 15% for 5 seconds. Switching weapons removes buff",
+      "commander_perk_desc": "After reloading, increases weapon damage by 15% and fire rate by 35% for 5 seconds. Switching weapons removes buff"
+    },
+    "Fossil Southie": {
+      "support_perk_name": "Saurian Focus",
+      "support_perk_desc": "While shield is depleted, regenerates 4 Energy per second.",
+      "commander_perk_desc": "While shield is depleted, regenerates 12 Energy per second."
+    },
+    "Riot Response Hazard": {
+      "support_perk_name": "One Hot Minute",
+      "support_perk_desc": "Decreases Plasma Pulse cooldown by 18%",
+      "commander_perk_desc": "Decreases Plasma Pulse cooldown by 42%"
+    },
+    "Sleuth": {
+      "support_perk_name": "Cold Lead",
+      "support_perk_desc": "R.O.S.I.E.'s Fire Rate is increased by 1.15% and Heat Generation is reduced by 0.65%.",
+      "commander_perk_desc": "R.O.S.I.E.'s Fire Rate is increased by 1.15% and Heat Generation is reduced by 0.65%. Every 12 damaging shots freezes all enemies within 256 tiles of the target for 3 seconds."
+    },
+    "Hotfixer Hazard": {
+      "support_perk_name": "Hotfix",
+      "support_perk_desc": "Increases building repair speed by 10%",
+      "commander_perk_desc": "Increases building repair speed by 30%"
+    },
+    "Enforcer Grizzly": {
+      "support_perk_name": "Bear With Me",
+      "support_perk_desc": "Increases T.E.D.D.Y. duration by 4 seconds",
+      "commander_perk_desc": "Increases T.E.D.D.Y duration by 12 seconds"
+    },
+    "Ventura Ramirez": {
+      "support_perk_name": "Overbearing",
+      "support_perk_desc": "Increases T.E.D.D.Y. range by 2 tiles. Enemies take more damage from T.E.D.D.Y. based on distance, up to 40% at max range",
+      "commander_perk_desc": "Increases T.E.D.D.Y. range by 2 tiles. Enemies take more damage from T.E.D.D.Y. based on distance, up to 110.% at max range"
+    },
+    "Breakbeat Wildcat": {
+      "support_perk_name": "Battle Beat",
+      "support_perk_desc": "Eliminating 10 enemies within 9 seconds grants Rockin\u2019 Riff.",
+      "commander_perk_desc": "Eliminating 4 enemies within 9 seconds grants Rockin\u2019 Riff."
+    },
+    "Director Riggs": {
+      "support_perk_name": "Direct Threat",
+      "support_perk_desc": "Goin\u2019 Constructor eliminations extend its duration by 1 second, up to a maximum of 10 eliminations.",
+      "commander_perk_desc": "Goin\u2019 Constructor eliminations extend its duration by 2 seconds, up to a maximum of 10 eliminations."
+    },
+    "Piercing Lotus Edge": {
+      "support_perk_name": "Pointy Fury",
+      "support_perk_desc": "Increases Spear heavy attack efficiency by 65%",
+      "commander_perk_desc": "Increases Spear heavy attack efficiency by 200%"
+    },
+    "Razor": {
+      "support_perk_name": "Crystal Daggers",
+      "support_perk_desc": "Kunai Storm unleashes 12 Crystal Daggers, which seek targets and deal 32 base damage.",
+      "commander_perk_desc": "Kunai Storm unleashes 12 Crystal Daggers, which seek targets and deal 96 base damage."
+    },
+    "Steel Wool Anthony": {
+      "support_perk_name": "Four On The Floor",
+      "support_perk_desc": "Seismic Smash leaves a pusling zone with a 0.5 tile radius at the end of its range which deals 56 base Energy Damage over 4 seconds and bounces husks inside",
+      "commander_perk_desc": "Seismic Smash leaves a pusling zone with a 0.75 tile radius at the end of its range which deals 248 base Energy Damage over 4 seconds and bounces husks inside"
+    },
+    "Trailblazer A.C.": {
+      "support_perk_name": "Bearserker",
+      "support_perk_desc": "Increases T.E.D.D.Y. damage by 30%",
+      "commander_perk_desc": "Increases T.E.D.D.Y. damage by 46% and fire rate by 25%"
+    },
+    "Machinist Harper": {
+      "support_perk_name": "Tough Traps",
+      "support_perk_desc": "Increases Trap durability by 17.5%",
+      "commander_perk_desc": "Increases Trap durability by 52.5%"
+    },
+    "Archaeolo-Jess": {
+      "support_perk_name": "Strike Cost",
+      "support_perk_desc": "Increases Anti-Material Charge heavy attack efficiency by 28.%",
+      "commander_perk_desc": "Increases Anti-Material Charge heavy attack efficiency by 128%"
+    },
+    "Infiltrator Ken": {
+      "support_perk_name": "Endless Smoke",
+      "support_perk_desc": "Increases Smoke Bomb radius by 46%",
+      "commander_perk_desc": "Increases Smoke Bomb radius by 186%"
+    },
+    "Controller Harper": {
+      "support_perk_name": "Grease The Wheels",
+      "support_perk_desc": "Decreases DECOY cooldown by 17%",
+      "commander_perk_desc": "Decreases DECOY cooldown by 43%"
+    },
+    "Marathon Hype": {
+      "support_perk_name": "Long Rush",
+      "support_perk_desc": "Increases Bull Rush distance by 2 tiles",
+      "commander_perk_desc": "Increases Bull Rush distance by 6 tiles"
+    },
+    "Trailblazer Quinn": {
+      "support_perk_name": "Bearserker",
+      "support_perk_desc": "Increases T.E.D.D.Y. damage by 30%",
+      "commander_perk_desc": "Increases T.E.D.D.Y. damage by 46% and fire rate by 25%"
+    },
+    "Fleetfoot Ken": {
+      "support_perk_name": "Fleet",
+      "support_perk_desc": "Increases movement speed by 12.5%",
+      "commander_perk_desc": "Increases movement speed by 37.5%"
+    },
+    "Energy Thief Mari": {
+      "support_perk_name": "Rebound",
+      "support_perk_desc": "Crescent Kick returns 5 energy for each enemy hit",
+      "commander_perk_desc": "Crescent Kick returns 15 energy for each enemy hit"
+    },
+    "Buckshot Raptor": {
+      "support_perk_name": "Critical Blast",
+      "support_perk_desc": "Increases Shotgun Critical Damage by 75%",
+      "commander_perk_desc": "Increases Shotgun Critical Damage by 225%"
+    },
+    "Shockgunner Grizzly": {
+      "support_perk_name": "Run And Stun",
+      "support_perk_desc": "Dashing through enemies with Phase Shift stuns them for 0.5 seconds",
+      "commander_perk_desc": "Dashing through enemies with Phase Shift stuns them for 1.5 seconds"
+    },
+    "Assassin Sarah": {
+      "support_perk_name": "Assassination",
+      "support_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 4.5%",
+      "commander_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 18%"
+    },
+    "Shock Specialist A.C.": {
+      "support_perk_name": "Up The Voltage",
+      "support_perk_desc": "Increases Shock Tower damage by 33%",
+      "commander_perk_desc": "Increases Shock Tower damage by 108%"
+    },
+    "Dark Vanguard Airheart": {
+      "support_perk_name": "Software",
+      "support_perk_desc": "Increases hardware heavy attack efficiency by 65%",
+      "commander_perk_desc": "Increases hardware heavy attack efficiency by 200%"
+    },
+    "Shockblaster Buzz": {
+      "support_perk_name": "Electroshock",
+      "support_perk_desc": "Increases Shock Tower impact by 67%",
+      "commander_perk_desc": "Increases Shock Tower impact by 200%"
+    },
+    "Miss Bunny Penny": {
+      "support_perk_name": "Plasma Overdrive",
+      "support_perk_desc": "Decreases Plasma Pulse energy cost by 38%",
+      "commander_perk_desc": "Decreases Plasma Pulse energy cost by 75%"
+    },
+    "Highland Warrior Wildcat": {
+      "support_perk_name": "Pull The Pin",
+      "support_perk_desc": "Decreases Frag Grenade energy cost by 33%",
+      "commander_perk_desc": "Decreases Frag Grenade energy cost by 83%"
+    },
+    "Commando Spitfire": {
+      "support_perk_name": "Goin' Again",
+      "support_perk_desc": "Decreases Goin' Commando cooldown by 30%",
+      "commander_perk_desc": "Decreases Goin' Commando cooldown by 66%"
+    },
+    "Freebooter Ken": {
+      "support_perk_name": "Sea Fog",
+      "support_perk_desc": "Smoke Bomb restores your Shields to full.",
+      "commander_perk_desc": "Smoke Bomb restores your Shields to full and freezes your enemies for 5.5 seconds on activation."
+    },
+    "Dragon Scorch": {
+      "support_perk_name": "Wings Of The Dragon",
+      "support_perk_desc": "Increases Dragon Slash range to 3 tiles",
+      "commander_perk_desc": "Increases Dragon Slash range to 3 tiles, width to 2 tiles and damage by 25%"
+    },
+    "Skull Trooper Jonesy": {
+      "support_perk_name": "Locked And Reloaded",
+      "support_perk_desc": "After reloading, increases weapon damage by 15% for 5 seconds. Switching weapons removes buff",
+      "commander_perk_desc": "After reloading, increases weapon damage by 15% and fire rate by 35% for 5 seconds. Switching weapons removes buff"
+    },
+    "Master Grenadier Ramirez": {
+      "support_perk_name": "Bigger Is Better",
+      "support_perk_desc": "Increases Frag Grenade radius by 50%",
+      "commander_perk_desc": "Increases Frag Grenade radius by 50%"
+    },
+    "Valkyrie Rio": {
+      "support_perk_name": "Kinetic Punch",
+      "support_perk_desc": "Increases Anti-Material Charge impact by 245.% and adds knocks back",
+      "commander_perk_desc": "Increases Anti-Material Charge impact by 600% and adds knocks back"
+    },
+    "Rabbit Raider Jonesy": {
+      "support_perk_name": "Sure Shot",
+      "support_perk_desc": "Increases sniper critical damage by 75%",
+      "commander_perk_desc": "Increases sniper critical damage by 225%"
+    },
+    "Alchemist Sarah": {
+      "support_perk_name": "Medicinal Fumes",
+      "support_perk_desc": "Smoke Bomb heals allies for 10 base health per second",
+      "commander_perk_desc": "Smoke Bomb heals allies for 31 base health per second"
+    },
+    "Buccaneer Jonesy": {
+      "support_perk_name": "Buckle",
+      "support_perk_desc": "Dealing Sword Damage increases Pistol Damage by 22% for 6 seconds",
+      "commander_perk_desc": "Dealing Sword Damage increases Pistol Damage by 65% for 6 seconds"
+    },
+    "Survivalist Jonesy": {
+      "support_perk_name": "Survivalist",
+      "support_perk_desc": "Eliminations heal you for 39 base health for over 3 seconds. Duration refreshes with additional eliminations",
+      "commander_perk_desc": "Eliminations heal you for 117 base health for over 3 seconds. Duration refreshes with additional eliminations"
+    },
+    "Shrapnel Headhunter": {
+      "support_perk_name": "Shell Shock",
+      "support_perk_desc": "Increases Shotgun damage by 17%",
+      "commander_perk_desc": "Increases Shotgun damage by 50%"
+    },
+    "Stoneheart Farrah": {
+      "support_perk_name": "Cupid's Arrow",
+      "support_perk_desc": "On Bow hit, arrows splinter, dealing 20% damage to 3 nearby targets.",
+      "commander_perk_desc": "On Bow hit, arrows splinter, dealing 60% damage to 5 nearby targets."
+    },
+    "Undercover Vaughn": {
+      "support_perk_name": "Grenade Damage",
+      "support_perk_desc": "Increases Frag Grenade damage by 36%",
+      "commander_perk_desc": "Increases Frag Grenade damage by 106%"
+    },
+    "Prehistoric Izza": {
+      "support_perk_name": "Saurian Hide",
+      "support_perk_desc": "When Shield is depleted, increases Armor by 33",
+      "commander_perk_desc": "When Shield is depleted, increases Armor by 100"
+    },
+    "Wild Fragment Deadeye": {
+      "support_perk_name": "Static Cling",
+      "support_perk_desc": "Shock Tower applies affliction which deals 50% damage per second for 3 seconds",
+      "commander_perk_desc": "Shock Tower applies affliction which deals 149% damage per second for 3 seconds"
+    },
+    "Jolly Headhunter": {
+      "support_perk_name": "Present... Arms!",
+      "support_perk_desc": "Eliminated enemies have a 15% chance to drop a present. Presents grant a buff lasting 8 seconds which can be 8.5% movement speed, 6.5% damage or energy over time",
+      "commander_perk_desc": "Eliminated enemies have a 15% chance to drop a present. Presents grant a buff lasting 8 seconds which can be 8.5% movement speed, 19.5% damage or energy over time"
+    },
+    "Raven": {
+      "support_perk_name": "Bang And Pow",
+      "support_perk_desc": "Increases Lefty and Righty damage by 25%",
+      "commander_perk_desc": "Increases Lefty and Righty damage by 25%. Lefty and Righty causes explosions which deal 20 base energy damage in a .5 tile radius"
+    },
+    "Stonefoot Crash": {
+      "support_perk_name": "Hot Foot",
+      "support_perk_desc": "Increases Crescent Kick damage by 36%",
+      "commander_perk_desc": "Increases Crescent Kick damage by 72%"
+    },
+    "Vintage-Tech Penny": {
+      "support_perk_name": "Malfunction",
+      "support_perk_desc": "Increases radius of Plasma Pulse mines 40%",
+      "commander_perk_desc": "Increases radius of Plasma Pulse mines 40%. Furthermore, causes Plasma Pulse to malfunction, dropping only 8 mines. These deal 730% more damage and self-destruct after 10 seconds"
+    },
+    "Warden Kyle": {
+      "support_perk_name": "Base M.D.",
+      "support_perk_desc": "Allies standing on structures affected by your B.A.S.E. heal for 3.75 base health every 1 second",
+      "commander_perk_desc": "Allies standing on structures affected by your B.A.S.E. heal for 11..25 base health every 1 second"
+    },
+    "Gold Knox": {
+      "support_perk_name": "Demo Derby",
+      "support_perk_desc": "Bull Rush drops a mine for every 1 tile traveled. Each mine deals 110 base physical damage in a 0.5 tile radius when triggered.",
+      "commander_perk_desc": "Bull Rush drops a mine for every .5 tile traveled. Each mine deals 275 base physical damage in a 0.5 tile radius when triggered."
+    },
+    "Metal Team Leader": {
+      "support_perk_name": "Bear With Me",
+      "support_perk_desc": "Increases T.E.D.D.Y. duration by 4 seconds",
+      "commander_perk_desc": "Increases T.E.D.D.Y duration by 12 seconds"
+    },
+    "Swordmaster Ken": {
+      "support_perk_name": "Legendary Blade",
+      "support_perk_desc": "During Shadow Stance, increases sword damage by 25%",
+      "commander_perk_desc": "During Shadow Stance, increases sword damage by 75%"
+    },
+    "Shock Trooper Renegade": {
+      "support_perk_name": "Doppler Effect",
+      "support_perk_desc": "Decreases Shockwave energy cost by 24%",
+      "commander_perk_desc": "Decreases Shockwave energy cost by 56.%"
+    },
+    "Skirmisher Edge": {
+      "support_perk_name": "Trained Throw",
+      "support_perk_desc": "Decreases Throwing Stars energy cost by 33%",
+      "commander_perk_desc": "Decreases Throwing Stars energy cost by 83%"
+    },
+    "Guardian Bull": {
+      "support_perk_name": "Hardware Crit Rating",
+      "support_perk_desc": "Increases hardware critical rating by 17",
+      "commander_perk_desc": "Increases hardware critical rating by 50"
+    },
+    "Special Forces Banshee": {
+      "support_perk_name": "Fight Or Flight",
+      "support_perk_desc": "War Cry grants 8.5% additional weapon damage and 8.5% movement speed.",
+      "commander_perk_desc": "War Cry grants 25.5% additional weapon damage and 25.5% movement speed."
+    },
+    "Archetype Havoc": {
+      "support_perk_name": "Escape Artist",
+      "support_perk_desc": "Using Shockwave increases movement speed by 40% for 8 seconds",
+      "commander_perk_desc": "Using Shockwave increases movement speed by 40% and armor by 145 for 9 seconds"
+    },
+    "Fallen Love Ranger Jonesy": {
+      "support_perk_name": "Fuel For The Fallen",
+      "support_perk_desc": "Eliminations restore 6 energy over 3 seconds. Duration refreshes with additional eliminations",
+      "commander_perk_desc": "Eliminations restore 18 energy over 3 seconds. Duration refreshes with additional eliminations"
+    },
+    "The Ice Queen": {
+      "support_perk_name": "Cold To The Touch",
+      "support_perk_desc": "Increases damage against frozen enemies by 14.%",
+      "commander_perk_desc": "Increases damage against frozen enemies by 14.%. Seismic Smash freezes enemies for 2.75 seconds"
+    },
+    "Jurassic Ken": {
+      "support_perk_name": "Saurian Fight",
+      "support_perk_desc": "While Shield is depleted, increase Ability damage by 1.2%.",
+      "commander_perk_desc": "While Shield is depleted, increase Ability damage by 1.6%."
+    },
+    "Bluestreak Ken": {
+      "support_perk_name": "Assassination",
+      "support_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 4.5%",
+      "commander_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 18%"
+    },
+    "Diecast Jonesy": {
+      "support_perk_name": "Boomstick!",
+      "support_perk_desc": "Increases Goin' Commando damage by 25%",
+      "commander_perk_desc": "Increases Goin' Commando damage by 50% and changes damage type to energy"
+    },
+    "The Cloaked Star": {
+      "support_perk_name": "Fan Of Stars",
+      "support_perk_desc": "Throw all Throwing Stars together in an arc. Adds 1 additional star",
+      "commander_perk_desc": "Throw all Throwing Stars together in an arc. Adds 3 additional star"
+    },
+    "Steel Wool Carlos": {
+      "support_perk_name": "Bass Solo",
+      "support_perk_desc": "Each elimination during Warcry extends its Duration by 0.4 seconds, up to a maximum of 15 eliminations",
+      "commander_perk_desc": "Each elimination during Warcry extends its Duration by 0.9 seconds, up to a maximum of 15 eliminations. Additionally, enjoy a rockin' Bass solo"
+    },
+    "Commando Ramirez": {
+      "support_perk_name": "Goin' Again",
+      "support_perk_desc": "Decreases Goin' Commando cooldown by 30%",
+      "commander_perk_desc": "Decreases Goin' Commando cooldown by 66%"
+    },
+    "Dire": {
+      "support_perk_name": "Night Stalker",
+      "support_perk_desc": "During evening and night, increases movement speed by 25%",
+      "commander_perk_desc": "During evening and night, increases movement speed by 50% and decreases energy cost for abilities by 50%"
+    },
+    "Ambush Buzz": {
+      "support_perk_name": "In And Outlander",
+      "support_perk_desc": "Eliminating 6 enemies within 10 seconds of using Phase Shift grants 1 charge(s)",
+      "commander_perk_desc": "Eliminating 6 enemies within 10 seconds of using Phase Shift grants 2 charge(s)"
+    },
+    "Sub Commando Jonesy": {
+      "support_perk_name": "Goin' Again",
+      "support_perk_desc": "Decreases Goin' Commando cooldown by 30%",
+      "commander_perk_desc": "Decreases Goin' Commando cooldown by 66%"
+    },
+    "Sentinel Hype": {
+      "support_perk_name": "Going And Going",
+      "support_perk_desc": "Increases DECOY duration by 1.5 seconds",
+      "commander_perk_desc": "Increases DECOY duration by 4.5 seconds"
+    },
+    "Harvester Sarah": {
+      "support_perk_name": "Scythe To Meet You",
+      "support_perk_desc": "Increases scythe damage by 25% against slowed or snared enemies",
+      "commander_perk_desc": "Increases scythe damage by 62% against slowed or snared enemies. Scythes apply 30% snare for 2 seconds"
+    },
+    "Support Specialist Hawk": {
+      "support_perk_name": "Combatants Might",
+      "support_perk_desc": "Decreases War Cry energy cost by 38%",
+      "commander_perk_desc": "Decreases War Cry energy cost by 75%"
+    },
+    "Recon Scout Eagle Eye": {
+      "support_perk_name": "Phase Forward",
+      "support_perk_desc": "Phase Shift grants an additional 30% movement speed for 3 seconds.",
+      "commander_perk_desc": "Increases Phase Shift distance by 1. Phase Shift grants an additional 140% movement speed for 3 seconds."
+    },
+    "Whirlwind Scorch": {
+      "support_perk_name": "Footloose",
+      "support_perk_desc": "Increases Crescent Kick impact by 85%",
+      "commander_perk_desc": "Increases Crescent Kick impact by 85% and stun duration by 2.25 seconds"
+    },
+    "Commando Renegade": {
+      "support_perk_name": "Goin' Again",
+      "support_perk_desc": "Decreases Goin' Commando cooldown by 30%",
+      "commander_perk_desc": "Decreases Goin' Commando cooldown by 66%"
+    },
+    "Dennis Jr.": {
+      "support_perk_name": "Shredder",
+      "support_perk_desc": "Axe eliminations have an 11% chance to grant Rockin\u2019 Riff.",
+      "commander_perk_desc": "Axe eliminations have an 37% chance to grant Rockin\u2019 Riff"
+    },
+    "Sanguine Dusk": {
+      "support_perk_name": "Phase Siphon",
+      "support_perk_desc": "Dashing through enemies with Phase Shift heals 12 base health per enemy passed through",
+      "commander_perk_desc": "Dashing through enemies with Phase Shift heals 24 base health per enemy passed through"
+    },
+    "Deadly Star Scorpion": {
+      "support_perk_name": "Corrosive Stars",
+      "support_perk_desc": "Throwing Stars apply energy affliction dealing 3 base energy damage per second for 6 seconds. Stacks to a maximum of 3",
+      "commander_perk_desc": "Throwing Stars apply energy affliction dealing 9 base energy damage per second for 6 seconds. Stacks to a maximum of 3"
+    },
+    "Venturion": {
+      "support_perk_name": "Blast Kick",
+      "support_perk_desc": "Crescent Kick Spawns 3 projectile that pierces through targets dealing 25 damage.",
+      "commander_perk_desc": "Crescent Kick Spawns 5 projectile that pierces through targets dealing 37 damage."
+    },
+    "Striker A.C.": {
+      "support_perk_name": "Sustained Smash",
+      "support_perk_desc": "Decreases Seismic Smash energy cost by 38%",
+      "commander_perk_desc": "Decreases Seismic Smash energy cost by 75%"
+    },
+    "Ranger Deadeye": {
+      "support_perk_name": "Hipshot",
+      "support_perk_desc": "Increases pistol damage by 17%",
+      "commander_perk_desc": "Increases pistol damage by 50%"
+    },
+    "Varsity Hiro": {
+      "support_perk_name": "Fumble",
+      "support_perk_desc": "Eliminated enemies have a 7% chance to fumble a Football. Footballs grant Rockin' Riff when picked up.",
+      "commander_perk_desc": "Eliminated enemies have a 23% chance to fumble a Football. Footballs grant Rockin' Riff when picked up."
+    },
+    "Sentry Gunner Krampus": {
+      "support_perk_name": "Racking Up The Coal",
+      "support_perk_desc": "Each R.O.S.I.E. elimination increases R.O.S.I.E. damage by 4%, up to a maximum of 30 stacks",
+      "commander_perk_desc": "Each R.O.S.I.E. elimination increases R.O.S.I.E. damage by 12%, up to a maximum of 30 stacks"
+    },
+    "Beetlejess": {
+      "support_perk_name": "Make It Count",
+      "support_perk_desc": "Increases pistol critical damage by 75%",
+      "commander_perk_desc": "Increases pistol critical damage by 225%"
+    },
+    "Hybrid": {
+      "support_perk_name": "Fire of the Dragon",
+      "support_perk_desc": "Increases Affliction Duration by 34%",
+      "commander_perk_desc": "Increases Affliction Duration by 67%. Dragon Slash applies Affliction, which deals 15 base Fire Damage per second for 3 seconds"
+    },
+    "Intergalactic Ken": {
+      "support_perk_name": "Energy Siphon",
+      "support_perk_desc": "Eliminations with Energy Damage restore 8.5% of missing shields.",
+      "commander_perk_desc": "Eliminations with Energy Damage restore 17% of missing shields. Additionally, Throwing Stars deals Energy damage."
+    },
+    "Brawler Luna": {
+      "support_perk_name": "Quick Kick",
+      "support_perk_desc": "Decreases Crescent Kick cooldown by 20%",
+      "commander_perk_desc": "Decreases Crescent Kick cooldown by 60%"
+    },
+    "Tank Penny": {
+      "support_perk_name": "Actuated Attacks",
+      "support_perk_desc": "Increases hardware damage by 17%",
+      "commander_perk_desc": "Increases hardware damage by 50%"
+    },
+    "Phase Scout Jess": {
+      "support_perk_name": "Shifting Gears",
+      "support_perk_desc": "FOR EACH: Outlander of Epic or higher rarity",
+      "commander_perk_desc": "tiles. (It seems the decreased range is additive, so beware a very short Phase Shift with too many Outlanders in the squad.)"
+    },
+    "Privateer Hype": {
+      "support_perk_name": "Swab the Deck",
+      "support_perk_desc": "Increases Club Damage by 17%",
+      "commander_perk_desc": "Increases Club Damage by 50%"
+    },
+    "Star-Spangled Headhunter": {
+      "support_perk_name": "Spoils Of War",
+      "support_perk_desc": "War Cry grants 25% chance for each shot to cost no ammo",
+      "commander_perk_desc": "War Cry grants 50% chance for each shot to cost no ammo"
+    },
+    "Cottontail Eagle Eye": {
+      "support_perk_name": "Un-eggs-pected Departure",
+      "support_perk_desc": "Phase Shift leaves 3 egg bombs, which deal 18 base damage to nearby enemies.",
+      "commander_perk_desc": "Phase Shift leaves 3 egg bombs, which deal 45 base damage to nearby enemies."
+    },
+    "Birthday Brigade Ramirez": {
+      "support_perk_name": "Ain't Done Yet",
+      "support_perk_desc": "Increases Goin' Commando duration by 5 seconds",
+      "commander_perk_desc": "Increases Goin' Commando duration by 20 seconds"
+    },
+    "Plague Doctor Igor": {
+      "support_perk_name": "Deep Pockets",
+      "support_perk_desc": "Decreases Smoke Bomb energy cost by 38%",
+      "commander_perk_desc": "Decreases Smoke Bomb energy cost by 75%"
+    },
+    "Onslaught Headhunter": {
+      "support_perk_name": "Explosive Optimization",
+      "support_perk_desc": "Decreases Shockwave energy cost by 33%",
+      "commander_perk_desc": "Decreases Shockwave energy cost by 83%"
+    },
+    "Bullet Storm Jonesy": {
+      "support_perk_name": "Start Up",
+      "support_perk_desc": "Every shot increases ranged weapon damage by 1%, up to a maxmimum of 25 stacks. Switching weapons or reloading removes buff.",
+      "commander_perk_desc": "Every shot increases ranged weapon damage by 2% and fire rate by 1.2%, up to a maxmimum of 25 stacks. Switching weapons or reloading removes buff."
+    },
+    "Sarah Hotep": {
+      "support_perk_name": "Return Of The Dragon",
+      "support_perk_desc": "Decreases Dragon Slash energy cost by 30%",
+      "commander_perk_desc": "Decreases Dragon Slash energy cost by 75%"
+    },
+    "Quickdraw Calamity": {
+      "support_perk_name": "Hot Swap",
+      "support_perk_desc": "Weapon eliminations increase Weapon damage by 13% for 15 seconds.",
+      "commander_perk_desc": "REQUIRES: One hero of each class"
+    },
+    "Sea Wolf Jonesy": {
+      "support_perk_name": "High Tide",
+      "support_perk_desc": "Increases your Shockwave damage by 55%",
+      "commander_perk_desc": "Increases your Shockwave damage by 55%. Additionally, Shockwave activates a second time immediately after use."
+    },
+    "Fireflower Eagle Eye": {
+      "support_perk_name": "Parting Gift",
+      "support_perk_desc": "Phase Shift leaves behind fireworks which deal 3 base damage per second",
+      "commander_perk_desc": "Phase Shift leaves behind fireworks which deal 9 base damage per second"
+    },
+    "Power Pop Penny": {
+      "support_perk_name": "Bringin\u2019 Down the House",
+      "support_perk_desc": "Heavy attack eliminations have a 12.5% chance to grant Rockin\u2019 Riff.",
+      "commander_perk_desc": "Heavy attack eliminations have a 40% chance to grant Rockin\u2019 Riff."
+    },
+    "Azalea Clark": {
+      "support_perk_name": "Space Technology",
+      "support_perk_desc": "Increases Ability Energy Damage by 15%.",
+      "commander_perk_desc": "Increases Ability Energy Damage by 15%. Additionally, Shock Tower explodes, dealing 107 Energy Damage to nearby enemies."
+    },
+    "Demolisher Jonesy": {
+      "support_perk_name": "Cluster Bomb",
+      "support_perk_desc": "Frag Grenade explodes into 6 small grenades which each deal 16 base energy damage in a 0.5 tile radius",
+      "commander_perk_desc": "Frag Grenade explodes into 6 small grenades which each deal 49 base energy damage in a 0.5 tile radius"
+    },
+    "Subzero Zenith": {
+      "support_perk_name": "Icy Shot",
+      "support_perk_desc": "Sniper critical hits apply water affliction, dealing 21 base water damage per second for 3 seconds",
+      "commander_perk_desc": "Sniper critical hits freeze enemies for 1.6 second(s) and apply water affliction, dealing 21 base water damage per second for 3 seconds"
+    },
+    "Sergeant Jonesy": {
+      "support_perk_name": "Ain't Done Yet",
+      "support_perk_desc": "Increases Goin' Commando duration by 5 seconds",
+      "commander_perk_desc": "Increases Goin' Commando duration by 20 seconds"
+    },
+    "Dim Mak Mari": {
+      "support_perk_name": "Utility Belt",
+      "support_perk_desc": "Decreases Smoke Bomb cooldown by 18%",
+      "commander_perk_desc": "Decreases Smoke Bomb cooldown by 42%"
+    },
+    "Sentry Gunner Airheart": {
+      "support_perk_name": "War Of The R.O.S.I.E.",
+      "support_perk_desc": "Increases R.O.S.I.E. damage by 25%",
+      "commander_perk_desc": "Increases R.O.S.I.E. damage by 50% and changes its damage type to energy"
+    },
+    "Whiteout Fiona": {
+      "support_perk_name": "Anatomy Lessons",
+      "support_perk_desc": "Increases critical rating of swords, axes and scythes by 15",
+      "commander_perk_desc": "Increases critical rating of swords, axes and scythes by 45"
+    },
+    "Ghoul Trooper Ramirez": {
+      "support_perk_name": "Practiced In Combat",
+      "support_perk_desc": "Increases War Cry duration by 3 seconds",
+      "commander_perk_desc": "Increases War Cry duration by 9 seconds"
+    },
+    "T.E.D.D. Shot Jess": {
+      "support_perk_name": "Eye On The Prize",
+      "support_perk_desc": "Every 21 headshot eliminations, gain a charge fragment",
+      "commander_perk_desc": "Every 7 headshot eliminations, gain a charge fragment"
+    },
+    "Old Glory A.C.": {
+      "support_perk_name": "Impossibility Matrix",
+      "support_perk_desc": "Spending a charge fragment reduces T.E.D.D.Y. and Shock Tower cooldowns by an additional 10%",
+      "commander_perk_desc": "Spending a charge fragment reduces T.E.D.D.Y. and Shock Tower cooldowns by an additional 30%"
+    },
+    "First Shot Rio": {
+      "support_perk_name": "First Assault",
+      "support_perk_desc": "After reloading assault weapons, the next 6 shots have 100% critical chance",
+      "commander_perk_desc": "After reloading assault weapons, the next 6 shots have 100% critical chance"
+    },
+    "Heavy B.A.S.E. Kyle": {
+      "support_perk_name": "Feel The Base",
+      "support_perk_desc": "Eliminating enemies standing on structures affected by B.A.S.E. charges B.A.S.E. After 30 charges, B.A.S.E. emits an explosion which knocks back enemies and deals 39 base energy damage in a 3 tile radius",
+      "commander_perk_desc": "Eliminating enemies standing on structures affected by B.A.S.E. charges B.A.S.E. After 30 charges, B.A.S.E. emits an explosion which knocks back enemies and deals 89 base energy damage in a 5 tile radius"
+    },
+    "Four Leaf Wildcat": {
+      "support_perk_name": "Grenade Generation",
+      "support_perk_desc": "Every 45 eliminations, gain 1 Frag Grenade charge(s).",
+      "commander_perk_desc": "Every 20 eliminations, gain 1 Frag Grenade charge(s)."
+    },
+    "Jade Assassin Sarah": {
+      "support_perk_name": "Assassination",
+      "support_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 4.5%",
+      "commander_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 18%"
+    },
+    "Sgt. Winter": {
+      "support_perk_name": "Snowin Commando",
+      "support_perk_desc": "Goin' Commando fires a snowball grenade every 20 shots, dealing 19 base water damage in a radius of 0.5 tile(s).",
+      "commander_perk_desc": "Goin' Commando fires a snowball grenade every 20 shots, dealing 57 base water damage in a radius of 0.5 tile(s)."
+    },
+    "Jilly Teacup": {
+      "support_perk_name": "Under Warranty",
+      "support_perk_desc": "T.E.D.D.Y. has 100% Crit Chance against new targets and has a 5% chance to Malfunction. During Malfunction T.E.D.D.Y. finds a new target after every shot.",
+      "commander_perk_desc": "T.E.D.D.Y. has 100% Crit Chance against new targets and has a 5% chance to Malfunction. During Malfunction T.E.D.D.Y. finds a new target after every shot and Zaps a nearby enemy for 51 base energy damage. Zapped targets deal 51 base energy damage to surrounding enemies."
+    },
+    "Monks": {
+      "support_perk_name": "Monkeying Around",
+      "support_perk_desc": "Kunai Storm throws 6 Banana Peels that last for 8 seconds and knock down and stun enemies for 2.3 seconds.",
+      "commander_perk_desc": "Kunai Storm throws 9 Banana Peels that last for 6 seconds and knock down and stun enemies for 2.3 seconds, dealing 12 base damage."
+    },
+    "Noir": {
+      "support_perk_name": "Pump Metal",
+      "support_perk_desc": "Lefty and Righty eliminations extend its Duration by 1 second, up to a maximum of 10 eliminations.",
+      "commander_perk_desc": "Lefty and Righty eliminations extend its Duration by 2 second, up to a maximum of 10 eliminations."
+    },
+    "Snuggle Specialist Sarah": {
+      "support_perk_name": "Tail Of The Dragon",
+      "support_perk_desc": "Dragon Slash leaves behind an energized trail, which deals 18 base energy damage per second",
+      "commander_perk_desc": "Dragon Slash leaves behind an energized trail, which deals 45 base energy damage per second and slows enemies by 30% for 3 seconds."
+    },
+    "The Ice King": {
+      "support_perk_name": "Frozen Castle",
+      "support_perk_desc": "Enemies standing on structures affected by B.A.S.E. are snared by 15%",
+      "commander_perk_desc": "Enemies standing on structures affected by B.A.S.E. are snared by 15%. Enemies that damage a structure affected by B.A.S.E. are frozen for 4 seconds. Each enemy can be frozen once every 15 seconds"
+    },
+    "Riot Control Izza": {
+      "support_perk_name": "Plasma Pulse Blast",
+      "support_perk_desc": "When Plasma Pulse is placed, it deals 43 base energy damage to enemies in a 1 tile radius",
+      "commander_perk_desc": "When Plasma Pulse is placed, it deals 94 base energy damage to enemies in a 2 tile radius"
+    },
+    "Saboteur Bull": {
+      "support_perk_name": "Get Ready For A Surprise!",
+      "support_perk_desc": "When D.E.C.O.Y. is desteroyed, it explodes, dealing 51 base damage",
+      "commander_perk_desc": "When D.E.C.O.Y. is desteroyed, it explodes, dealing 153 base damage"
+    },
+    "Colonel Wildcat": {
+      "support_perk_name": "Leadership",
+      "support_perk_desc": "Decreases War Cry cooldown by 17%",
+      "commander_perk_desc": "Decreases War Cry cooldown by 38%"
+    },
+    "Field Agent Rio": {
+      "support_perk_name": "Phase Cannon",
+      "support_perk_desc": "Using Phase Shift causes your next ranged weapon shot to fire a Phase Pulse, dealing 31 base energy damage and piercing enemies. Switching or holstering weapon removes effect",
+      "commander_perk_desc": "Using Phase Shift causes your next ranged weapon shot to fire a Phase Pulse, dealing 93 base energy damage and piercing enemies. Switching or holstering weapon removes effect"
+    },
+    "BombSquad Kyle": {
+      "support_perk_name": "Bomb Squad",
+      "support_perk_desc": "Increases Armor by 22",
+      "commander_perk_desc": "Increases Armor by 66"
+    },
+    "Crossbones Barret": {
+      "support_perk_name": "Goin' Coconuts",
+      "support_perk_desc": "20% chance to find Coconuts in containers. Coconuts restore health instantly and restore additional health over time. Increases damage by 16% while under the effects of a Coconut",
+      "commander_perk_desc": "30% chance to find Coconuts in containers. Coconuts restore health instantly and restore additional health over time. Increases damage by 36% while under the effects of a Coconut"
+    },
+    "Main Stage Quinn": {
+      "support_perk_name": "Sub Wafers",
+      "support_perk_desc": "Harvesting Metal objects has a 32% chance to give Sub Wafers. Consuming Sub Wafers grants Rockin' Riff.",
+      "commander_perk_desc": "Harvesting Metal objects has a 100% chance to give Sub Wafers. Consuming Sub Wafers grants Rockin' Riff."
+    },
+    "Flash A.C.": {
+      "support_perk_name": "Phased Out",
+      "support_perk_desc": "Decreases Phase Shift cooldown by 25%",
+      "commander_perk_desc": "Decreases Phase Shift cooldown by 62.5%"
+    },
+    "Vanguard Southie": {
+      "support_perk_name": "Fault Line",
+      "support_perk_desc": "Decreases Seismic Smash cooldown by 27%",
+      "commander_perk_desc": "Decreases Seismic Smash cooldown by 67%"
+    },
+    "Redline Ramirez": {
+      "support_perk_name": "Quick Scope",
+      "support_perk_desc": "Increases Sniper damage by 17%",
+      "commander_perk_desc": "Increases Sniper damage by 17% and fire rate by 45%"
+    },
+    "Staredown Southie": {
+      "support_perk_name": "Bear Stare",
+      "support_perk_desc": "T.E.D.D.Y. fires lasers (from his eyes!) every 2 second(s), dealing 26 base energy damage",
+      "commander_perk_desc": "T.E.D.D.Y. fires lasers (from his eyes!) every 2 second(s), dealing 51 base energy damage"
+    },
+    "Dashing Hare Ken": {
+      "support_perk_name": "Eggs-termination",
+      "support_perk_desc": "Kunai Storm throws 3 egg bombs, which each deal 37 base damage to nearby enemies.",
+      "commander_perk_desc": "Kunai Storm throws 3 egg bombs, which each deal 111 base damage to nearby enemies."
+    },
+    "Gunblazer Southie": {
+      "support_perk_name": "Blaze Of Glory",
+      "support_perk_desc": "Phase Shift increases pistol damage by 35% for 4 seconds",
+      "commander_perk_desc": "Phase Shift increases pistol damage by 105% for 4 seconds"
+    },
+    "Ragnarok": {
+      "support_perk_name": "Return To Sender",
+      "support_perk_desc": "Seismic Smash returns to its origin point. Decreases Seismic Smash damage and impact by 25%",
+      "commander_perk_desc": "Seismic Smash returns to its origin point. Increases Seismic Smash damage and impact by 125%"
+    },
+    "Extraterrestrial Rio": {
+      "support_perk_name": "Resonant Frequency",
+      "support_perk_desc": "Increases Energy Damage by 26% against shields.",
+      "commander_perk_desc": "Increases Energy Damage by 78% against shields."
+    },
+    "Overtaker Hiro": {
+      "support_perk_name": "Kunai Collection",
+      "support_perk_desc": "Kunai Storm eliminations decrease Kunai Storm cooldown by 2 second(s)",
+      "commander_perk_desc": "Kunai Storm eliminations decrease Kunai Storm cooldown by 4.5 second(s)"
+    },
+    "Lotus Assassin Sarah": {
+      "support_perk_name": "Assassination",
+      "support_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 4.5%",
+      "commander_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 18%"
+    },
+    "Electro-pulse Penny": {
+      "support_perk_name": "Fully Contained",
+      "support_perk_desc": "Enemies that melee attack structures affected by BASE take 15 base damage",
+      "commander_perk_desc": "Enemies that melee attack structures affected by BASE take 44 base damage"
+    },
+    "Crackshot": {
+      "support_perk_name": "Mad Tidings",
+      "support_perk_desc": "Firing a ranged weapon grants 1 stack of Holiday Spirit, up to 50 stacks. Each stack of Holiday Spirit increases ranged weapon damage by 1% but decreases weapon stability by 0.2%. Buff removed on weapon swap or reload",
+      "commander_perk_desc": "Firing a ranged weapon grants 1 stack of Holiday Spirit, up to 50 stacks. Each stack of Holiday Spirit increases ranged weapon damage by 2.9% but decreases weapon stability by 0.7%. Buff removed on weapon swap or reload"
+    },
+    "Swift Shuriken Llamurai": {
+      "support_perk_name": "Rapid Fire",
+      "support_perk_desc": "Decreases Throwing Stars cooldown by 30%",
+      "commander_perk_desc": "Decreases Throwing Stars cooldown by 65%"
+    },
+    "Double Agent Evelynn": {
+      "support_perk_name": "Where's Lefty",
+      "support_perk_desc": "Every pistol elimination decreases cooldown of Lefty and Righty by 1 second(s)",
+      "commander_perk_desc": "Every pistol elimination decreases cooldown of Lefty and Righty by 5 second(s)"
+    },
+    "Ted": {
+      "support_perk_name": "First Cup of the Day",
+      "support_perk_desc": "While Goin' Commando is active, increase Crit Rating by 10 and Crit Damage by 100%.",
+      "commander_perk_desc": "While Goin' Commando is active, increase Crit Rating by 10 and Crit Damage by 100%. In addition, eliminating 5 enemies heals you and nearby allies for 97 base health."
+    },
+    "ED-EE": {
+      "support_perk_name": "MUST.PROTECT",
+      "support_perk_desc": "Critical hits with Melee Weapon Energy Damage adds 32% of current shield to damage.",
+      "commander_perk_desc": "Critical hits with Melee Weapon Energy Damage adds 96% of current shield to damage."
+    },
+    "Trailblaster A.C.": {
+      "support_perk_name": "Capacitor",
+      "support_perk_desc": "Increases Shock Tower duration by 0.5 seconds",
+      "commander_perk_desc": "Increases Shock Tower duration by 1.5 seconds"
+    },
+    "Shuriken Master Sarah": {
+      "support_perk_name": "Cascade",
+      "support_perk_desc": "Adds 1 extra stars to Throwing Stars",
+      "commander_perk_desc": "Adds 3 extra stars to Throwing Stars"
+    },
+    "Dashing Hawk": {
+      "support_perk_name": "Absolutely Stunning",
+      "support_perk_desc": "Lefty and Righty shots have a 37.5% chance to Stun the target for 2 seconds.",
+      "commander_perk_desc": "Lefty and Righty shots have a 37.5% chance to Stun the target for 2 seconds. Additionally, Lefty and Righty damage is increased by 100% against Stunned targets."
+    },
+    "Cloaked Shadow": {
+      "support_perk_name": "Corrupted Aura",
+      "support_perk_desc": "During Shadow Stance, deal 6 base damage per second to nearby enemies",
+      "commander_perk_desc": "During Shadow Stance, deal 20 base damage per second to nearby enemies"
+    },
+    "Blakebeard The Blackhearted": {
+      "support_perk_name": "Avast Mateys",
+      "support_perk_desc": "Increases Cannonball Damage by 20%",
+      "commander_perk_desc": "Increases Cannonball Damage by 40%. Converts R.O.S.I.E to fire 25 cannonballs"
+    },
+    "Deadly Lotus Luna": {
+      "support_perk_name": "Poking Holes",
+      "support_perk_desc": "Increases Spear damage by 25% against afflicted enemies. Spears apply affliction which deals 18.5% weapon damage per second for 3 seconds",
+      "commander_perk_desc": "Increases Spear damage by 50% against afflicted enemies"
+    },
+    "Tricera Ops Ramirez": {
+      "support_perk_name": "Saurian Vigor",
+      "support_perk_desc": "Heal 2.125% of your max Health every 5 seconds",
+      "commander_perk_desc": "Heal 6.375% of your max Health every 5 seconds"
+    },
+    "Lotus Assassin Ken": {
+      "support_perk_name": "Assassination",
+      "support_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 4.5%",
+      "commander_perk_desc": "Dealing melee weapon damage grants 1 stack of Assassination (up to 5 stacks). Assassination lasts 5 seconds and increases melee weapon damage by 18%"
+    },
+    "Demolitionist Penny": {
+      "support_perk_name": "Faster Explosions",
+      "support_perk_desc": "Increass Launcher Damage by 17%",
+      "commander_perk_desc": "Increass Launcher Damage by 50%"
+    },
+    "Urban Assault Headhunter": {
+      "support_perk_name": "Make It Rain",
+      "support_perk_desc": "Each headshot increases headshot damage by 4% and fire rate by 0% for 2 seconds, up to a maximum of 5 stacks",
+      "commander_perk_desc": "Each headshot increases headshot damage by 4% and fire rate by 9% for 2 seconds, up to a maximum of 5 stacks"
+    },
+    "Plasma Specialist Izza": {
+      "support_perk_name": "Power Pulse",
+      "support_perk_desc": "Increases Plasma Pulse damage by 30%",
+      "commander_perk_desc": "Increases Plasma Pulse damage by 80%"
+    },
+    "Rescue Trooper Havoc": {
+      "support_perk_name": "Assault Damage",
+      "support_perk_desc": "Increases Assault Damage by 17%",
+      "commander_perk_desc": "Increases Assault Damage by 50%"
+    },
+    "Love Ranger Jonesy": {
+      "support_perk_name": "Power Impact",
+      "support_perk_desc": "Increases Shockwave radius by 37.5%",
+      "commander_perk_desc": "Increases Shockwave radius by 112.5%"
+    },
+    "Gumshoe": {
+      "support_perk_name": "Pressing Charges",
+      "support_perk_desc": "Increases damage of your Fragment Abilities by 1.3%.",
+      "commander_perk_desc": "Increases damage of your Fragment Abilities by 1.3%. Additionally, grants 0.33% chance to not consume Charge Fragment."
+    },
+    "Tactical Assault Sledgehammer": {
+      "support_perk_name": "Assault Crit Damage",
+      "support_perk_desc": "Increases assault critical damage by 75%",
+      "commander_perk_desc": "Increases assault critical damage by 225%"
+    },
+    "Carbide": {
+      "support_perk_name": "Zip And Zap",
+      "support_perk_desc": "Lefty and Right applies affliction which deals 13 base energy damage per second for 3 seconds",
+      "commander_perk_desc": "Lefty and Right applies affliction which deals 26 base energy damage per second for 3 seconds. Lefty and Righty uses Space Pistols which fire piercing, bouncing lasers"
+    },
+    "Power B.A.S.E. Kyle": {
+      "support_perk_name": "Power Modulation",
+      "support_perk_desc": "Structures affected by BASE are healed for 4% of max health every 10 seconds",
+      "commander_perk_desc": "Structures affected by BASE are healed for 11% of max health every 10 seconds"
+    },
+    "Forged Fate": {
+      "support_perk_name": "Easy Sword",
+      "support_perk_desc": "Increases Sword heavy attack efficiency by 0.65%",
+      "commander_perk_desc": "Increases Sword heavy attack efficiency by 2%"
+    },
+    "Recon Scout A.C.": {
+      "support_perk_name": "Phase Forward",
+      "support_perk_desc": "Phase Shift grants an additional 30% movement speed for 3 seconds.",
+      "commander_perk_desc": "Increases Phase Shift distance by 1. Phase Shift grants an additional 140% movement speed for 3 seconds."
+    },
+    "Kurohomura": {
+      "support_perk_name": "Seismic Smash",
+      "support_perk_desc": "Seismic Smash applies a 3.3 second stun and 1,500 impact.",
+      "commander_perk_desc": "Seismic Smash applies a 3.3 second stun and 1,500 impact. Additionally, Seismic Smash deals 35 base Fire damage every second for 3 seconds."
+    },
+    "Power B.A.S.E. Penny": {
+      "support_perk_name": "Power Modulation",
+      "support_perk_desc": "Structures affected by BASE are healed for 4% of max health every 10 seconds",
+      "commander_perk_desc": "Structures affected by BASE are healed for 11% of max health every 10 seconds"
+    },
+    "Swashbuckler Keelhaul": {
+      "support_perk_name": "Swash",
+      "support_perk_desc": "Dealing Pistol Damage Increases Sword Damage by 22% for 6 seconds",
+      "commander_perk_desc": "Dealing Pistol Damage Increases Sword Damage by 65% for 6 seconds"
+    },
+    "MEGA B.A.S.E. Kyle": {
+      "support_perk_name": "Mega Base",
+      "support_perk_desc": "Increases B.A.S.E. connectivity range by 1",
+      "commander_perk_desc": "Increases B.A.S.E. connectivity range by 3"
+    },
+    "Special Forces Jonesy": {
+      "support_perk_name": "Fight Or Flight",
+      "support_perk_desc": "War Cry grants 8.5% additional weapon damage and 8.5% movement speed.",
+      "commander_perk_desc": "War Cry grants 25.5% additional weapon damage and 25.5% movement speed."
+    },
+    "Rex Jonesy": {
+      "support_perk_name": "Saurian Might",
+      "support_perk_desc": "Every 1 second, adds 3% of Current Health to Damage of next Ranged Weapon hit.",
+      "commander_perk_desc": "Every 1 second, adds 9% of Current Health to Damage of next Ranged Weapon hit."
+    },
+    "Mermonster Ken": {
+      "support_perk_name": "From the Depths",
+      "support_perk_desc": "Increases Melee Damage by 44% based on the percentage of your missing health.",
+      "commander_perk_desc": "Increases Melee Damage by 44% based on the percentage of your missing health. Additionally, melee heavy attack eliminations have a 60% chance to conjure a Phantasm (targets a nearby enemy, dealing 62 base Energy damage in a 0.5 tile radius, 1.5 second cooldown)"
+    },
+    "Bladestorm Enforcer": {
+      "support_perk_name": "Kunaihilation",
+      "support_perk_desc": "Daggers from Kunai storm explode shortly after impact, dealing 4 base energy damage in 0.25 tile radius",
+      "commander_perk_desc": "Daggers from Kunai storm explode shortly after impact, dealing 8 base energy damage in 0.5 tile radius"
+    },
+    "Paleo Luna": {
+      "support_perk_name": "Saurian Claws",
+      "support_perk_desc": "Adds 5.5% of Current Health to Melee Weapon Damage",
+      "commander_perk_desc": "Adds 16.5% of Current Health to Melee Weapon Damage"
+    },
+    "Lynx Kassandra": {
+      "support_perk_name": "Hang Time",
+      "support_perk_desc": "Using Kunai Storm grants hover for 4 seconds. Increases damage by 40% during hover",
+      "commander_perk_desc": "Using Kunai Storm grants hover for 4 seconds. Increases damage by 140% during hover"
+    },
+    "Steel Wool Syd": {
+      "support_perk_name": "Boom B.A.S.E.",
+      "support_perk_desc": "B.A.S.E. blasts Steel Wool music, increasing damage by 12% and Critical ",
+      "commander_perk_desc": "REQUIRES: 2 Steel Wool heroes"
+    },
+    "Black Knight Garridan": {
+      "support_perk_name": "Knight\u2019s Impact",
+      "support_perk_desc": "Increases Hardware Impact by 33%",
+      "commander_perk_desc": "Increases Hardware Impact by 75%. Additionally, Goin' Constructor can trigger Kinetic Overload"
+    },
+    "Special Forces Ramirez": {
+      "support_perk_name": "Fight Or Flight",
+      "support_perk_desc": "War Cry grants 8.5% additional weapon damage and 8.5% movement speed.",
+      "commander_perk_desc": "War Cry grants 25.5% additional weapon damage and 25.5% movement speed."
+    },
+    "Brainiac Jonesy": {
+      "support_perk_name": "Practiced In Combat",
+      "support_perk_desc": "Increases War Cry duration by 3 seconds",
+      "commander_perk_desc": "Increases War Cry duration by 9 seconds"
+    },
+    "Bloodfinder A.C.": {
+      "support_perk_name": "Iron Knuckles",
+      "support_perk_desc": "Increases Anti-Material Charge damage to enemies by 75%",
+      "commander_perk_desc": "Increases Anti-Material Charge damage to enemies by 225%"
+    },
+    "Thunder Thora": {
+      "support_perk_name": "Electrified Floors",
+      "support_perk_desc": "Enemies standing on structures affected by B.A.S.E take 12.7 base energy damage every 5 seconds",
+      "commander_perk_desc": "Enemies standing on structures affected by B.A.S.E take 38.1 base energy damage every 5 seconds"
+    },
+    "Birthday Brigade Jonesy": {
+      "support_perk_name": "Survivalist",
+      "support_perk_desc": "Eliminations heal you for 39 base health for over 3 seconds. Duration refreshes with additional eliminations",
+      "commander_perk_desc": "Eliminations heal you for 117 base health for over 3 seconds. Duration refreshes with additional eliminations"
+    },
+    "JONESEE-BOT": {
+      "support_perk_name": "Ow, My Eye!",
+      "support_perk_desc": "Increase Headshot damage up to 50% based on the percentage of your missing Health.",
+      "commander_perk_desc": "Increase Headshot damage up to 50% based on the percentage of your missing Health. In addition, Headshot eliminations have a 50% chance to conjure a Phantasm (targets nearby enemy, dealing 63 base Energy damage in a 0.5 tile radius)."
+    },
+    "Jingle Jess": {
+      "support_perk_name": "Bear With Me",
+      "support_perk_desc": "Increases T.E.D.D.Y. duration by 4 seconds",
+      "commander_perk_desc": "Increases T.E.D.D.Y duration by 12 seconds"
+    },
+    "Conqueror Magnus": {
+      "support_perk_name": "Your Move Creep",
+      "support_perk_desc": "D.E.C.O.Y. deals 6 base damage every 1 second to nearby enemies",
+      "commander_perk_desc": "D.E.C.O.Y. deals 13 base damage every 1 second to nearby enemies"
+    },
+    "Patriot Penny": {
+      "support_perk_name": "Emergency Override",
+      "support_perk_desc": "When your shield depletes, reset Bull Rush cooldown. Effect can occur once every 12 seconds",
+      "commander_perk_desc": "When your shield depletes, reset Bull Rush cooldown. Next use of Bull rush costs 0 energy. Effect can occur once every 5 seconds"
+    },
+    "Recon Scout Jess": {
+      "support_perk_name": "Phase Forward",
+      "support_perk_desc": "Phase Shift grants an additional 30% movement speed for 3 seconds.",
+      "commander_perk_desc": "Increases Phase Shift distance by 1. Phase Shift grants an additional 140% movement speed for 3 seconds."
+    },
+    "Willow": {
+      "support_perk_name": "Ghoulish Cackle",
+      "support_perk_desc": "Ability damage is increased proportionate to player Health missing.",
+      "commander_perk_desc": "Ability damage is increased proportionate to player Health missing. Ability eliminations have a chance to summon a Phantasm which seeks out nearby foes and explodes, dealing damage in a small radius."
+    },
+    "Thunderstrike Mari": {
+      "support_perk_name": "Dragon Daze",
+      "support_perk_desc": "When your shield depletes, knock back and stun nearby enemies for 1 second",
+      "commander_perk_desc": "When your shield depletes, knock back and stun nearby enemies for 1 second. Also deal 47 base damage."
+    },
+    "Chromium Ramirez": {
+      "support_perk_name": "In A Pinch",
+      "support_perk_desc": "Reloads with an empty magazine regenerate 13.5% of your shield over 3 seconds",
+      "commander_perk_desc": "Reloads with an empty magazine are 50% faster and regenerate 13.5% of your shield over 3 seconds"
+    },
+    "Liteshow Spitfire": {
+      "support_perk_name": "Waste Not Want Not",
+      "support_perk_desc": "Increases magazine size by 30%",
+      "commander_perk_desc": "Increases magazine size by 90%"
+    },
+    "Fragment Flurry Jess": {
+      "support_perk_name": "Fragment Generation",
+      "support_perk_desc": "Every 39 eliminations, gain 1 charge fragment(s)",
+      "commander_perk_desc": "Every 13 eliminations, gain 1 charge fragment(s)"
+    },
+    "Bunny Brawler Luna": {
+      "support_perk_name": "Eggs-plosive Entrance",
+      "support_perk_desc": "Shockwave drops 3 egg bombs, which each deal 54 base damage to nearby enemies.",
+      "commander_perk_desc": "Shockwave drops 3 egg bombs, which each deal 162 base damage to nearby enemies."
+    },
+    "Swamp Knight": {
+      "support_perk_name": "Unearthly Treat",
+      "support_perk_desc": "Increases Damage vs. Mist Monsters by up to 42% based on the percentage of your missing health.",
+      "commander_perk_desc": "Increases Damage vs. Mist Monsters by up to 42% based on the percentage of your missing health. In addition, taking damage has a 45% chance to conjure a Phantasm (targets a nearby enemy, dealing 62 base Energy damage in a 0.5 tile radius, 1.5 second cooldown)"
+    },
+    "B.A.S.E. Kyle": {
+      "support_perk_name": "Lofty Architecture",
+      "support_perk_desc": "B.A.S.E. increases building health by 28%.",
+      "commander_perk_desc": "B.A.S.E. increases building health by 84%."
+    },
+    "Power B.A.S.E. Knox": {
+      "support_perk_name": "Power Modulation",
+      "support_perk_desc": "Structures affected by BASE are healed for 4% of max health every 10 seconds.",
+      "commander_perk_desc": "Structures affected by BASE are healed for 11% of max health every 10 seconds."
+    },
+    "Ankylo Kyle": {
+      "support_perk_name": "Saurian Grit",
+      "support_perk_desc": "Kinetic Overload heals for 2.125% of your max health.",
+      "commander_perk_desc": "Kinetic Overload heals for 6.375% of your max health."
+    },
+    "Lars": {
+      "support_perk_name": "Bringin' Down The House",
+      "support_perk_desc": "Heavy attack eliminations have a 12.5% chance to grant Rockin\u00e2\u20ac\u2122 Riff.",
+      "commander_perk_desc": "Heavy attack eliminations have a 40% chance to grant Rockin\u00e2\u20ac\u2122 Riff."
+    },
+    "Major Oswald": {
+      "support_perk_name": "Holiday Surprise",
+      "support_perk_desc": "War Cry snares enemies within its range by 30% for its duration.",
+      "commander_perk_desc": "War Cry snares enemies within its range by 30% for its duration. Additionally, affected enemies take 25% increased weapon damage."
+    },
+    "Machinist Mina": {
+      "support_perk_name": "Tough Traps",
+      "support_perk_desc": "Increases Trap Durability by 17.5%.",
+      "commander_perk_desc": "Increases Trap Durability by 52.5%."
+    },
+    "Powerhouse": {
+      "support_perk_name": "Power Impact",
+      "support_perk_desc": "Increases Shockwave Radius by 37.5%.",
+      "commander_perk_desc": "Increases Shockwave Radius by 112.5%."
+    },
+    "Cassie \"Clip\" Lipman": {
+      "support_perk_name": "High Caliber Harvest",
+      "support_perk_desc": "Objects destroyed by Anti Material Charge have a 33% chance to drop additional ingredients.",
+      "commander_perk_desc": "Objects destroyed by Anti Material Charge have a 100% chance to drop additional ingredients."
+    },
+    "Birthday Brigade Penny": {
+      "support_perk_name": "One Hot Minute",
+      "support_perk_desc": "Decreases Plasma Pulse Cooldown by 18%.",
+      "commander_perk_desc": "Decreases Plasma Pulse Cooldown by 42%."
+    },
+    "Robo-Ray": {
+      "support_perk_name": "Energy Siphon",
+      "support_perk_desc": "Eliminations with Energy Damage restore 8.5% of missing shields.",
+      "commander_perk_desc": "Eliminations with Energy Damage restore 17% of missing shields. Additionally, Throwing Stars deals Energy damage."
+    },
+    "Parasaur Jess": {
+      "support_perk_name": "Saurian Instinct",
+      "support_perk_desc": "Abilities heal for 7.2% of max health when used.",
+      "commander_perk_desc": "Abilities heal for 21.5% of max health when used."
+    },
+    "Dennis": {
+      "support_perk_name": "Burger Buff",
+      "support_perk_desc": "Eliminations have a 8% chance to drop a Burger. Burgers grant 53 base health and 5 energy every 1 second for 3 seconds.",
+      "commander_perk_desc": "Eliminations have a 15% chance to drop a Burger. Burgers grant 85 base health and 8 energy every 1 second for 3 seconds."
+    },
+    "Deimos": {
+      "support_perk_name": "Corrupted Aura",
+      "support_perk_desc": "During Shadow Stance, deal 6 base damage per second to nearby enemies.",
+      "commander_perk_desc": "During Shadow Stance, deal 20 base damage per second to nearby enemies."
+    },
+    "Samurai Scrapper": {
+      "support_perk_name": "Pointy Fury",
+      "support_perk_desc": "Increases Spear heavy attack efficiency by 65%.",
+      "commander_perk_desc": "Increases Spear heavy attack efficiency by 200%."
+    },
+    "Sgt. Tank Gatling": {
+      "support_perk_name": "Bouncy Shield",
+      "support_perk_desc": "Up to 5 attacks blocked by Goin' Constructor create a sonic wave, dealing 64 base damage to enemies within 0.5 tiles.",
+      "commander_perk_desc": "Up to 8 attacks blocked by Goin' Constructor create a sonic wave, dealing 64 base damage to enemies within 0.5 tiles."
+    },
+    "Fennix": {
+      "support_perk_name": "Debilitating Bite",
+      "support_perk_desc": "Tamed wildlife apply 15% Damage Vulnerability on attack.",
+      "commander_perk_desc": "Tamed wildlife apply 15% Damage Vulnerability on attack. Hit foes are marked with a bomb. When a marked target is shot, the bomb explodes, dealing 65% of the damage dealt in a radius around them."
+    },
+    "Battle Hound Jonesy": {
+      "support_perk_name": "Rucksack",
+      "support_perk_desc": "Increases Frag Grenade maximum charges by 1.",
+      "commander_perk_desc": "Increases Frag Grenade maximum charges by 4."
+    },
+    "Red Willow": {
+      "support_perk_name": "Holiday Surprise",
+      "support_perk_desc": "At the end of Phase Shift trigger an explosion, dealing 20 base energy damage in a .75 tile radius.",
+      "commander_perk_desc": "At the end of Phase Shift trigger an explosion, dealing 20 base energy damage in a .75 tile radius. Additionally, Phase Shift has a 60% chance to conjure a Phantasm."
+    },
+    "\"Arrlene\" Izza": {
+      "support_perk_name": "Monster Smash",
+      "support_perk_desc": "Increase Life Leech with Melee attacks and Goin' Constructor by up to 15% based on the percentage of your missing Health.",
+      "commander_perk_desc": "Increase Life Leech with Melee attacks and Goin' Constructor by up to 15% based on the percentage of your missing Health. Additionally, Melee and Goin' Constructor eliminations have a 50% chance to conjure a Phantasm, dealing 62 base Energy damage in a 0.5 tile radius, 1.5 second cooldown."
+    },
+    "Rogue Agent Jonesy": {
+      "support_perk_name": "Make It Rain",
+      "support_perk_desc": "Each headshot increases Headshot Damage by 4% for 2 seconds, up to a maximum of 5 stacks.",
+      "commander_perk_desc": "Each headshot increases Headshot Damage by 4% and Fire Rate by 9% for 2 seconds, up to a maximum of 5 stacks."
+    },
+    "Robo-Kevin": {
+      "support_perk_name": "Gadgeteer",
+      "support_perk_desc": "Decreases Gadget cooldowns by 20%.",
+      "commander_perk_desc": "Decreases Gadget cooldowns by 50%."
+    },
+    "Gia": {
+      "support_perk_name": "Vital Bond",
+      "support_perk_desc": "Tamed Wildlife heals the player for 15% their damage, on attack.",
+      "commander_perk_desc": "Tamed Wildlife heals the player for 30% times their damage, on attack. Heroes heal their Tamed Wildlife for 15% their damage, when they deal damage."
+    },
+    "Lok-Bot": {
+      "support_perk_name": "Plasma Pulse Blast",
+      "support_perk_desc": "When Plasma Pulse is placed, it deals 43 base Energy Damage to enemies in a 1 tile Radius.",
+      "commander_perk_desc": "When Plasma Pulse is placed, it deals 94 base Energy Damage to enemies in a 2 tile Radius."
+    },
+    "Chaos Agent": {
+      "support_perk_name": "Quick Fingers",
+      "support_perk_desc": "Whenever you use any ability, Quick Fingers reloads your equipped weapon (if it can be reloaded).",
+      "commander_perk_desc": "Whenever you use any ability, Quick Fingers reloads your equipped weapon (if it can be reloaded). When you reload a weapon this way, you have a % chance to summon a phantasm based on how empty the clip was, with a cap of 80%."
+    },
+    "Stars and Stripes Jonesy": {
+      "support_perk_name": "Assault Ammo Recovery",
+      "support_perk_desc": "Dealing damage with Assault weapons has a 24% chance to generate 1 ammo for the equipped weapon.",
+      "commander_perk_desc": "Dealing damage with Assault weapons has a 48% chance to generate 1 ammo for the equipped weapon."
+    },
+    "8-Bit Demo": {
+      "support_perk_name": "Enduring Machine",
+      "support_perk_desc": "After ability cast, weapons lose 40% less Durability for the next 2 uses.",
+      "commander_perk_desc": "After ability cast, weapons lose 40% less Durability for the next 6 uses."
     }
+  }
 }
