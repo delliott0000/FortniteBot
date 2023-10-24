@@ -11,7 +11,7 @@ class EmbedField:
         'inline'
     )
 
-    def __init__(self, name: str, value: str, inline: bool) -> None:
+    def __init__(self, *, name: str, value: str, inline: bool) -> None:
         self.name: str = name
         self.value: str = value
         self.inline: bool = inline
