@@ -11,12 +11,16 @@ from core.errors import FortniteException, HTTPException
 from core.cache import PartialAccountCacheEntry
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
+from components.embed import CustomEmbed
 
 if TYPE_CHECKING:
     from core.auth import AuthSession
     from core.account import PartialEpicAccount
+    from core.decorators import FortniteInteraction
 
+from discord.ui import View
 from discord.ext import commands, tasks
+from discord.utils import MISSING, _MissingSentinel
 from discord import (
     __version__ as __discord__,
     Guild,
@@ -24,6 +28,7 @@ from discord import (
     Intents,
     app_commands,
     LoginFailure,
+    InteractionResponded,
     PrivilegedIntentsRequired
 )
 
@@ -84,6 +89,20 @@ class FortniteBot(commands.Bot):
             return guild.me.colour
         except AttributeError:
             return Colour(16777215)
+
+    async def send_response(
+        self,
+        interaction: FortniteInteraction,
+        message: str,
+        colour: Colour | None = None,
+        view: View | _MissingSentinel = MISSING
+    ) -> None:
+        embed = CustomEmbed(description=message, colour=colour or self.colour(interaction.guild))
+        try:
+            # noinspection PyUnresolvedReferences
+            await interaction.response.send_message(embed=embed, view=view)
+        except InteractionResponded:
+            await interaction.followup.send(embed=embed, view=view)
 
     def get_partial_account(
             self,
