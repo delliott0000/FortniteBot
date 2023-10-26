@@ -11,6 +11,7 @@ from core.errors import FortniteException, HTTPException
 from core.cache import PartialAccountCacheEntry
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
+from core.tree import CustomTree
 from components.embed import CustomEmbed
 
 if TYPE_CHECKING:
@@ -56,6 +57,7 @@ class FortniteBot(commands.Bot):
             help_command=None,
             command_prefix='',
             intents=intents,
+            tree_cls=CustomTree
         )
 
         self.app_commands: list[app_commands.AppCommand] = []
