@@ -97,12 +97,13 @@ class FortniteBot(commands.Bot):
         interaction: FortniteInteraction,
         message: str,
         colour: Colour | None = None,
-        view: View | _MissingSentinel = MISSING
+        view: View | _MissingSentinel = MISSING,
+        ephemeral: bool = True
     ) -> None:
         embed = CustomEmbed(description=message, colour=colour or self.colour(interaction.guild))
         try:
             # noinspection PyUnresolvedReferences
-            await interaction.response.send_message(embed=embed, view=view)
+            await interaction.response.send_message(embed=embed, view=view, ephemeral=ephemeral)
         except InteractionResponded:
             await interaction.followup.send(embed=embed, view=view)
 
