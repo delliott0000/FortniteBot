@@ -19,7 +19,9 @@ class EmbedField:
 
 class CustomEmbed(Embed):
 
-    __slots__ = ()
+    __slots__ = (
+        '_colour',
+    )
 
     def append_field(self, field: EmbedField) -> CustomEmbed:
         return self.add_field(name=field.name, value=field.value, inline=field.inline)
