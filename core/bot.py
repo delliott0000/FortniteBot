@@ -104,6 +104,14 @@ class FortniteBot(commands.Bot):
         except InteractionResponded:
             await interaction.followup.send(embed=embed, view=view)
 
+    async def bad_response(
+        self,
+        interaction: FortniteInteraction,
+        message: str,
+        view: View | _MissingSentinel = MISSING
+    ) -> None:
+        await self.send_response(interaction, f'❌ {message}', colour=Colour.red(), view=view)
+
     def get_partial_account(
             self,
             display: str | None = None,
