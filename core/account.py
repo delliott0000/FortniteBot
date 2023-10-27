@@ -9,18 +9,75 @@ if TYPE_CHECKING:
     from core.auth import AuthSession
 
 from dateutil import parser
+from core.errors import HTTPException
 
 
 class PartialEpicAccount:
 
     __slots__ = (
         'id',
-        'display'
+        'display',
+        '_stw_raw_cache',
+        '_stw_obj_cache',
+        '_btr_raw_cache',
+        '_btr_obj_cache',
+        '_icon_url'
     )
 
     def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
         self.id: str = data.get('id') or data.get('accountId')
         self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
+
+        self._stw_raw_cache: _Dict | None = None
+        self._btr_raw_cache: _Dict | None = None
+
+        self._icon_url: str | None = None
+
+    async def raw_stw_data(self, auth_session: AuthSession) -> _Dict:
+        if self._stw_raw_cache is None:
+            self._stw_raw_cache = await auth_session.profile_operation(
+                epic_id=self.id
+            )
+        return self._stw_raw_cache
+
+    async def raw_btr_data(self, auth_session: AuthSession) -> _Dict:
+        if self._btr_raw_cache is None:
+            self._btr_raw_cache = await auth_session.profile_operation(
+                epic_id=self.id,
+                route='client',
+                operation='QueryProfile',
+                profile_id='athena'
+            )
+        return self._btr_raw_cache
+
+    async def icon_url(self, auth_session: AuthSession) -> str | None:
+        if self._icon_url is None:
+            try:
+                data: _Dict = await self.raw_btr_data(auth_session)
+                items_data: _Dict = data['profileChanges'][0]['profile']['items']
+            except (HTTPException, KeyError):
+                return
+
+            for item_id, data in items_data.items():
+
+                try:
+                    tid: str = data['templateId']
+                    if not tid.startswith('CosmeticLocker'):
+                        continue
+
+                    character_id: str = data['attributes']['locker_slots_data']['slots']['Character']['items'][0][16:]
+
+                    http = auth_session.http_client
+                    character_data = await http.get(http.COSMETICS_URL.format(character_id))
+                    self._icon_url = character_data['data']['images']['icon']
+                    break
+
+                except HTTPException:
+                    return
+                except KeyError:
+                    continue
+
+        return self._icon_url
 
 
 class FullEpicAccount(PartialEpicAccount):
