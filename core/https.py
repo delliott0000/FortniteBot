@@ -64,6 +64,10 @@ class FortniteHTTPClient:
     AUTH_EXCHANGE_URL: str = BASE_EPIC_URL + '/oauth/token'
     AUTH_EXCHANGE_SECRET: str = b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()
 
+    # Miscellaneous URL used to get in-game cosmetics data from an item ID
+    # Not a part of Epic Games' API
+    COSMETICS_URL: str = 'https://fortnite-api.com/v2/cosmetics/br/{0}'
+
     __slots__ = (
         'bot',
         '_session'
