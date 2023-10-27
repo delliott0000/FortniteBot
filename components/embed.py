@@ -20,7 +20,19 @@ class EmbedField:
 class CustomEmbed(Embed):
 
     __slots__ = (
+        'title',
+        'url',
+        'type',
+        '_timestamp',
         '_colour',
+        '_footer',
+        '_image',
+        '_thumbnail',
+        '_video',
+        '_provider',
+        '_author',
+        '_fields',
+        'description',
     )
 
     def append_field(self, field: EmbedField) -> CustomEmbed:
