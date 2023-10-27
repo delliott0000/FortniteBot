@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 import logging
 from datetime import datetime
-from weakref import ref, ReferenceType
 
 from core.errors import Unauthorized
 from core.account import PartialEpicAccount, FullEpicAccount
@@ -28,7 +27,7 @@ class AuthSession:
         'access_expires',
         'refresh_expires',
         '_killed',
-        '_cached_full_account',
+        '_account',
         '_cached_full_account_expires'
     )
 
@@ -42,7 +41,7 @@ class AuthSession:
         # True if session was killed via HTTP
         self._killed: bool = False
 
-        self._cached_full_account: ReferenceType[FullEpicAccount] | None = None
+        self._account: FullEpicAccount | None = None
         self._set_cached_account_expiration()
 
         self.bot.cache_auth_session(self)
@@ -101,13 +100,12 @@ class AuthSession:
         self._killed = True
 
     async def account(self) -> FullEpicAccount:
-        if self._cached_full_account is None or self._cached_full_account_expires < self.bot.now:
+        if self._account is None or self._cached_full_account_expires < self.bot.now:
             url: str = self.http_client.BASE_EPIC_URL + '/public/account/' + self.epic_id
             data: _Dict = await self.access_request('get', url)
-            account = FullEpicAccount(self, data)
-            self._cached_full_account = ref(account)
+            self._account = FullEpicAccount(self, data)
             self._set_cached_account_expiration()
-        return self._cached_full_account()
+        return self._account
 
     async def fetch_account(
         self,

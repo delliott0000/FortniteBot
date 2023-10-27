@@ -14,7 +14,6 @@ from dateutil import parser
 class PartialEpicAccount:
 
     __slots__ = (
-        '__weakref__',
         'id',
         'display'
     )
