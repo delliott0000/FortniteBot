@@ -68,6 +68,10 @@ class AuthSession:
     def _set_cached_account_expiration(self) -> None:
         self._cached_full_account_expires: datetime = self.bot.now + self.bot.ACCOUNT_CACHE_DURATION
 
+    def manage_cached_account(self) -> None:
+        if self._cached_full_account_expires < self.bot.now:
+            self._account = None
+
     async def renew(self) -> None:
         # Do nothing if access token is already active
         if self.is_active is True:

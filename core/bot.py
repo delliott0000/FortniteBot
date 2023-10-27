@@ -174,8 +174,9 @@ class FortniteBot(commands.Bot):
     @tasks.loop(minutes=1)
     async def manage_auth_cache(self) -> None:
         for discord_id, auth_session in self._auth_session_cache.items():
-            if auth_session.refresh_expires - self.ACCOUNT_CACHE_DURATION <= self.now:
+            auth_session.manage_cached_account()
 
+            if auth_session.refresh_expires - self.ACCOUNT_CACHE_DURATION <= self.now:
                 try:
                     await auth_session.renew()
                     logging.info(f'Auth Session [{auth_session.access_token}] renewed.')
@@ -186,9 +187,8 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=1)
     async def manage_data_base(self) -> None:
-        now = self.now
         for discord_id, premium_until in await self.database_client.get_premium_states():
-            if premium_until < now:
+            if premium_until < self.now:
                 await self.database_client.expire_premium(discord_id)
 
     async def setup_hook(self) -> None:
