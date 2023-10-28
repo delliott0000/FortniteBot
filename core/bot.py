@@ -104,7 +104,7 @@ class FortniteBot(commands.Bot):
         embed_list: list[CustomEmbed] = [self._new_embed(**kwargs)]
 
         for field in fields:
-            if len(embed_list[-1].fields) < kwargs.get('field_limit', 6) - 1:
+            if len(embed_list[-1].fields) >= kwargs.get('field_limit', 6):
                 embed_list.append(self._new_embed(**kwargs))
             embed_list[-1].append_field(field)
 
