@@ -18,9 +18,6 @@ class PartialEpicAccount:
         'id',
         'display',
         '_stw_raw_cache',
-        '_stw_obj_cache',
-        '_btr_raw_cache',
-        '_btr_obj_cache',
         '_icon_url'
     )
 
@@ -29,31 +26,18 @@ class PartialEpicAccount:
         self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
 
         self._stw_raw_cache: _Dict | None = None
-        self._btr_raw_cache: _Dict | None = None
 
         self._icon_url: str | None = None
 
     async def raw_stw_data(self, auth_session: AuthSession) -> _Dict:
         if self._stw_raw_cache is None:
-            self._stw_raw_cache = await auth_session.profile_operation(
-                epic_id=self.id
-            )
+            self._stw_raw_cache = await auth_session.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
-
-    async def raw_btr_data(self, auth_session: AuthSession) -> _Dict:
-        if self._btr_raw_cache is None:
-            self._btr_raw_cache = await auth_session.profile_operation(
-                epic_id=self.id,
-                route='client',
-                operation='QueryProfile',
-                profile_id='athena'
-            )
-        return self._btr_raw_cache
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
             try:
-                data: _Dict = await self.raw_btr_data(auth_session)
+                data: _Dict = await self.raw_stw_data(auth_session)
                 items_data: _Dict = data['profileChanges'][0]['profile']['items']
             except (HTTPException, KeyError):
                 return

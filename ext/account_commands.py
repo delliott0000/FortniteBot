@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from core.errors import FortniteException
 from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown
 from components.embed import CustomEmbed
 from components.login import LoginView
@@ -10,7 +11,7 @@ if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.decorators import FortniteInteraction
 
-from discord import app_commands
+from discord import app_commands, User
 from discord.utils import format_dt
 
 
@@ -110,6 +111,43 @@ class AccountCommands(app_commands.Group):
                   f'> **Access Token:** `{auth_session.access_token}`\n'
                   f'> **Refresh Token:** `{auth_session.refresh_token}`\n',
             inline=False)
+
+        await interaction.followup.send(embed=embed)
+
+    @non_premium_cooldown()
+    @is_logged_in()
+    @is_not_blacklisted()
+    @app_commands.command(description='Search for an Epic Games account by ID, display name or Discord user.')
+    async def search(
+        self,
+        interaction: FortniteInteraction,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> None:
+        await interaction.response.defer(thinking=True, ephemeral=True)
+
+        if user is not None:
+            auth_session = interaction.client.get_auth_session(user.id)
+            if auth_session is None:
+                raise FortniteException(f'{user.mention} is not logged in with {interaction.client.user.name}.')
+            account = await auth_session.fetch_account(auth_session.epic_id)
+
+        else:
+            auth_session = interaction.client.get_auth_session(interaction.user.id)
+            account = await auth_session.fetch_account(display=display, account_id=epic_id)
+
+        icon_url = await account.icon_url(auth_session)
+        discord_id = interaction.client.discord_id_from_account_id(account.id)
+        linked_str = f'{emojis["check"]} <@{discord_id}>' if discord_id is not None else f'{emojis["cross"]}'
+
+        embed = CustomEmbed(colour=interaction.client.colour(interaction.guild))
+        embed.set_author(name='Epic Account Info', icon_url=icon_url)
+        embed.add_field(
+            name='Found Account:',
+            value=f'> **Display Name:** `{account.display}`\n'
+                  f'> **Epic ID:** `{account.id}`\n'
+                  f'> **Logged in with {interaction.client.user.name}:** {linked_str}',)
 
         await interaction.followup.send(embed=embed)
 
