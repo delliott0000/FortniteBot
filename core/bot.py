@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from core.auth import AuthSession
     from core.account import PartialEpicAccount
     from core.decorators import FortniteInteraction
+    from components.embed import EmbedField
 
 from discord.ui import View
 from discord.ext import commands, tasks
@@ -91,6 +92,31 @@ class FortniteBot(commands.Bot):
             return guild.me.colour
         except AttributeError:
             return Colour(16777215)
+
+    @staticmethod
+    def _new_embed(**kwargs: str | Colour) -> CustomEmbed:
+        return CustomEmbed(
+            title=kwargs.get('title'),
+            description=kwargs.get('description'),
+            colour=kwargs.get('colour'))
+
+    def fields_to_embeds(self, fields: list[EmbedField], **kwargs: str | Colour) -> list[CustomEmbed]:
+        embed_list: list[CustomEmbed] = [self._new_embed(**kwargs)]
+
+        for field in fields:
+            if len(embed_list[-1].fields) < kwargs.get('field_limit', 6) - 1:
+                embed_list.append(self._new_embed(**kwargs))
+            embed_list[-1].append_field(field)
+
+        for embed in embed_list:
+            embed.set_footer(text=f'Page {embed_list.index(embed) + 1} of {len(embed_list)}')
+
+        author_name = kwargs.get('author_name')
+        if author_name is not None:
+            for embed in embed_list:
+                embed.set_author(name=author_name, icon_url=kwargs.get('author_icon'))
+
+        return embed_list
 
     async def send_response(
         self,
