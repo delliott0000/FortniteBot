@@ -133,5 +133,4 @@ class FullEpicAccount(PartialEpicAccount):
             self._friends_data = await self.auth_session.access_request('get', url)
 
         account_ids: tuple[str, ...] = tuple([entry['accountId'] for entry in self._friends_data[friend_type]])
-        accounts = await self.auth_session.fetch_accounts(*account_ids)
-        return accounts
+        return await self.auth_session.fetch_accounts(*account_ids)
