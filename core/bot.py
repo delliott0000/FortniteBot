@@ -199,6 +199,8 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=1)
     async def manage_auth_cache(self) -> None:
+        dead_session_discord_ids: list[int] = []
+
         for discord_id, auth_session in self._auth_session_cache.items():
             auth_session.manage_cached_account()
 
@@ -208,8 +210,12 @@ class FortniteBot(commands.Bot):
                     logging.info(f'Auth Session [{auth_session.access_token}] renewed.')
                     continue
                 except HTTPException:
+                    logging.info(f'Auth Session [{auth_session.access_token}] could not be renewed. Ending session...')
                     await auth_session.kill()
-                    self.remove_auth_session(discord_id)
+                    dead_session_discord_ids.append(discord_id)
+
+        for _id in dead_session_discord_ids:
+            self.remove_auth_session(_id)
 
     def discord_id_from_account_id(self, account_id: str) -> int | None:
         for discord_id, auth_session in self._auth_session_cache.items():
