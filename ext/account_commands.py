@@ -131,7 +131,7 @@ class AccountCommands(app_commands.Group):
             auth_session = interaction.client.get_auth_session(user.id)
             if auth_session is None:
                 raise FortniteException(f'{user.mention} is not logged in with {interaction.client.user.name}.')
-            account = await auth_session.fetch_account(auth_session.epic_id)
+            account = await auth_session.fetch_account(account_id=auth_session.epic_id)
 
         else:
             auth_session = interaction.client.get_auth_session(interaction.user.id)
