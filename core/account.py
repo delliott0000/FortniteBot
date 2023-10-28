@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from typing import Literal
 from datetime import datetime
 from weakref import ref, ReferenceType
 
@@ -10,6 +11,9 @@ if TYPE_CHECKING:
 
 from dateutil import parser
 from core.errors import HTTPException
+
+
+_FriendTypes = Literal['friends', 'incoming', 'outgoing', 'suggested', 'blocklist']
 
 
 class PartialEpicAccount:
@@ -79,7 +83,8 @@ class FullEpicAccount(PartialEpicAccount):
         'tfa_enabled',
         'display_last_updated',
         'date_of_birth',
-        'last_login'
+        'last_login',
+        '_friends_data'
     )
 
     def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
@@ -115,6 +120,18 @@ class FullEpicAccount(PartialEpicAccount):
             except (TypeError, parser.ParserError):
                 pass
 
+        self._friends_data: _Dict | None = None
+
     @property
     def auth_session(self) -> AuthSession:
         return self._auth_session()
+
+    async def friends_list(self, *, friend_type: _FriendTypes) -> list[PartialEpicAccount]:
+        if self._friends_data is None:
+
+            url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
+            self._friends_data = await self.auth_session.access_request('get', url)
+
+        account_ids: tuple[str, ...] = tuple([entry['accountId'] for entry in self._friends_data[friend_type]])
+        accounts = await self.auth_session.fetch_accounts(*account_ids)
+        return accounts

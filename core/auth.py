@@ -112,7 +112,7 @@ class AuthSession:
         return self._account
 
     async def fetch_account(
-        self,
+        self, *,
         display: str | None = None,
         account_id: str | None = None
     ) -> PartialEpicAccount:
