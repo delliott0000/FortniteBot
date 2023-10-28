@@ -27,8 +27,7 @@ class HTTPException(FortniteException):
         self.error_message: str = data.get('errorMessage', '[error message not found]')
 
     def __str__(self) -> str:
-        return f'{self.method.upper()} {self.url} responded with {self.status} {self.reason}' \
-               f' - {self.error_message} ({self.error_code})'
+        return f'{self.status} {self.reason} - {self.error_message} ({self.error_code})'
 
 
 class BadRequest(HTTPException):
