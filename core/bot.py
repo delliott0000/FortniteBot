@@ -185,6 +185,11 @@ class FortniteBot(commands.Bot):
                     await auth_session.kill()
                     self.remove_auth_session(discord_id)
 
+    def discord_id_from_account_id(self, account_id: str) -> int | None:
+        for discord_id, auth_session in self._auth_session_cache.items():
+            if auth_session.epic_id == account_id:
+                return discord_id
+
     @tasks.loop(minutes=1)
     async def manage_data_base(self) -> None:
         for discord_id, premium_until in await self.database_client.get_premium_states():
