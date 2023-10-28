@@ -26,6 +26,8 @@ class Paginator(CustomView):
         self.last_page.disabled = self.next_page.disabled = self.current_page == len(self.embeds)
 
     async def edit_page(self, interaction: FortniteInteraction) -> None:
+        # noinspection PyUnresolvedReferences
+        await interaction.response.defer()
         self.update_buttons()
         await interaction.edit_original_response(embed=self.embeds[self.current_page - 1], view=self)
 
