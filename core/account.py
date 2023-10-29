@@ -83,8 +83,7 @@ class FullEpicAccount(PartialEpicAccount):
         'tfa_enabled',
         'display_last_updated',
         'date_of_birth',
-        'last_login',
-        '_friends_data'
+        'last_login'
     )
 
     def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
@@ -120,37 +119,28 @@ class FullEpicAccount(PartialEpicAccount):
             except (TypeError, parser.ParserError):
                 pass
 
-        self._friends_data: _Dict | None = None
-
     @property
     def auth_session(self) -> AuthSession:
         return self._auth_session()
 
     async def friends_list(self, *, friend_type: _FriendTypes) -> list[PartialEpicAccount]:
-        if self._friends_data is None:
-
-            url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
-            self._friends_data = await self.auth_session.access_request('get', url)
-
-        account_ids: list[str] = [entry['accountId'] for entry in self._friends_data[friend_type]]
+        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
+        data: _Dict = await self.auth_session.access_request('get', url)
+        account_ids: list[str] = [entry['accountId'] for entry in data[friend_type]]
         return await self.auth_session.fetch_accounts(*account_ids)
 
     async def friend(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
         await self.auth_session.access_request('post', url)
-        self._friends_data = None
 
     async def unfriend(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
         await self.auth_session.access_request('delete', url)
-        self._friends_data = None
 
     async def block(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
         await self.auth_session.access_request('post', url)
-        self._friends_data = None
 
     async def unblock(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
         await self.auth_session.access_request('delete', url)
-        self._friends_data = None
