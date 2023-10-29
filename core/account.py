@@ -19,6 +19,7 @@ _FriendTypes = Literal['friends', 'incoming', 'outgoing', 'suggested', 'blocklis
 class PartialEpicAccount:
 
     __slots__ = (
+        '__weakref__',
         'id',
         'display',
         '_stw_raw_cache',
