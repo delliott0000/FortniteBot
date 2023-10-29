@@ -222,6 +222,12 @@ class FortniteBot(commands.Bot):
             if auth_session.epic_id == account_id:
                 return discord_id
 
+    async def account_from_discord_id(self, discord_id: int) -> PartialEpicAccount:
+        auth_session = self.get_auth_session(discord_id)
+        if auth_session is None:
+            raise FortniteException(f'<@{discord_id}> is not logged in with {self.user.name}.')
+        return await auth_session.fetch_account(account_id=auth_session.epic_id)
+
     @tasks.loop(minutes=1)
     async def manage_data_base(self) -> None:
         for discord_id, premium_until in await self.database_client.get_premium_states():

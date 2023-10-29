@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from core.errors import FortniteException
 from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown
 from components.embed import CustomEmbed
 from components.login import LoginView
@@ -127,14 +126,11 @@ class AccountCommands(app_commands.Group):
     ) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
-        if user is not None:
-            auth_session = interaction.client.get_auth_session(user.id)
-            if auth_session is None:
-                raise FortniteException(f'{user.mention} is not logged in with {interaction.client.user.name}.')
-            account = await auth_session.fetch_account(account_id=auth_session.epic_id)
+        auth_session = interaction.client.get_auth_session(interaction.user.id)
 
+        if user is not None:
+            account = await interaction.client.account_from_discord_id(user.id)
         else:
-            auth_session = interaction.client.get_auth_session(interaction.user.id)
             account = await auth_session.fetch_account(display=display, account_id=epic_id)
 
         icon_url = await account.icon_url(auth_session)
