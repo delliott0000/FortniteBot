@@ -145,16 +145,20 @@ class AuthSession:
                 _account_ids.remove(account_id)
 
         if _account_ids:
-            data: _List = await self.access_request(
-                'get',
-                self.http_client.ACCOUNT_REQUESTS_URL.format(''),
-                params=[('accountId', _account_id) for _account_id in _account_ids]
-            )
 
-            for entry in data:
-                account = PartialEpicAccount(self, entry)
-                self.bot.cache_partial_account(account)
-                account_list.append(account)
+            _account_ids_chunks: list[list[str]] = [_account_ids[i:i + 100] for i in range(0, len(_account_ids), 100)]
+            for _account_ids_chunk in _account_ids_chunks:
+
+                data: _List = await self.access_request(
+                    'get',
+                    self.http_client.ACCOUNT_REQUESTS_URL.format(''),
+                    params=[('accountId', _account_id) for _account_id in _account_ids_chunk]
+                )
+
+                for entry in data:
+                    account = PartialEpicAccount(self, entry)
+                    self.bot.cache_partial_account(account)
+                    account_list.append(account)
 
         return account_list
 
