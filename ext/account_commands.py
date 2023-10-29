@@ -116,7 +116,7 @@ class AccountCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='Search for an Epic account by ID, display name or Discord user.')
+    @app_commands.command(description='Search for an account by ID, display name or Discord user.')
     async def search(
         self,
         interaction: FortniteInteraction,
