@@ -100,7 +100,7 @@ class FortniteBot(commands.Bot):
             description=kwargs.get('description'),
             colour=kwargs.get('colour'))
 
-    def fields_to_embeds(self, fields: list[EmbedField], **kwargs: str | Colour) -> list[CustomEmbed]:
+    def fields_to_embeds(self, fields: list[EmbedField], **kwargs: str | int | Colour) -> list[CustomEmbed]:
         embed_list: list[CustomEmbed] = [self._new_embed(**kwargs)]
 
         for field in fields:
