@@ -68,28 +68,28 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View your Epic Games friends list.')
+    @app_commands.command(description='View your incoming friend requests.')
     async def incoming(self, interaction: FortniteInteraction) -> None:
         await self._show_friends(interaction, 'incoming')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View your Epic Games friends list.')
+    @app_commands.command(description='View your outgoing friend requests.')
     async def outgoing(self, interaction: FortniteInteraction) -> None:
         await self._show_friends(interaction, 'outgoing')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View your Epic Games friends list.')
+    @app_commands.command(description='View your suggested friends list.')
     async def suggested(self, interaction: FortniteInteraction) -> None:
         await self._show_friends(interaction, 'suggested')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View your Epic Games friends list.')
+    @app_commands.command(description='View your list of blocked users.')
     async def blocklist(self, interaction: FortniteInteraction) -> None:
         await self._show_friends(interaction, 'blocklist')
 
@@ -132,7 +132,7 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='Remove someone from your friends list or decline an incoming request.')
+    @app_commands.command(description='Unfriend a user or decline an incoming request.')
     async def remove(
         self,
         interaction: FortniteInteraction,
