@@ -96,7 +96,7 @@ class FriendsCommands(app_commands.Group):
     @staticmethod
     async def _friend_operation(
         interaction: FortniteInteraction,
-        operation_str: Literal['friend', 'unfriend', 'block', 'unblock'], *,
+        operation_str: Literal['friend', 'unfriend', 'block', 'unblock'],
         display: str | None,
         epic_id: str | None,
         user: User | None
