@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from typing import Literal, Callable, Awaitable
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from components.paginator import Paginator
 from components.embed import EmbedField
@@ -9,9 +10,10 @@ from resources.emojis import emojis
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.decorators import FortniteInteraction
-    from core.account import _FriendTypes
+    from core.account import _FriendTypes, PartialEpicAccount
+    from core.https import _Dict
 
-from discord import app_commands
+from discord import app_commands, User
 
 
 # noinspection PyUnresolvedReferences
@@ -25,7 +27,7 @@ class FriendsCommands(app_commands.Group):
         'blocklist': 'Blocked Users'
     }
 
-    async def send_friends(self, interaction: FortniteInteraction, friend_type: _FriendTypes) -> None:
+    async def _show_friends(self, interaction: FortniteInteraction, friend_type: _FriendTypes) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
         auth_session = interaction.client.get_auth_session(interaction.user.id)
@@ -61,35 +63,110 @@ class FriendsCommands(app_commands.Group):
     @is_not_blacklisted()
     @app_commands.command(description='View your Epic Games friends list.')
     async def list(self, interaction: FortniteInteraction) -> None:
-        await self.send_friends(interaction, 'friends')
+        await self._show_friends(interaction, 'friends')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
     @app_commands.command(description='View your Epic Games friends list.')
     async def incoming(self, interaction: FortniteInteraction) -> None:
-        await self.send_friends(interaction, 'incoming')
+        await self._show_friends(interaction, 'incoming')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
     @app_commands.command(description='View your Epic Games friends list.')
     async def outgoing(self, interaction: FortniteInteraction) -> None:
-        await self.send_friends(interaction, 'outgoing')
+        await self._show_friends(interaction, 'outgoing')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
     @app_commands.command(description='View your Epic Games friends list.')
     async def suggested(self, interaction: FortniteInteraction) -> None:
-        await self.send_friends(interaction, 'suggested')
+        await self._show_friends(interaction, 'suggested')
 
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
     @app_commands.command(description='View your Epic Games friends list.')
     async def blocklist(self, interaction: FortniteInteraction) -> None:
-        await self.send_friends(interaction, 'blocklist')
+        await self._show_friends(interaction, 'blocklist')
+
+    @staticmethod
+    async def _friend_operation(
+        interaction: FortniteInteraction,
+        operation_str: Literal['friend', 'unfriend', 'block', 'unblock'], *,
+        display: str | None,
+        epic_id: str | None,
+        user: User | None
+    ) -> None:
+        await interaction.response.defer(thinking=True, ephemeral=True)
+
+        host_auth_session = interaction.client.get_auth_session(interaction.user.id)
+        host_account = await host_auth_session.account()
+
+        if user is not None:
+            account = await interaction.client.account_from_discord_id(user.id)
+        else:
+            account = await host_auth_session.fetch_account(display=display, account_id=epic_id)
+
+        operation: Callable[[PartialEpicAccount], Awaitable[_Dict]] = getattr(host_account, operation_str)
+        await operation(account)
+
+        await interaction.client.send_response(interaction, f'Successfully {operation}ed `{account.display}`.')
+
+    @non_premium_cooldown()
+    @is_logged_in()
+    @is_not_blacklisted()
+    @app_commands.command(description='Send a friend request or accept an incoming one.')
+    async def add(
+        self,
+        interaction: FortniteInteraction,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> None:
+        await self._friend_operation(interaction, 'friend', display=display, epic_id=epic_id, user=user)
+
+    @non_premium_cooldown()
+    @is_logged_in()
+    @is_not_blacklisted()
+    @app_commands.command(description='Remove someone from your friends list or decline an incoming request.')
+    async def remove(
+        self,
+        interaction: FortniteInteraction,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> None:
+        await self._friend_operation(interaction, 'unfriend', display=display, epic_id=epic_id, user=user)
+
+    @non_premium_cooldown()
+    @is_logged_in()
+    @is_not_blacklisted()
+    @app_commands.command(description='Block an Epic Games account.')
+    async def block(
+        self,
+        interaction: FortniteInteraction,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> None:
+        await self._friend_operation(interaction, 'block', display=display, epic_id=epic_id, user=user)
+
+    @non_premium_cooldown()
+    @is_logged_in()
+    @is_not_blacklisted()
+    @app_commands.command(description='Unblock an Epic Games account.')
+    async def unblock(
+        self,
+        interaction: FortniteInteraction,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> None:
+        await self._friend_operation(interaction, 'unblock', display=display, epic_id=epic_id, user=user)
 
 
 async def setup(bot: FortniteBot):
