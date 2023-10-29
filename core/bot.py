@@ -56,7 +56,7 @@ class FortniteBot(commands.Bot):
         super().__init__(
             owner_ids=OWNER_IDS,
             help_command=None,
-            command_prefix='',
+            command_prefix=None,
             intents=intents,
             tree_cls=CustomTree
         )
