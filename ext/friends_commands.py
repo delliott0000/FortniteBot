@@ -114,7 +114,7 @@ class FriendsCommands(app_commands.Group):
         operation: Callable[[PartialEpicAccount], Awaitable[_Dict]] = getattr(host_account, operation_str)
         await operation(account)
 
-        await interaction.client.send_response(interaction, f'Successfully {operation}ed `{account.display}`.')
+        await interaction.client.send_response(interaction, f'Successfully {operation_str}ed `{account.display}`.')
 
     @non_premium_cooldown()
     @is_logged_in()
