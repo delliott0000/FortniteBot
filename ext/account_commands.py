@@ -148,5 +148,5 @@ class AccountCommands(app_commands.Group):
         await interaction.followup.send(embed=embed)
 
 
-async def setup(bot: FortniteBot):
+async def setup(bot: FortniteBot) -> None:
     bot.tree.add_command(AccountCommands(name='account'))

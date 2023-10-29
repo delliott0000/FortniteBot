@@ -169,5 +169,5 @@ class FriendsCommands(app_commands.Group):
         await self._friend_operation(interaction, 'unblock', display=display, epic_id=epic_id, user=user)
 
 
-async def setup(bot: FortniteBot):
+async def setup(bot: FortniteBot) -> None:
     bot.tree.add_command(FriendsCommands(name='friends'))
