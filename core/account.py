@@ -138,15 +138,19 @@ class FullEpicAccount(PartialEpicAccount):
     async def friend(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
         await self.auth_session.access_request('post', url)
+        self._friends_data = None
 
     async def unfriend(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
         await self.auth_session.access_request('delete', url)
+        self._friends_data = None
 
     async def block(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
         await self.auth_session.access_request('post', url)
+        self._friends_data = None
 
     async def unblock(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
         await self.auth_session.access_request('delete', url)
+        self._friends_data = None
