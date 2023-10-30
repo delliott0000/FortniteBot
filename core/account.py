@@ -22,6 +22,7 @@ class PartialEpicAccount:
         '__weakref__',
         'id',
         'display',
+        'raw_attributes',
         '_stw_raw_cache',
         '_icon_url'
     )
@@ -29,6 +30,7 @@ class PartialEpicAccount:
     def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
         self.id: str = data.get('id') or data.get('accountId')
         self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
+        self.raw_attributes: _Dict = data.copy()
 
         self._stw_raw_cache: _Dict | None = None
 
