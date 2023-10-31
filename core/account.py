@@ -126,7 +126,7 @@ class FullEpicAccount(PartialEpicAccount):
     def auth_session(self) -> AuthSession:
         return self._auth_session()
 
-    async def friends_list(self, *, friend_type: _FriendTypes) -> list[PartialEpicAccount]:
+    async def friends_list(self, friend_type: _FriendTypes) -> list[PartialEpicAccount]:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
         data: _Dict = await self.auth_session.access_request('get', url)
         account_ids: list[str] = [entry['accountId'] for entry in data[friend_type]]
