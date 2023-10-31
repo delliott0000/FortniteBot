@@ -113,6 +113,8 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
 
 class Upgradable(Recyclable):
 
+    __slots__ = ()
+
     __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
 
     async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> dict:
