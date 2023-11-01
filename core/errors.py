@@ -82,3 +82,9 @@ class ItemIsReadOnly(FortniteItemException):
 
     def __str__(self) -> str:
         return 'Item is not bound to an `AuthSession` so it is read-only'
+
+
+class ItemIsFavourited(FortniteItemException):
+
+    def __str__(self) -> str:
+        return f'Favourite items can not be recycled.'

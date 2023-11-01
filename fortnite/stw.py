@@ -7,7 +7,7 @@ from weakref import ref
 from resources.lookup import lookup
 from resources.emojis import emojis
 from fortnite.base import AccountBoundMixin, BaseEntity
-from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOnly
+from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOnly, ItemIsFavourited
 
 if TYPE_CHECKING:
     from weakref import ReferenceType
@@ -99,6 +99,9 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
             raise ItemIsReadOnly(self)
 
     async def recycle(self) -> dict:
+        if self.favourite is True:
+            raise ItemIsFavourited(self)
+
         data = await self.auth_checker.profile_operation(
             route='client',
             operation='RecycleItem',
