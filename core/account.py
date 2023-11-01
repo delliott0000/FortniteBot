@@ -34,6 +34,7 @@ class PartialEpicAccount:
         'display',
         'raw_attributes',
         '_stw_raw_cache',
+        '_stw_obj_cache',
         '_icon_url'
     )
 
@@ -43,6 +44,7 @@ class PartialEpicAccount:
         self.raw_attributes: _Dict = data.copy()
 
         self._stw_raw_cache: _Dict | None = None
+        self._stw_obj_cache: _Dict = {}
 
         self._icon_url: str | None = None
 
@@ -50,6 +52,10 @@ class PartialEpicAccount:
         if self._stw_raw_cache is None:
             self._stw_raw_cache = await auth_session.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
+
+    async def stw_items(self, auth_session: AuthSession) -> _Dict:
+        data = await self.raw_stw_data(auth_session)
+        return data['profileChanges'][0]['profile']['items']
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
