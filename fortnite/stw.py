@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from core.auth import AuthSession
 
 
-_MaterialTypes = Literal[
+_MaterialType = Literal[
     'Crystal',
     'Ore']
 
@@ -184,7 +184,7 @@ class Schematic(Upgradable):
         elif self.tier == 5:
             return 'Sunbeam'
 
-    def conversion_index(self, target_material: _MaterialTypes, target_tier: int = 5) -> int:
+    def conversion_index(self, target_material: _MaterialType, target_tier: int = 5) -> int:
         if self.tier <= 3 and target_tier > 3:
             return self.__index_mapping__.get(target_material, 1)
         return -1
