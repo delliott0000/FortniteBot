@@ -128,6 +128,8 @@ class Upgradable(Recyclable):
     async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> _Json:
         if new_level <= self.level or new_tier < self.tier:
             raise InvalidUpgrade(self)
+        elif new_level not in range(2, 61):
+            raise InvalidUpgrade(self)
 
         data = await self.auth_checker.profile_operation(
             route='client',
