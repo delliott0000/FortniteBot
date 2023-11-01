@@ -1,17 +1,24 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Literal, TypedDict
-from datetime import datetime
+import logging
+from typing import Literal, TypedDict, TypeVar
 from weakref import ref, ReferenceType
 
+from core.errors import UnknownTemplateID, MalformedItemAttributes
+from fortnite.stw import SaveTheWorldItem, Schematic
+
 if TYPE_CHECKING:
+    from datetime import datetime
     from core.https import _Dict, _List
     from core.auth import AuthSession
+    from fortnite.base import Attributes
 
 from dateutil import parser
 from core.errors import HTTPException
 
+
+_STWTypes = TypeVar('_STWTypes', bound=SaveTheWorldItem)
 
 _FriendTypes = Literal['friends', 'incoming', 'outgoing', 'suggested', 'blocklist']
 
@@ -48,14 +55,52 @@ class PartialEpicAccount:
 
         self._icon_url: str | None = None
 
-    async def _raw_stw_data(self, auth_session: AuthSession) -> _Dict:
+    async def _raw_stw_data(self, _au: AuthSession) -> _Dict:
         if self._stw_raw_cache is None:
-            self._stw_raw_cache = await auth_session.profile_operation(epic_id=self.id)
+            self._stw_raw_cache = await _au.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
 
-    async def _raw_stw_items(self, auth_session: AuthSession) -> _Dict:
-        data = await self._raw_stw_data(auth_session)
+    async def _raw_stw_items(self, _au: AuthSession) -> _Dict:
+        data = await self._raw_stw_data(_au)
         return data['profileChanges'][0]['profile']['items']
+
+    async def _stw_objects(
+        self,
+        _au: AuthSession,
+        cache_location: str,
+        *item_types: tuple[str, type[_STWTypes]]
+    ) -> list[_STWTypes]:
+        try:
+            _return = self._stw_obj_cache[cache_location]
+        except KeyError:
+            _return = self._stw_obj_cache[cache_location] = []
+
+            raw_items = await self._raw_stw_items(_au)
+            for item_id, item_data in raw_items.items():
+
+                template_id: str = item_data['templateId']
+                attributes: Attributes = item_data['attributes']
+
+                for item_type in item_types:
+                    tid_prefix: str = item_type[0]
+                    item_cls = item_type[1]
+
+                    if template_id.startswith(tid_prefix):
+                        try:
+                            item = item_cls(self, item_id, template_id, attributes)
+                        except (UnknownTemplateID, MalformedItemAttributes) as error:
+                            logging.error(error)
+                            continue
+
+                        _return.append(item)
+
+        return _return
+
+    async def schematics(self, auth_session: AuthSession) -> list[Schematic]:
+        item_types = (('Schematic:sid', Schematic),)
+        schematics = await self._stw_objects(auth_session, 'schematics', *item_types)
+        schematics.sort(key=lambda schematic: schematic.power_level, reverse=True)
+        return schematics
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
