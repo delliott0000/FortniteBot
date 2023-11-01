@@ -7,7 +7,7 @@ from weakref import ref
 from resources.lookup import lookup
 from resources.emojis import emojis
 from fortnite.base import AccountBoundMixin, BaseEntity
-from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOnly, ItemIsFavourited
+from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOnly, ItemIsFavourited, InvalidUpgrade
 
 if TYPE_CHECKING:
     from weakref import ReferenceType
@@ -121,6 +121,9 @@ class Upgradable(Recyclable):
     __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
 
     async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> dict:
+        if new_level <= self.level or new_tier <= self.tier:
+            raise InvalidUpgrade(self)
+
         data = await self.auth_checker.profile_operation(
             route='client',
             operation='UpgradeItemBulk',
