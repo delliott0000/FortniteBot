@@ -107,12 +107,16 @@ class SchematicCommands(app_commands.Group):
     @app_commands.choices(material=[
         app_commands.Choice(name='Ore', value='Ore'),
         app_commands.Choice(name='Crystal', value='Crystal')])
+    @app_commands.describe(
+        name='The name of the schematic.',
+        level='The desired level of the schematic.',
+        material='The desired upgrade path of the schematic, if applicable.')
     @app_commands.command(description='Upgrade one of your schematics.')
     async def upgrade(
         self,
         interaction: FortniteInteraction,
         name: str = '',
-        new_level: int = 50,
+        level: int = 50,
         material: app_commands.Choice[str] | None = None
     ) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
@@ -132,7 +136,7 @@ class SchematicCommands(app_commands.Group):
             author_icon=icon_url,
         )
         view = Paginator(interaction, embeds)
-        view.add_item(UpgradeSelect(schematics, new_level, material.value if material else None))
+        view.add_item(UpgradeSelect(schematics, level, material.value if material else None))
 
         await interaction.followup.send(embed=embeds[0], view=view)
 
