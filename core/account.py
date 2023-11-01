@@ -1,12 +1,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Literal
+from typing import Literal, TypedDict
 from datetime import datetime
 from weakref import ref, ReferenceType
 
 if TYPE_CHECKING:
-    from core.https import _Dict
+    from core.https import _Dict, _List
     from core.auth import AuthSession
 
 from dateutil import parser
@@ -14,6 +14,16 @@ from core.errors import HTTPException
 
 
 _FriendTypes = Literal['friends', 'incoming', 'outgoing', 'suggested', 'blocklist']
+
+
+class FriendDict(TypedDict):
+
+    account: PartialEpicAccount
+    favorite: bool
+    mutual: int | None
+    alias: str | None
+    note: str | None
+    created: datetime | None
 
 
 class PartialEpicAccount:
@@ -126,11 +136,35 @@ class FullEpicAccount(PartialEpicAccount):
     def auth_session(self) -> AuthSession:
         return self._auth_session()
 
-    async def friends_list(self, friend_type: _FriendTypes) -> list[PartialEpicAccount]:
+    async def friends_list(self, friend_type: _FriendTypes) -> list[FriendDict]:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
         data: _Dict = await self.auth_session.access_request('get', url)
-        account_ids: list[str] = [entry['accountId'] for entry in data[friend_type]]
-        return await self.auth_session.fetch_accounts(*account_ids)
+        friend_type_data: _List = data[friend_type]
+
+        account_ids: list[str] = [_entry['accountId'] for _entry in friend_type_data]
+        accounts = await self.auth_session.fetch_accounts(*account_ids)
+
+        # Fetching accounts doesn't preserve order
+        account_ids.sort(key=lambda _id: _id)
+        accounts.sort(key=lambda _account: _account.id)
+
+        # Formatting the dictionaries
+        for i in range(len(account_ids)):
+            entry = friend_type_data[i]
+
+            entry['account'] = accounts[i]
+            entry['favorite'] = entry.get('favorite', False)
+
+            for string in 'mutual', 'alias', 'note':
+                # Replace any empty strings or missing values with `None`
+                entry[string] = entry.get(string) or None
+
+            try:
+                entry['created'] = parser.parse(entry.get('created'))
+            except (TypeError, parser.ParserError):
+                entry['created'] = None
+
+        return friend_type_data
 
     async def friend(self, account: PartialEpicAccount) -> None:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'

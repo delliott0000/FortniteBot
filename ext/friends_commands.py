@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from core.account import _FriendTypes, PartialEpicAccount
     from core.https import _Dict
 
+from discord.utils import format_dt
 from discord import app_commands, User
 
 
@@ -38,12 +39,19 @@ class FriendsCommands(app_commands.Group):
         field_list: list[EmbedField] = []
 
         for friend in friends:
-            discord_id = interaction.client.discord_id_from_account_id(friend.id)
+            account = friend['account']
+            discord_id = interaction.client.discord_id_from_account_id(account.id)
             linked_str = f'{emojis["check"]} <@{discord_id}>' if discord_id is not None else f'{emojis["cross"]}'
+            since = friend["created"]
 
             field = EmbedField(
-                name=friend.display,
-                value=f'> **Epic ID:** `{friend.id}`\n'
+                name=account.display,
+                value=f'> **Epic ID:** `{account.id}`\n'
+                      f'> **Favourite:** {emojis["check" if friend["favorite"] is True else "cross"]}\n'
+                      f'> **Mutual:** `{friend["mutual"]}`\n'
+                      f'> **Alias:** `{friend["alias"]}`\n'
+                      f'> **Note:** `{friend["note"]}`\n'
+                      f'> **Since: {format_dt(since) if since is not None else "`None`"}**\n'
                       f'> **Logged in with {interaction.client.user.name}:** {linked_str}',
                 inline=False)
 
@@ -51,6 +59,7 @@ class FriendsCommands(app_commands.Group):
 
         embeds = interaction.client.fields_to_embeds(
             field_list,
+            field_limit=4,
             description=interaction.user.mention,
             colour=interaction.client.colour(interaction.guild),
             author_name=self.__auth_mapping__[friend_type],
