@@ -53,7 +53,7 @@ class PartialEpicAccount:
             self._stw_raw_cache = await auth_session.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
 
-    async def _stw_items(self, auth_session: AuthSession) -> _Dict:
+    async def _raw_stw_items(self, auth_session: AuthSession) -> _Dict:
         data = await self._raw_stw_data(auth_session)
         return data['profileChanges'][0]['profile']['items']
 
