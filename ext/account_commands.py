@@ -116,6 +116,10 @@ class AccountCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
+    @app_commands.describe(
+        display='Search by Epic display name.',
+        epic_id='Search by Epic account ID.',
+        user='Search by Discord user.')
     @app_commands.command(description='Search for an account by ID, display name or Discord user.')
     async def search(
         self,
