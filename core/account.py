@@ -48,19 +48,19 @@ class PartialEpicAccount:
 
         self._icon_url: str | None = None
 
-    async def raw_stw_data(self, auth_session: AuthSession) -> _Dict:
+    async def _raw_stw_data(self, auth_session: AuthSession) -> _Dict:
         if self._stw_raw_cache is None:
             self._stw_raw_cache = await auth_session.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
 
-    async def stw_items(self, auth_session: AuthSession) -> _Dict:
-        data = await self.raw_stw_data(auth_session)
+    async def _stw_items(self, auth_session: AuthSession) -> _Dict:
+        data = await self._raw_stw_data(auth_session)
         return data['profileChanges'][0]['profile']['items']
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
             try:
-                data: _Dict = await self.raw_stw_data(auth_session)
+                data: _Dict = await self._raw_stw_data(auth_session)
                 items_data: _Dict = data['profileChanges'][0]['profile']['items']
             except (HTTPException, KeyError):
                 return
