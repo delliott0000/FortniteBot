@@ -20,7 +20,7 @@ from discord import app_commands, User
 # noinspection PyUnresolvedReferences
 class FriendsCommands(app_commands.Group):
 
-    __auth_mapping__: dict[str, str] = {
+    __friend_type_mapping__: dict[str, str] = {
         'friends': 'Friends List',
         'incoming': 'Incoming Requests',
         'outgoing': 'Outgoing Requests',
@@ -62,7 +62,7 @@ class FriendsCommands(app_commands.Group):
             field_limit=4,
             description=interaction.user.mention,
             colour=interaction.client.colour(interaction.guild),
-            author_name=self.__auth_mapping__[friend_type],
+            author_name=self.__friend_type_mapping__[friend_type],
             author_icon=icon_url)
         view = Paginator(interaction, embeds)
         await interaction.followup.send(embed=embeds[0], view=view)
