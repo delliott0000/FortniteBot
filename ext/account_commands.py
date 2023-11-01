@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown
+from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown, account_kwargs
 from components.embed import CustomEmbed
 from components.login import LoginView
 from resources.emojis import emojis
@@ -116,10 +116,7 @@ class AccountCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.describe(
-        display='Search by Epic display name.',
-        epic_id='Search by Epic account ID.',
-        user='Search by Discord user.')
+    @app_commands.describe(**account_kwargs)
     @app_commands.command(description='Search for an account by ID, display name or Discord user.')
     async def search(
         self,

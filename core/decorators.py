@@ -6,6 +6,12 @@ from discord import app_commands, Interaction
 FortniteInteraction = Interaction[FortniteBot]
 
 
+account_kwargs = {
+    'display': 'Search by Epic display name.',
+    'epic_id': 'Search by Epic account ID.',
+    'user': 'Search by Discord user.'}
+
+
 def is_not_blacklisted():
 
     async def predicate(interaction: FortniteInteraction) -> bool:

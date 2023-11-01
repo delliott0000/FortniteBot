@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from typing import Literal, Callable, Awaitable
-from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
+from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown, account_kwargs
 from components.paginator import Paginator
 from components.embed import EmbedField
 from resources.emojis import emojis
@@ -129,10 +129,7 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.describe(
-        display='Search by Epic display name.',
-        epic_id='Search by Epic account ID.',
-        user='Search by Discord user.')
+    @app_commands.describe(**account_kwargs)
     @app_commands.command(description='Send a friend request or accept an incoming one.')
     async def add(
         self,
@@ -146,10 +143,7 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.describe(
-        display='Search by Epic display name.',
-        epic_id='Search by Epic account ID.',
-        user='Search by Discord user.')
+    @app_commands.describe(**account_kwargs)
     @app_commands.command(description='Unfriend a user or decline an incoming request.')
     async def remove(
         self,
@@ -163,10 +157,7 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.describe(
-        display='Search by Epic display name.',
-        epic_id='Search by Epic account ID.',
-        user='Search by Discord user.')
+    @app_commands.describe(**account_kwargs)
     @app_commands.command(description='Block an Epic Games account.')
     async def block(
         self,
@@ -180,10 +171,7 @@ class FriendsCommands(app_commands.Group):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.describe(
-        display='Search by Epic display name.',
-        epic_id='Search by Epic account ID.',
-        user='Search by Discord user.')
+    @app_commands.describe(**account_kwargs)
     @app_commands.command(description='Unblock an Epic Games account.')
     async def unblock(
         self,
