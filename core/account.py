@@ -97,8 +97,7 @@ class PartialEpicAccount:
         return _return
 
     async def schematics(self, auth_session: AuthSession) -> list[Schematic]:
-        item_types = (('Schematic:sid', Schematic),)
-        schematics = await self._stw_objects(auth_session, 'schematics', *item_types)
+        schematics = await self._stw_objects(auth_session, 'schematics', ('Schematic:sid', Schematic))
         schematics.sort(key=lambda schematic: schematic.power_level, reverse=True)
         return schematics
 
