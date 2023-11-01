@@ -132,10 +132,11 @@ class AccountCommands(app_commands.Group):
 
         auth_session = interaction.client.get_auth_session(interaction.user.id)
 
-        if user is not None:
-            account = await interaction.client.account_from_discord_id(user.id)
-        else:
-            account = await auth_session.fetch_account(display=display, account_id=epic_id)
+        account = await interaction.client.account_from_kwargs(
+            auth_session,
+            display=display,
+            epic_id=epic_id,
+            user=user)
 
         icon_url = await account.icon_url(auth_session)
         discord_id = interaction.client.discord_id_from_account_id(account.id)

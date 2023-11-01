@@ -115,10 +115,11 @@ class FriendsCommands(app_commands.Group):
         host_auth_session = interaction.client.get_auth_session(interaction.user.id)
         host_account = await host_auth_session.account()
 
-        if user is not None:
-            account = await interaction.client.account_from_discord_id(user.id)
-        else:
-            account = await host_auth_session.fetch_account(display=display, account_id=epic_id)
+        account = await interaction.client.account_from_kwargs(
+            host_auth_session,
+            display=display,
+            epic_id=epic_id,
+            user=user)
 
         operation: Callable[[PartialEpicAccount], Awaitable[_Dict]] = getattr(host_account, operation_str)
         await operation(account)

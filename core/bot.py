@@ -25,6 +25,7 @@ from discord.ext import commands, tasks
 from discord.utils import MISSING, _MissingSentinel
 from discord import (
     __version__ as __discord__,
+    User,
     Guild,
     Colour,
     Intents,
@@ -227,6 +228,18 @@ class FortniteBot(commands.Bot):
         if auth_session is None:
             raise FortniteException(f'<@{discord_id}> is not logged in with {self.user.name}.')
         return await auth_session.fetch_account(account_id=auth_session.epic_id)
+
+    async def account_from_kwargs(
+        self,
+        auth_session: AuthSession,
+        display: str | None = None,
+        epic_id: str | None = None,
+        user: User | None = None
+    ) -> PartialEpicAccount:
+        if user is not None:
+            return await self.account_from_discord_id(user.id)
+        else:
+            return await auth_session.fetch_account(display=display, account_id=epic_id)
 
     @tasks.loop(minutes=1)
     async def manage_data_base(self) -> None:
