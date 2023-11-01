@@ -156,6 +156,7 @@ class Upgradable(Recyclable):
 class Schematic(Upgradable):
 
     __slots__ = (
+        '__weakref__',
         'perks',
     )
 
