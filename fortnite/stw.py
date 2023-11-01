@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from weakref import ReferenceType
     from fortnite.base import Account, Attributes
     from core.auth import AuthSession
+    from core.https import _Json
 
 
 _MaterialType = Literal[
@@ -102,7 +103,7 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
         except AttributeError:
             raise ItemIsReadOnly(self)
 
-    async def recycle(self) -> dict:
+    async def recycle(self) -> _Json:
         if self.favourite is True:
             raise ItemIsFavourited(self)
 
@@ -124,7 +125,7 @@ class Upgradable(Recyclable):
 
     __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
 
-    async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> dict:
+    async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> _Json:
         if new_level <= self.level or new_tier <= self.tier:
             raise InvalidUpgrade(self)
 
