@@ -103,7 +103,7 @@ class PartialEpicAccount:
 
     async def heroes(self, auth_session: AuthSession) -> list[Hero]:
         heroes = await self._stw_objects(auth_session, 'heroes', ('Hero:hid', Hero))
-        heroes.sort(key=lambda hero: hero.power_level)
+        heroes.sort(key=lambda hero: hero.power_level, reverse=True)
         return heroes
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
