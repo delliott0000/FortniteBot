@@ -6,7 +6,7 @@ from typing import Literal, TypedDict, TypeVar
 from weakref import ref, ReferenceType
 
 from core.errors import UnknownTemplateID, MalformedItemAttributes
-from fortnite.stw import SaveTheWorldItem, Schematic
+from fortnite.stw import SaveTheWorldItem, Schematic, Hero
 
 if TYPE_CHECKING:
     from datetime import datetime
@@ -100,6 +100,11 @@ class PartialEpicAccount:
         schematics = await self._stw_objects(auth_session, 'schematics', ('Schematic:sid', Schematic))
         schematics.sort(key=lambda schematic: schematic.power_level, reverse=True)
         return schematics
+
+    async def heroes(self, auth_session: AuthSession) -> list[Hero]:
+        heroes = await self._stw_objects(auth_session, 'heroes', ('Hero:hid', Hero))
+        heroes.sort(key=lambda hero: hero.power_level)
+        return heroes
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
