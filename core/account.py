@@ -102,7 +102,7 @@ class PartialEpicAccount:
         return schematics
 
     async def survivors(self, auth_session: AuthSession) -> list[Survivor | LeadSurvivor]:
-        item_types = ('Worker:manager', LeadSurvivor), ('Worker;worker', Survivor)
+        item_types = ('Worker:manager', LeadSurvivor), ('Worker:worker', Survivor)
         survivors = await self._stw_objects(auth_session, 'survivors', *item_types)
         survivors.sort(key=lambda survivor: survivor.base_power_level, reverse=True)
         return survivors
