@@ -126,9 +126,7 @@ class Upgradable(Recyclable):
     __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
 
     async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> _Json:
-        if new_level <= self.level or new_tier < self.tier:
-            raise InvalidUpgrade(self)
-        elif new_level not in range(2, 61):
+        if new_tier < self.tier or new_level not in range(self.level + 1, 61):
             raise InvalidUpgrade(self)
 
         data = await self.auth_checker.profile_operation(
