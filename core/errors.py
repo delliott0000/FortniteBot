@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from fortnite.base import BaseEntity
 
-from aiohttp import ClientResponse
+    from aiohttp import ClientResponse
 
 
 class FortniteException(Exception):
