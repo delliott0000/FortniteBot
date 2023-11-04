@@ -7,12 +7,12 @@ from components.login import LoginView
 from resources.emojis import emojis
 from resources.extras import account_kwargs
 
+from discord import app_commands, User
+from discord.utils import format_dt
+
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from resources.extras import FortniteInteraction
-
-from discord import app_commands, User
-from discord.utils import format_dt
 
 
 # noinspection PyUnresolvedReferences

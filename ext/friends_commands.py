@@ -2,19 +2,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from typing import Literal, Callable, Awaitable
+
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from components.paginator import Paginator
 from components.embed import EmbedField
 from resources.emojis import emojis
 from resources.extras import account_kwargs
 
+from discord.utils import format_dt
+from discord import app_commands, User
+
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.account import PartialEpicAccount
     from resources.extras import Dict, FriendType, FortniteInteraction
-
-from discord.utils import format_dt
-from discord import app_commands, User
 
 
 # noinspection PyUnresolvedReferences

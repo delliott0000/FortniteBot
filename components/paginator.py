@@ -1,14 +1,14 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from resources.extras import FortniteInteraction
-    from components.embed import CustomEmbed
-
 from components.view import CustomView
 
 from discord.ui import button
 from discord import Button, ButtonStyle
+
+if TYPE_CHECKING:
+    from resources.extras import FortniteInteraction
+    from components.embed import CustomEmbed
 
 
 class Paginator(CustomView):

@@ -5,16 +5,16 @@ import logging
 from typing import TypedDict
 from weakref import ref, ReferenceType
 
-from core.errors import UnknownTemplateID, MalformedItemAttributes
+from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
 from fortnite.stw import Schematic, Survivor, LeadSurvivor, Hero
+
+from dateutil import parser
 
 if TYPE_CHECKING:
     from datetime import datetime
+
     from core.auth import AuthSession
     from resources.extras import Dict, List, STWFetchable, GenericSurvivor, FriendType, Attributes
-
-from dateutil import parser
-from core.errors import HTTPException
 
 
 class FriendDict(TypedDict):

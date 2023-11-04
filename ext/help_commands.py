@@ -6,11 +6,11 @@ from components.embed import CustomEmbed
 from components.paginator import Paginator
 from resources.emojis import emojis
 
+from discord import app_commands
+
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from resources.extras import FortniteInteraction
-
-from discord import app_commands
 
 
 # noinspection PyUnresolvedReferences

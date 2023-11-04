@@ -9,15 +9,16 @@ from components.embed import EmbedField
 from resources.emojis import emojis
 from resources.extras import account_kwargs
 
+from discord import app_commands, User
+
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.auth import AuthSession
     from components.embed import CustomEmbed
     from fortnite.stw import Schematic
     from resources.extras import FortniteInteraction, Account
-    from discord import Colour
 
-from discord import app_commands, User
+    from discord import Colour
 
 
 # noinspection PyUnresolvedReferences

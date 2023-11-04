@@ -13,14 +13,6 @@ from core.database import DatabaseClient
 from core.tree import CustomTree
 from components.embed import CustomEmbed
 
-if TYPE_CHECKING:
-    from core.auth import AuthSession
-    from core.account import PartialEpicAccount
-    from core.cache import PartialAccountCacheEntry
-    from components.embed import EmbedField
-    from resources.extras import FortniteInteraction
-    from discord import User, Guild
-
 from discord.ui import View
 from discord.ext import commands, tasks
 from discord.utils import MISSING, _MissingSentinel
@@ -33,6 +25,15 @@ from discord import (
     InteractionResponded,
     PrivilegedIntentsRequired
 )
+
+if TYPE_CHECKING:
+    from core.auth import AuthSession
+    from core.account import PartialEpicAccount
+    from core.cache import PartialAccountCacheEntry
+    from components.embed import EmbedField
+    from resources.extras import FortniteInteraction
+
+    from discord import User, Guild
 
 
 if __discord__ != '2.3.2':

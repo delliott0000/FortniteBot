@@ -1,13 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from resources.extras import FortniteInteraction
-
 from core.errors import HTTPException
 from components.view import CustomView
 
 from discord import Button, ui
+
+if TYPE_CHECKING:
+    from resources.extras import FortniteInteraction
 
 
 class LoginView(CustomView):

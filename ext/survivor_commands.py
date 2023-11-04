@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from typing import get_args
+
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from core.errors import FortniteException
 from components.itemselect import RecycleSelect, UpgradeSelect
@@ -11,14 +12,15 @@ from resources.emojis import emojis
 from resources.extras import Personality, account_kwargs
 from fortnite.stw import Survivor
 
+from discord import app_commands, User
+
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.auth import AuthSession
     from components.embed import CustomEmbed
     from resources.extras import FortniteInteraction, GenericSurvivor, Account
-    from discord import Colour
 
-from discord import app_commands, User
+    from discord import Colour
 
 
 # noinspection PyUnresolvedReferences

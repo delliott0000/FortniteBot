@@ -16,15 +16,15 @@ from core.errors import (
     ServerError
 )
 
-if TYPE_CHECKING:
-    from core.bot import FortniteBot
-    from resources.extras import Dict, Json
-
 from aiohttp import (
     ClientResponseError,
     ClientResponse,
     ClientSession
 )
+
+if TYPE_CHECKING:
+    from core.bot import FortniteBot
+    from resources.extras import Dict, Json
 
 
 async def response_to_json(resp: ClientResponse) -> Json:

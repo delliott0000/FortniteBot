@@ -4,11 +4,11 @@ from typing import TYPE_CHECKING
 from core.errors import FortniteException
 from fortnite.stw import Schematic
 
+from discord import ui, SelectOption
+
 if TYPE_CHECKING:
     from fortnite.stw import Recyclable, Upgradable
     from resources.extras import FortniteInteraction, Selectable, Material
-
-from discord import ui, SelectOption
 
 
 class ItemSelect(ui.Select):

@@ -6,6 +6,7 @@ from abc import ABC
 
 if TYPE_CHECKING:
     from weakref import ReferenceType
+
     from resources.extras import Account, Attributes
 
 

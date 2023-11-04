@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from discord import app_commands
+
 if TYPE_CHECKING:
     from resources.extras import FortniteInteraction
-
-from discord import app_commands
 
 
 def is_not_blacklisted():

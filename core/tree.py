@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 
 from datetime import timedelta
 
+from discord import app_commands
+
 if TYPE_CHECKING:
     from resources.extras import FortniteInteraction
-
-from discord import app_commands
 
 
 class CustomTree(app_commands.CommandTree):

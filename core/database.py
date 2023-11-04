@@ -3,14 +3,14 @@ from typing import TYPE_CHECKING
 
 from datetime import datetime, timedelta
 
-if TYPE_CHECKING:
-    from core.bot import FortniteBot
-
 from aiosqlite import (
     connect,
     Connection,
     Cursor
 )
+
+if TYPE_CHECKING:
+    from core.bot import FortniteBot
 
 
 class DatabaseClient:

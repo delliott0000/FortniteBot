@@ -12,6 +12,7 @@ from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOn
 
 if TYPE_CHECKING:
     from weakref import ReferenceType
+
     from core.auth import AuthSession
     from resources.extras import Json, Material, FortStat, Personality, Account, Attributes
 

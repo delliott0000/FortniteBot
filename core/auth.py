@@ -7,12 +7,12 @@ from datetime import datetime
 from core.errors import Unauthorized
 from core.account import PartialEpicAccount, FullEpicAccount
 
+from dateutil import parser
+
 if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
     from core.bot import FortniteBot
     from resources.extras import Dict, List, Json
-
-from dateutil import parser
 
 
 class AuthSession:
