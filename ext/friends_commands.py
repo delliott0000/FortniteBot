@@ -2,16 +2,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from typing import Literal, Callable, Awaitable
-from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown, account_kwargs
+from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from components.paginator import Paginator
 from components.embed import EmbedField
 from resources.emojis import emojis
+from resources.extras import account_kwargs
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
-    from core.decorators import FortniteInteraction
-    from core.account import _FriendTypes, PartialEpicAccount
-    from core.https import _Dict
+    from core.account import PartialEpicAccount
+    from resources.extras import Dict, FriendType, FortniteInteraction
 
 from discord.utils import format_dt
 from discord import app_commands, User
@@ -28,7 +28,7 @@ class FriendsCommands(app_commands.Group):
         'blocklist': 'Blocked Users'
     }
 
-    async def _show_friends(self, interaction: FortniteInteraction, friend_type: _FriendTypes) -> None:
+    async def _show_friends(self, interaction: FortniteInteraction, friend_type: FriendType) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
         auth_session = interaction.client.get_auth_session(interaction.user.id)
@@ -121,7 +121,7 @@ class FriendsCommands(app_commands.Group):
             epic_id=epic_id,
             user=user)
 
-        operation: Callable[[PartialEpicAccount], Awaitable[_Dict]] = getattr(host_account, operation_str)
+        operation: Callable[[PartialEpicAccount], Awaitable[Dict]] = getattr(host_account, operation_str)
         await operation(account)
 
         await interaction.client.send_response(interaction, f'Successfully {operation_str}ed `{account.display}`.')

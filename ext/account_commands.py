@@ -1,14 +1,15 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown, account_kwargs
+from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown
 from components.embed import CustomEmbed
 from components.login import LoginView
 from resources.emojis import emojis
+from resources.extras import account_kwargs
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
-    from core.decorators import FortniteInteraction
+    from resources.extras import FortniteInteraction
 
 from discord import app_commands, User
 from discord.utils import format_dt

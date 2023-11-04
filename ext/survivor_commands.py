@@ -2,20 +2,20 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from typing import get_args
-from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown, account_kwargs
+from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from core.errors import FortniteException
 from components.itemselect import RecycleSelect, UpgradeSelect
 from components.paginator import Paginator
 from components.embed import EmbedField
 from resources.emojis import emojis
-from fortnite.stw import Survivor, LeadSurvivor, _PersonalityType
+from resources.extras import Personality, account_kwargs
+from fortnite.stw import Survivor
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
     from core.auth import AuthSession
-    from core.decorators import FortniteInteraction
     from components.embed import CustomEmbed
-    from fortnite.base import Account
+    from resources.extras import FortniteInteraction, GenericSurvivor, Account
     from discord import Colour
 
 from discord import app_commands, User
@@ -24,12 +24,12 @@ from discord import app_commands, User
 # noinspection PyUnresolvedReferences
 class SurvivorCommands(app_commands.Group):
 
-    Personalities = [app_commands.Choice(name=choice, value=choice) for choice in get_args(_PersonalityType)]
+    Personalities = [app_commands.Choice(name=choice, value=choice) for choice in get_args(Personality)]
 
     @staticmethod
     def _survivors_to_embeds(
         interaction: FortniteInteraction,
-        survivors: list[Survivor | LeadSurvivor],
+        survivors: list[GenericSurvivor],
         **kwargs: str | int | Colour
     ) -> list[CustomEmbed]:
         embed_fields = []
@@ -59,7 +59,7 @@ class SurvivorCommands(app_commands.Group):
         account: Account,
         name: str,
         personality: app_commands.Choice[str] | None
-    ) -> list[Survivor | LeadSurvivor]:
+    ) -> list[GenericSurvivor]:
         survivors = await account.survivors(auth_session)
         survivors = [survivor for survivor in survivors if name.lower() in survivor.name.lower() and
                      (not personality or personality.name == survivor.personality)]

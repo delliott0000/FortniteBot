@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from datetime import timedelta
 
 if TYPE_CHECKING:
-    from core.decorators import FortniteInteraction
+    from resources.extras import FortniteInteraction
 
 from discord import app_commands
 

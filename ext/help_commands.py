@@ -8,7 +8,7 @@ from resources.emojis import emojis
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
-    from core.decorators import FortniteInteraction
+    from resources.extras import FortniteInteraction
 
 from discord import app_commands
 

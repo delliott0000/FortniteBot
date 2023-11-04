@@ -1,56 +1,19 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import Literal, TypedDict, get_args
+from typing import TypedDict, get_args
 from weakref import ref
 
 from resources.lookup import lookup
 from resources.emojis import emojis
+from resources.extras import SetBonus, HeroType
 from fortnite.base import AccountBoundMixin, BaseEntity
 from core.errors import UnknownTemplateID, MalformedItemAttributes, ItemIsReadOnly, ItemIsFavourited, InvalidUpgrade
 
 if TYPE_CHECKING:
     from weakref import ReferenceType
-    from fortnite.base import Account, Attributes
     from core.auth import AuthSession
-    from core.https import _Json
-
-
-_MaterialType = Literal[
-    'Crystal',
-    'Ore']
-
-_FortType = Literal[
-    'Fortitude',
-    'Offense',
-    'Resistance',
-    'Tech']
-
-_SetBonusType = Literal[
-    'TrapDurability',
-    'RangedDamage',
-    'MeleeDamage',
-    'TrapDamage',
-    'AbilityDamage',
-    'Fortitude',
-    'Resistance',
-    'ShieldRegen']
-
-_PersonalityType = Literal[
-    'Competitive',
-    'Cooperative',
-    'Adventurous',
-    'Dependable',
-    'Analytical',
-    'Pragmatic',
-    'Dreamer',
-    'Curious']
-
-_HeroType = Literal[
-    'Commando',
-    'Constructor',
-    'Outlander',
-    'Ninja']
+    from resources.extras import Json, Material, FortStat, Personality, Account, Attributes
 
 
 class _FortStats(TypedDict):
@@ -113,7 +76,7 @@ class Recyclable(AccountBoundMixin, SaveTheWorldItem):
         except AttributeError:
             raise ItemIsReadOnly(self)
 
-    async def recycle(self) -> _Json:
+    async def recycle(self) -> Json:
         if self.favourite is True:
             raise ItemIsFavourited(self)
 
@@ -135,7 +98,7 @@ class Upgradable(Recyclable):
 
     __tier_mapping__: dict[int, str] = {1: 'i', 2: 'ii', 3: 'iii', 4: 'iv', 5: 'v'}
 
-    async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> _Json:
+    async def upgrade(self, new_level: int, new_tier: int, conversion_index: int) -> Json:
         if new_tier < self.tier or new_level not in range(self.level + 1, 61):
             raise InvalidUpgrade(self)
 
@@ -196,7 +159,7 @@ class Schematic(Upgradable):
         elif self.tier == 5:
             return 'Sunbeam'
 
-    def conversion_index(self, target_material: _MaterialType, target_tier: int = 5) -> int:
+    def conversion_index(self, target_material: Material, target_tier: int = 5) -> int:
         if self.tier <= 3 and target_tier > 3:
             return self.__index_mapping__.get(target_material, 1)
         return -1
@@ -240,7 +203,7 @@ class SurvivorBase(Upgradable):
         super().__init__(account, item_id, template_id, attributes)
 
         try:
-            self.personality: _PersonalityType = attributes['personality'].split('.')[-1][2:]
+            self.personality: Personality = attributes['personality'].split('.')[-1][2:]
             self.squad_index: int = attributes['squad_slot_idx']
         except KeyError:
             raise MalformedItemAttributes(self)
@@ -260,7 +223,7 @@ class Survivor(SurvivorBase):
         super().__init__(account, item_id, template_id, attributes)
 
         try:
-            self.set_bonus_type: _SetBonusType = \
+            self.set_bonus_type: SetBonus = \
                 attributes['set_bonus'].split('.')[-1][2:].replace('Low', '').replace('High', '')
             self.set_bonus_data: dict[str, str | int | None] = lookup['Set Bonuses'][self.set_bonus_type]
         except KeyError:
@@ -300,11 +263,11 @@ class ActiveSetBonus:
         'fort_stats'
     )
 
-    def __init__(self, squad: SurvivorSquad, name: _SetBonusType, points: int, fort_type: _FortType | None) -> None:
+    def __init__(self, squad: SurvivorSquad, name: SetBonus, points: int, fort_type: FortStat | None) -> None:
         self.squad: SurvivorSquad = squad
-        self.name: _SetBonusType = name
+        self.name: SetBonus = name
         self.points: int = points
-        self.fort_type: _FortType | None = fort_type
+        self.fort_type: FortStat | None = fort_type
 
         self.fort_stats: _FortStats = dict(Fortitude=0, Offense=0, Resistance=0, Tech=0)
         if self.fort_type is not None:
@@ -337,7 +300,7 @@ class SurvivorSquad(AccountBoundMixin):
 
     @property
     def active_set_bonuses(self) -> list[ActiveSetBonus]:
-        tally: dict[_SetBonusType, int] = {_bonus_type: 0 for _bonus_type in get_args(_SetBonusType)}
+        tally: dict[SetBonus, int] = {_bonus_type: 0 for _bonus_type in get_args(SetBonus)}
 
         for survivor in self.survivors:
             tally[survivor.set_bonus_type] += 1
@@ -345,9 +308,9 @@ class SurvivorSquad(AccountBoundMixin):
         active_set_bonuses = []
 
         for bonus_type, count in tally.items():
-            name: _SetBonusType = lookup['Set Bonuses'][bonus_type]['name']
+            name: SetBonus = lookup['Set Bonuses'][bonus_type]['name']
             points: int = lookup['Set Bonuses'][bonus_type]['bonus']
-            fort_type: _FortType = lookup['Set Bonuses'][bonus_type]['bonus_type']
+            fort_type: FortStat = lookup['Set Bonuses'][bonus_type]['bonus_type']
 
             for _ in range(count // lookup['Set Bonuses'][bonus_type]['requirement']):
                 active_set_bonus = ActiveSetBonus(self, name, points, fort_type)
@@ -361,7 +324,7 @@ class SurvivorSquad(AccountBoundMixin):
 
         for active_set_bonus in self.active_set_bonuses:
             for fort_type, points in active_set_bonus.fort_stats.items():
-                fort_type: _FortType
+                fort_type: FortStat
                 fort_stats[fort_type] += points
 
         survivor_point_count: int = 0
@@ -383,7 +346,7 @@ class SurvivorSquad(AccountBoundMixin):
 
             survivor_point_count += pl
 
-        name_to_fort_type: _FortType = lookup['Survivor Squads FORT'][self.name]
+        name_to_fort_type: FortStat = lookup['Survivor Squads FORT'][self.name]
         fort_stats[name_to_fort_type] += survivor_point_count
 
         return fort_stats
@@ -453,7 +416,7 @@ class Hero(Upgradable):
     def __init__(self, account: Account, item_id: str, template_id: str, attributes: Attributes) -> None:
         super().__init__(account, item_id, template_id, attributes)
 
-        self.type: _HeroType | None = next((ht for ht in get_args(_HeroType) if ht.lower() in self.template_id), None)
+        self.type: HeroType | None = next((ht for ht in get_args(HeroType) if ht.lower() in self.template_id), None)
 
         perk_data: dict[str, str] = lookup['Hero Perks'].get(self.name, {})
         self.support_perk_name: str | None = perk_data.get('support_perk_name')

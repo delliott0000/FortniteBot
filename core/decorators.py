@@ -1,15 +1,10 @@
-from core.bot import FortniteBot
+from __future__ import annotations
+from typing import TYPE_CHECKING
 
-from discord import app_commands, Interaction
+if TYPE_CHECKING:
+    from resources.extras import FortniteInteraction
 
-
-FortniteInteraction = Interaction[FortniteBot]
-
-
-account_kwargs = {
-    'display': 'Search by Epic display name.',
-    'epic_id': 'Search by Epic account ID.',
-    'user': 'Search by Discord user.'}
+from discord import app_commands
 
 
 def is_not_blacklisted():

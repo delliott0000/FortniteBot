@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 import logging
 import asyncio
-from typing import Any
 from base64 import b64encode
 
 from core.auth import AuthSession
@@ -19,6 +18,7 @@ from core.errors import (
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
+    from resources.extras import Dict, Json
 
 from aiohttp import (
     ClientResponseError,
@@ -27,12 +27,7 @@ from aiohttp import (
 )
 
 
-_Dict = dict[str, Any]
-_List = list[_Dict]
-_Json = _Dict | _List
-
-
-async def response_to_json(resp: ClientResponse) -> _Json:
+async def response_to_json(resp: ClientResponse) -> Json:
     try:
         return await resp.json()
     except ClientResponseError:
@@ -85,7 +80,7 @@ class FortniteHTTPClient:
         await self._session.close()
         return False
 
-    async def request(self, method: str, url: str, retries: int = -1, **kwargs) -> _Json:
+    async def request(self, method: str, url: str, retries: int = -1, **kwargs) -> Json:
         async with self._session.request(method, url, **kwargs) as resp:
             logging.info(f'({resp.status}) {method.upper() + "      "[:6 - len(method)]} {url}')
 
@@ -120,22 +115,22 @@ class FortniteHTTPClient:
 
             raise cls(resp, data)
 
-    async def get(self, url: str, **kwargs) -> _Json:
+    async def get(self, url: str, **kwargs) -> Json:
         return await self.request('get', url, **kwargs)
 
-    async def put(self, url: str, **kwargs) -> _Json:
+    async def put(self, url: str, **kwargs) -> Json:
         return await self.request('put', url, **kwargs)
 
-    async def post(self, url: str, **kwargs) -> _Json:
+    async def post(self, url: str, **kwargs) -> Json:
         return await self.request('post', url, **kwargs)
 
-    async def patch(self, url: str, **kwargs) -> _Json:
+    async def patch(self, url: str, **kwargs) -> Json:
         return await self.request('patch', url, **kwargs)
 
-    async def delete(self, url: str, **kwargs) -> _Json:
+    async def delete(self, url: str, **kwargs) -> Json:
         return await self.request('delete', url, **kwargs)
 
-    async def renew_auth_session(self, refresh_token: str) -> _Dict:
+    async def renew_auth_session(self, refresh_token: str) -> Dict:
         return await self.post(
             self.AUTH_EXCHANGE_URL,
             headers={
@@ -153,7 +148,7 @@ class FortniteHTTPClient:
         )
 
     async def create_auth_session(self, auth_code: str, discord_id: int) -> AuthSession:
-        data: _Dict = await self.post(
+        data: Dict = await self.post(
             self.AUTH_EXCHANGE_URL,
             headers={
                 'Content-Type':

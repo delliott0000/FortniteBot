@@ -8,8 +8,9 @@ from core.errors import Unauthorized
 from core.account import PartialEpicAccount, FullEpicAccount
 
 if TYPE_CHECKING:
-    from core.https import _Dict, _List, _Json, FortniteHTTPClient
+    from core.https import FortniteHTTPClient
     from core.bot import FortniteBot
+    from resources.extras import Dict, List, Json
 
 from dateutil import parser
 
@@ -31,7 +32,7 @@ class AuthSession:
         '_cached_full_account_expires'
     )
 
-    def __init__(self, http_client: FortniteHTTPClient, discord_id: int, data: _Dict) -> None:
+    def __init__(self, http_client: FortniteHTTPClient, discord_id: int, data: Dict) -> None:
         self.http_client: FortniteHTTPClient = http_client
         self.bot: FortniteBot = http_client.bot
 
@@ -58,7 +59,7 @@ class AuthSession:
     def is_expired(self) -> bool:
         return self._killed or self.refresh_expires < self.bot.now
 
-    def _renew_data(self, data: _Dict) -> None:
+    def _renew_data(self, data: Dict) -> None:
         self.epic_id: str = data.get('account_id')
         self.access_token: str = data.get('access_token')
         self.refresh_token: str = data.get('refresh_token')
@@ -80,7 +81,7 @@ class AuthSession:
         data = await self.http_client.renew_auth_session(self.refresh_token)
         self._renew_data(data)
 
-    async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> _Json:
+    async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> Json:
         headers = {'Authorization': f'bearer {self.access_token}'}
 
         try:
@@ -106,7 +107,7 @@ class AuthSession:
     async def account(self) -> FullEpicAccount:
         if self._account is None or self._cached_full_account_expires < self.bot.now:
             url: str = self.http_client.BASE_EPIC_URL + '/public/account/' + self.epic_id
-            data: _Dict = await self.access_request('get', url)
+            data: Dict = await self.access_request('get', url)
             self._account = FullEpicAccount(self, data)
             self._set_cached_account_expiration()
         return self._account
@@ -124,7 +125,7 @@ class AuthSession:
         lookup: str = account_id or display
         url: str = self.http_client.ACCOUNT_REQUESTS_URL.format(url_formatter + lookup)
 
-        data: _Dict = await self.access_request('get', url)
+        data: Dict = await self.access_request('get', url)
 
         account = PartialEpicAccount(self, data)
         self.bot.cache_partial_account(account)
@@ -149,7 +150,7 @@ class AuthSession:
             _account_ids_chunks: list[list[str]] = [_account_ids[i:i + 100] for i in range(0, len(_account_ids), 100)]
             for _account_ids_chunk in _account_ids_chunks:
 
-                data: _List = await self.access_request(
+                data: List = await self.access_request(
                     'get',
                     self.http_client.ACCOUNT_REQUESTS_URL.format(''),
                     params=[('accountId', _account_id) for _account_id in _account_ids_chunk]
@@ -170,7 +171,7 @@ class AuthSession:
         operation: str = 'QueryPublicProfile',
         profile_id: str = 'campaign',
         json: dict | None = None
-    ) -> _Json:
+    ) -> Json:
         epic_id = epic_id or self.epic_id
         json = json or {}
 

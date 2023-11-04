@@ -2,25 +2,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import logging
-from typing import Literal, TypedDict, TypeVar
+from typing import TypedDict
 from weakref import ref, ReferenceType
 
 from core.errors import UnknownTemplateID, MalformedItemAttributes
-from fortnite.stw import SaveTheWorldItem, Schematic, Survivor, LeadSurvivor, Hero
+from fortnite.stw import Schematic, Survivor, LeadSurvivor, Hero
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from core.https import _Dict, _List
     from core.auth import AuthSession
-    from fortnite.base import Attributes
+    from resources.extras import Dict, List, STWFetchable, GenericSurvivor, FriendType, Attributes
 
 from dateutil import parser
 from core.errors import HTTPException
-
-
-_STWTypes = TypeVar('_STWTypes', bound=SaveTheWorldItem)
-
-_FriendTypes = Literal['friends', 'incoming', 'outgoing', 'suggested', 'blocklist']
 
 
 class FriendDict(TypedDict):
@@ -45,22 +39,22 @@ class PartialEpicAccount:
         '_icon_url'
     )
 
-    def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
+    def __init__(self, auth_session: AuthSession, data: Dict) -> None:
         self.id: str = data.get('id') or data.get('accountId')
         self.display: str = data.get('displayName', auth_session.bot.UNKNOWN_STR)
-        self.raw_attributes: _Dict = data.copy()
+        self.raw_attributes: Dict = data.copy()
 
-        self._stw_raw_cache: _Dict | None = None
-        self._stw_obj_cache: _Dict = {}
+        self._stw_raw_cache: Dict | None = None
+        self._stw_obj_cache: Dict = {}
 
         self._icon_url: str | None = None
 
-    async def _raw_stw_data(self, _au: AuthSession) -> _Dict:
+    async def _raw_stw_data(self, _au: AuthSession) -> Dict:
         if self._stw_raw_cache is None:
             self._stw_raw_cache = await _au.profile_operation(epic_id=self.id)
         return self._stw_raw_cache
 
-    async def _raw_stw_items(self, _au: AuthSession) -> _Dict:
+    async def _raw_stw_items(self, _au: AuthSession) -> Dict:
         data = await self._raw_stw_data(_au)
         return data['profileChanges'][0]['profile']['items']
 
@@ -68,8 +62,8 @@ class PartialEpicAccount:
         self,
         _au: AuthSession,
         cache_location: str,
-        *item_types: tuple[str, type[_STWTypes]]
-    ) -> list[_STWTypes]:
+        *item_types: tuple[str, type[STWFetchable]]
+    ) -> list[STWFetchable]:
         try:
             _return = self._stw_obj_cache[cache_location]
         except KeyError:
@@ -101,7 +95,7 @@ class PartialEpicAccount:
         schematics.sort(key=lambda schematic: schematic.power_level, reverse=True)
         return schematics
 
-    async def survivors(self, auth_session: AuthSession) -> list[Survivor | LeadSurvivor]:
+    async def survivors(self, auth_session: AuthSession) -> list[GenericSurvivor]:
         item_types = ('Worker:manager', LeadSurvivor), ('Worker:worker', Survivor)
         survivors = await self._stw_objects(auth_session, 'survivors', *item_types)
         survivors.sort(key=lambda survivor: survivor.base_power_level, reverse=True)
@@ -115,8 +109,8 @@ class PartialEpicAccount:
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
             try:
-                data: _Dict = await self._raw_stw_data(auth_session)
-                items_data: _Dict = data['profileChanges'][0]['profile']['items']
+                data: Dict = await self._raw_stw_data(auth_session)
+                items_data: Dict = data['profileChanges'][0]['profile']['items']
             except (HTTPException, KeyError):
                 return
 
@@ -160,7 +154,7 @@ class FullEpicAccount(PartialEpicAccount):
         'last_login'
     )
 
-    def __init__(self, auth_session: AuthSession, data: _Dict) -> None:
+    def __init__(self, auth_session: AuthSession, data: Dict) -> None:
         super().__init__(auth_session, data)
         unknown = auth_session.bot.UNKNOWN_STR
 
@@ -197,10 +191,10 @@ class FullEpicAccount(PartialEpicAccount):
     def auth_session(self) -> AuthSession:
         return self._auth_session()
 
-    async def friends_list(self, friend_type: _FriendTypes) -> list[FriendDict]:
+    async def friends_list(self, friend_type: FriendType) -> list[FriendDict]:
         url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
-        data: _Dict = await self.auth_session.access_request('get', url)
-        friend_type_data: _List = data[friend_type]
+        data: Dict = await self.auth_session.access_request('get', url)
+        friend_type_data: List = data[friend_type]
 
         account_ids: list[str] = [_entry['accountId'] for _entry in friend_type_data]
         accounts = await self.auth_session.fetch_accounts(*account_ids)

@@ -1,19 +1,14 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from typing import TypeVar
 from core.errors import FortniteException
-from fortnite.base import AccountBoundMixin
 from fortnite.stw import Schematic
 
 if TYPE_CHECKING:
-    from core.decorators import FortniteInteraction
-    from fortnite.stw import Recyclable, Upgradable, _MaterialType
+    from fortnite.stw import Recyclable, Upgradable
+    from resources.extras import FortniteInteraction, Selectable, Material
 
 from discord import ui, SelectOption
-
-
-Selectable = TypeVar('Selectable', bound=AccountBoundMixin)
 
 
 class ItemSelect(ui.Select):
@@ -47,12 +42,12 @@ class RecycleSelect(ItemSelect):
 
 class UpgradeSelect(ItemSelect):
 
-    def __init__(self, items: list[Selectable], new_level: int, new_material: _MaterialType | None = None) -> None:
+    def __init__(self, items: list[Selectable], new_level: int, new_material: Material | None = None) -> None:
         super().__init__(items)
 
         self.new_level: int = new_level
         self.new_tier: int = min((new_level - 1) // 10 + 1, 5)
-        self.new_material: _MaterialType | None = new_material
+        self.new_material: Material | None = new_material
 
     async def callback(self, interaction: FortniteInteraction) -> None:
         # noinspection PyUnresolvedReferences

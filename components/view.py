@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from core.decorators import FortniteInteraction
+    from resources.extras import FortniteInteraction
 
 from discord.ui import View, Item
 from discord import HTTPException
