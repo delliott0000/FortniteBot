@@ -7,7 +7,6 @@ from components.itemselect import RecycleSelect, UpgradeSelect
 from components.paginator import Paginator
 from components.embed import EmbedField
 from resources.emojis import emojis
-from fortnite.stw import Schematic
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
@@ -15,6 +14,7 @@ if TYPE_CHECKING:
     from core.decorators import FortniteInteraction
     from components.embed import CustomEmbed
     from fortnite.base import Account
+    from fortnite.stw import Schematic
     from discord import Colour
 
 from discord import app_commands, User
