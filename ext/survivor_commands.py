@@ -30,7 +30,6 @@ class SurvivorCommands(app_commands.Group):
     def _survivors_to_embeds(
         interaction: FortniteInteraction,
         survivors: list[Survivor | LeadSurvivor],
-        inline: bool = False,
         **kwargs: str | int | Colour
     ) -> list[CustomEmbed]:
         embed_fields = []
@@ -48,7 +47,7 @@ class SurvivorCommands(app_commands.Group):
                       f'> {emojis["id"]} **Item ID:** `{survivor.item_id}`\n'
                       f'> {emojis["favourite"]} **Favorite:** '
                       f'{emojis["check" if survivor.favourite is True else "cross"]}',
-                inline=inline)
+                inline=False)
 
             embed_fields.append(embed_field)
 
