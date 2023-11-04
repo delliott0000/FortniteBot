@@ -36,6 +36,16 @@ _SetBonusType = Literal[
     'Resistance',
     'ShieldRegen']
 
+_PersonalityType = Literal[
+    'Competitive',
+    'Cooperative',
+    'Adventurous',
+    'Dependable',
+    'Analytical',
+    'Pragmatic',
+    'Dreamer',
+    'Curious']
+
 _HeroType = Literal[
     'Commando',
     'Constructor',
@@ -230,7 +240,7 @@ class SurvivorBase(Upgradable):
         super().__init__(account, item_id, template_id, attributes)
 
         try:
-            self.personality: str = attributes['personality'].split('.')[-1][2:]
+            self.personality: _PersonalityType = attributes['personality'].split('.')[-1][2:]
             self.squad_index: int = attributes['squad_slot_idx']
         except KeyError:
             raise MalformedItemAttributes(self)
