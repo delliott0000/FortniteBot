@@ -209,7 +209,7 @@ class SurvivorBase(Upgradable):
         except KeyError:
             raise MalformedItemAttributes(self)
 
-        self.squad_id: str | None = attributes.get('squad_id')
+        self.squad_id: str | None = attributes.get('squad_id') or None
         self.squad_name: str | None = lookup['Survivor Squads'].get(self.squad_id)
 
 
