@@ -6,7 +6,7 @@ from typing import TypedDict
 from weakref import ref, ReferenceType
 
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
-from fortnite.stw import Schematic, Survivor, LeadSurvivor, Hero
+from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero
 
 from dateutil import parser
 
@@ -100,6 +100,37 @@ class PartialEpicAccount:
         survivors = await self._stw_objects(auth_session, 'survivors', *item_types)
         survivors.sort(key=lambda survivor: survivor.base_power_level, reverse=True)
         return survivors
+
+    async def squads(self, auth_session: AuthSession) -> list[SurvivorSquad]:
+        try:
+            squads = self._stw_obj_cache['squads']
+        except KeyError:
+            squads = self._stw_obj_cache['squads'] = []
+            mapping: dict[str, dict[str, list | LeadSurvivor | None]] = {}
+
+            for survivor in await self.survivors(auth_session):
+
+                _squad_id = survivor.squad_id
+                if _squad_id is None:
+                    continue
+
+                elif isinstance(survivor, Survivor):
+                    try:
+                        mapping[_squad_id]['survivors'].append(survivor)
+                    except KeyError:
+                        mapping[_squad_id] = {'survivors': [survivor], 'lead': None}
+
+                elif isinstance(survivor, LeadSurvivor):
+                    try:
+                        mapping[_squad_id]['lead'] = survivor
+                    except KeyError:
+                        mapping[_squad_id] = {'survivors': [], 'lead': survivor}
+
+            for squad_id, squad_composition in mapping.items():
+                squad = SurvivorSquad(self, squad_id, squad_composition['lead'], squad_composition['survivors'])
+                squads.append(squad)
+
+        return squads
 
     async def heroes(self, auth_session: AuthSession) -> list[Hero]:
         heroes = await self._stw_objects(auth_session, 'heroes', ('Hero:hid', Hero))
