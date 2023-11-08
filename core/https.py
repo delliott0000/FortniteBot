@@ -63,6 +63,10 @@ class FortniteHTTPClient:
     # Not a part of Epic Games' API
     COSMETICS_URL: str = 'https://fortnite-api.com/v2/cosmetics/br/{0}'
 
+    # Used to fetch the current day's Mission Alerts plus extra related information
+    MISSIONS_URL: str = 'https://fngw-mcp-gc-livefn.ol.epicgames.com/fortnite/api/game/v2/world/info'
+    FNC_BASE_URL: str = 'https://fortnitecentral.genxgames.gg/api/v1/export?path='
+
     __slots__ = (
         'bot',
         '_session'
