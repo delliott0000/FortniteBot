@@ -62,7 +62,7 @@ class MissionCommands(CustomGroup):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View today\'s Mission Alerts with VBuck rewards.')
+    @app_commands.command(description='View today\'s VBuck alerts.')
     async def vbucks(self, interaction: FortniteInteraction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
@@ -92,7 +92,7 @@ class MissionCommands(CustomGroup):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View today\'s Mission Alerts with legendary/mythic survivor rewards.')
+    @app_commands.command(description='View today\'s legendary/mythic survivor alerts.')
     async def survivors(self, interaction: FortniteInteraction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
@@ -120,7 +120,7 @@ class MissionCommands(CustomGroup):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View today\'s Mission Alerts with legendary schematic rewards.')
+    @app_commands.command(description='View today\'s legendary schematic alerts.')
     async def schematics(self, interaction: FortniteInteraction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
@@ -148,7 +148,7 @@ class MissionCommands(CustomGroup):
     @non_premium_cooldown()
     @is_logged_in()
     @is_not_blacklisted()
-    @app_commands.command(description='View today\'s Mission Alerts with legendary hero rewards.')
+    @app_commands.command(description='View today\'s legendary hero alerts.')
     async def heroes(self, interaction: FortniteInteraction) -> None:
         await interaction.response.defer(thinking=True, ephemeral=True)
 
