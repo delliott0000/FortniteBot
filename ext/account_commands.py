@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from core.group import CustomGroup
 from core.decorators import is_not_blacklisted, is_not_logged_in, is_logged_in, non_premium_cooldown
 from components.embed import CustomEmbed
 from components.login import LoginView
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 
 # noinspection PyUnresolvedReferences
-class AccountCommands(app_commands.Group):
+class AccountCommands(CustomGroup):
 
     @non_premium_cooldown()
     @is_not_logged_in()

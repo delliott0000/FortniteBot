@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 
 from typing import Literal, Callable, Awaitable
 
+from core.group import CustomGroup
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from components.paginator import Paginator
 from components.embed import EmbedField
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 
 
 # noinspection PyUnresolvedReferences
-class FriendsCommands(app_commands.Group):
+class FriendsCommands(CustomGroup):
 
     __friend_type_mapping__: dict[str, str] = {
         'friends': 'Friends List',

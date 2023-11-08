@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from core.group import CustomGroup
 from core.decorators import is_not_blacklisted
 from components.embed import CustomEmbed
 from components.paginator import Paginator
@@ -14,7 +15,7 @@ if TYPE_CHECKING:
 
 
 # noinspection PyUnresolvedReferences
-class HelpCommands(app_commands.Group):
+class HelpCommands(CustomGroup):
 
     __opt_map__: dict[bool, str] = {True: '', False: 'opt'}
 

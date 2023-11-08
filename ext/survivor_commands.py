@@ -3,73 +3,23 @@ from typing import TYPE_CHECKING
 
 from typing import get_args
 
+from core.group import CustomGroup
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
-from core.errors import FortniteException
 from components.itemselect import RecycleSelect, UpgradeSelect
 from components.paginator import Paginator
-from components.embed import EmbedField
-from resources.emojis import emojis
 from resources.extras import Personality, account_kwargs
-from fortnite.stw import Survivor
 
 from discord import app_commands, User
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
-    from core.auth import AuthSession
-    from components.embed import CustomEmbed
-    from resources.extras import FortniteInteraction, GenericSurvivor, Account
-
-    from discord import Colour
+    from resources.extras import FortniteInteraction
 
 
 # noinspection PyUnresolvedReferences
-class SurvivorCommands(app_commands.Group):
+class SurvivorCommands(CustomGroup):
 
     Personalities = [app_commands.Choice(name=choice, value=choice) for choice in get_args(Personality)]
-
-    @staticmethod
-    def _survivors_to_embeds(
-        interaction: FortniteInteraction,
-        survivors: list[GenericSurvivor],
-        **kwargs: str | int | Colour
-    ) -> list[CustomEmbed]:
-        embed_fields = []
-
-        for survivor in survivors:
-
-            extras = emojis['set_bonuses'][survivor.set_bonus_type] if isinstance(survivor, Survivor) else \
-                emojis['lead_survivors'][survivor.preferred_squad_name]
-
-            embed_field = EmbedField(
-                name=f'{survivor.emoji} {emojis["personalities"][survivor.personality]} {extras} {survivor.name}',
-                value=f'> {emojis["level"]} **Level:** `{survivor.level}`\n'
-                      f'> {emojis["tiers"][survivor.tier][None]} **Tier:** `{survivor.tier}`\n'
-                      f'> {emojis["power"]} **PL:** `{survivor.base_power_level}`\n'
-                      f'> {emojis["id"]} **Item ID:** `{survivor.item_id}`\n'
-                      f'> {emojis["favourite"]} **Favorite:** '
-                      f'{emojis["check" if survivor.favourite is True else "cross"]}',
-                inline=False)
-
-            embed_fields.append(embed_field)
-
-        return interaction.client.fields_to_embeds(embed_fields, **kwargs)
-
-    @staticmethod
-    async def _fetch_survivors(
-        auth_session: AuthSession,
-        account: Account,
-        name: str,
-        personality: app_commands.Choice[str] | None
-    ) -> list[GenericSurvivor]:
-        survivors = await account.survivors(auth_session)
-        survivors = [survivor for survivor in survivors if name.lower() in survivor.name.lower() and
-                     (not personality or personality.name == survivor.personality)]
-
-        if not survivors:
-            raise FortniteException(f'Survivor `{name}` not found.')
-
-        return survivors
 
     @non_premium_cooldown()
     @is_logged_in()
@@ -102,13 +52,13 @@ class SurvivorCommands(app_commands.Group):
             account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        survivors = await self._fetch_survivors(auth_session, account, name, personality)
+        survivors = await self.fetch_survivors(auth_session, account, name, personality)
 
-        embeds = self._survivors_to_embeds(
-            interaction,
-            survivors,
-            description=f'**IGN:** `{account.display}`',
+        fields = self.survivors_to_fields(survivors)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=f'**IGN:** `{account.display}`',
             author_name='Survivor List',
             author_icon=icon_url)
         view = Paginator(interaction, embeds)
@@ -137,16 +87,15 @@ class SurvivorCommands(app_commands.Group):
         account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        survivors = await self._fetch_survivors(auth_session, account, name, personality)
+        survivors = await self.fetch_survivors(auth_session, account, name, personality)
 
-        embeds = self._survivors_to_embeds(
-            interaction,
-            survivors,
-            description=interaction.user.mention,
+        fields = self.survivors_to_fields(survivors)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=interaction.user.mention,
             author_name='Upgrade Survivors',
-            author_icon=icon_url,
-        )
+            author_icon=icon_url,)
         view = Paginator(interaction, embeds)
         view.add_item(UpgradeSelect(survivors, level, None))
 
@@ -172,13 +121,13 @@ class SurvivorCommands(app_commands.Group):
         account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        survivors = await self._fetch_survivors(auth_session, account, name, personality)
+        survivors = await self.fetch_survivors(auth_session, account, name, personality)
 
-        embeds = self._survivors_to_embeds(
-            interaction,
-            survivors,
-            description=interaction.user.mention,
+        fields = self.survivors_to_fields(survivors)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=interaction.user.mention,
             author_name='Recycle Survivors',
             author_icon=icon_url)
         view = Paginator(interaction, embeds)

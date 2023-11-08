@@ -1,67 +1,21 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from core.group import CustomGroup
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
-from core.errors import FortniteException
 from components.itemselect import RecycleSelect, UpgradeSelect
 from components.paginator import Paginator
-from components.embed import EmbedField
-from resources.emojis import emojis
 from resources.extras import account_kwargs
 
 from discord import app_commands, User
 
 if TYPE_CHECKING:
     from core.bot import FortniteBot
-    from core.auth import AuthSession
-    from components.embed import CustomEmbed
-    from fortnite.stw import Schematic
-    from resources.extras import FortniteInteraction, Account
-
-    from discord import Colour
+    from resources.extras import FortniteInteraction
 
 
 # noinspection PyUnresolvedReferences
-class SchematicCommands(app_commands.Group):
-
-    @staticmethod
-    def _schematics_to_embeds(
-        interaction: FortniteInteraction,
-        schematics: list[Schematic],
-        **kwargs: str | int | Colour
-    ) -> list[CustomEmbed]:
-        embed_fields = []
-
-        for schematic in schematics:
-
-            perks = f'> {emojis["perk"]} **Perks:** ' \
-                    f'{"".join([emojis["perk_rarities"][perk.rarity] for perk in schematic.perks])}\n' if \
-                schematic.perks else ''
-
-            embed_field = EmbedField(
-                name=f'{schematic.emoji} {schematic.name}',
-                value=f'> {emojis["level"]} **Level:** `{schematic.level}`\n'
-                      f'> {emojis["tiers"][schematic.tier][schematic.material]} **Tier:** `{schematic.tier}`\n'
-                      f'> {emojis["power"]} **PL:** `{schematic.power_level}`\n'
-                      f'{perks}'
-                      f'> {emojis["id"]} **Item ID:** `{schematic.item_id}`\n'
-                      f'> {emojis["favourite"]} **Favorite:** '
-                      f'{emojis["check" if schematic.favourite is True else "cross"]}',
-                inline=False)
-
-            embed_fields.append(embed_field)
-
-        return interaction.client.fields_to_embeds(embed_fields, **kwargs)
-
-    @staticmethod
-    async def _fetch_schematics(auth_session: AuthSession, account: Account, name: str) -> list[Schematic]:
-        schematics = await account.schematics(auth_session)
-        schematics = [schematic for schematic in schematics if name.lower() in schematic.name.lower()]
-
-        if not schematics:
-            raise FortniteException(f'Schematic `{name}` not found.')
-
-        return schematics
+class SchematicCommands(CustomGroup):
 
     @non_premium_cooldown()
     @is_logged_in()
@@ -89,13 +43,13 @@ class SchematicCommands(app_commands.Group):
             account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        schematics = await self._fetch_schematics(auth_session, account, name)
+        schematics = await self.fetch_schematics(auth_session, account, name)
 
-        embeds = self._schematics_to_embeds(
-            interaction,
-            schematics,
-            description=f'**IGN:** `{account.display}`',
+        fields = self.schematics_to_fields(schematics)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=f'**IGN:** `{account.display}`',
             author_name='Schematic List',
             author_icon=icon_url)
         view = Paginator(interaction, embeds)
@@ -126,16 +80,15 @@ class SchematicCommands(app_commands.Group):
         account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        schematics = await self._fetch_schematics(auth_session, account, name)
+        schematics = await self.fetch_schematics(auth_session, account, name)
 
-        embeds = self._schematics_to_embeds(
-            interaction,
-            schematics,
-            description=interaction.user.mention,
+        fields = self.schematics_to_fields(schematics)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=interaction.user.mention,
             author_name='Upgrade Schematics',
-            author_icon=icon_url,
-        )
+            author_icon=icon_url)
         view = Paginator(interaction, embeds)
         view.add_item(UpgradeSelect(schematics, level, material.value if material else None))
 
@@ -153,13 +106,13 @@ class SchematicCommands(app_commands.Group):
         account = await auth_session.account()
 
         icon_url = await account.icon_url(auth_session)
-        schematics = await self._fetch_schematics(auth_session, account, name)
+        schematics = await self.fetch_schematics(auth_session, account, name)
 
-        embeds = self._schematics_to_embeds(
-            interaction,
-            schematics,
-            description=interaction.user.mention,
+        fields = self.schematics_to_fields(schematics)
+        embeds = interaction.client.fields_to_embeds(
+            fields,
             colour=interaction.client.colour(interaction.guild),
+            description=interaction.user.mention,
             author_name='Recycle Schematics',
             author_icon=icon_url)
         view = Paginator(interaction, embeds)
