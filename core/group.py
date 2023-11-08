@@ -10,7 +10,7 @@ from discord import app_commands
 
 if TYPE_CHECKING:
     from core.auth import AuthSession
-    from fortnite.stw import Schematic
+    from fortnite.stw import Schematic, MissionAlert
     from resources.extras import Account, GenericSurvivor
 
 
@@ -58,6 +58,29 @@ class CustomGroup(app_commands.Group):
                       f'> {emojis["favourite"]} **Favorite:** '
                       f'{emojis["check" if schematic.favourite is True else "cross"]}',
                 inline=inline)
+
+            fields.append(field)
+
+        return fields
+
+    @staticmethod
+    def mission_alerts_to_fields(mission_alerts: list[MissionAlert], show_theater: bool = False) -> list[EmbedField]:
+        fields = []
+
+        for mission_alert in mission_alerts:
+
+            rewards_str = '\n'.join(
+                [f'> {reward.emoji} `{reward.name} x{reward.quantity}`' for reward in mission_alert.alert_rewards])
+            theater_str = f'({mission_alert.theater})' if show_theater is True else ''
+
+            field = EmbedField(
+                name=f'{emojis["mission_icons"][mission_alert.name]} {mission_alert.name} {theater_str}',
+                value=f'> {emojis["power"]} **Power Rating:** `{mission_alert.power}`\n'
+                      f'> {emojis["tile_theme"]} **Zone Theme:** `{mission_alert.theme}`\n'
+                      f'> {emojis["red_skull"]} **4-Player:** '
+                      f'{emojis["check"] if mission_alert.four_player is True else emojis["cross"]}\n'
+                      f'> {emojis["loot"]} **Alert Rewards:**\n{rewards_str}',
+                inline=False)
 
             fields.append(field)
 
