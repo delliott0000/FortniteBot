@@ -4,14 +4,16 @@ from typing import TYPE_CHECKING
 import os
 import logging
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 
 from resources.config import TOKEN, OWNER_IDS
+from resources.lookup import lookup
 from core.errors import FortniteException, HTTPException
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
 from core.tree import CustomTree
 from components.embed import CustomEmbed
+from fortnite.stw import MissionAlert, MissionAlertReward
 
 from discord.ui import View
 from discord.ext import commands, tasks
@@ -31,7 +33,7 @@ if TYPE_CHECKING:
     from core.account import PartialEpicAccount
     from core.cache import PartialAccountCacheEntry
     from components.embed import EmbedField
-    from resources.extras import FortniteInteraction
+    from resources.extras import FortniteInteraction, Dict, List
 
     from discord import User, Guild
 
@@ -47,6 +49,7 @@ if __discord__ != '2.3.2':
 class FortniteBot(commands.Bot):
 
     ACCOUNT_CACHE_DURATION: timedelta = timedelta(seconds=900)
+    MISSION_REFRESH_TIME: time = time(minute=1)
     UNKNOWN_STR: str = '[UNKNOWN]'
 
     def __init__(self) -> None:
@@ -70,7 +73,13 @@ class FortniteBot(commands.Bot):
         self._partial_account_cache: dict[str, PartialAccountCacheEntry] = {}
         self._auth_session_cache: dict[int, AuthSession] = {}
 
-        self._tasks: tuple[tasks.Loop, ...] = (self.manage_partial_cache, self.manage_auth_cache, self.manage_data_base)
+        self._tasks: tuple[tasks.Loop, ...] = (
+            self.manage_partial_cache,
+            self.manage_auth_cache,
+            self.manage_data_base,
+            self.refresh_mission_alerts)
+
+        self._mission_alerts: list[MissionAlert] = []
 
     async def __aexit__(self, *_) -> None:
         for task in self._tasks:
@@ -147,11 +156,11 @@ class FortniteBot(commands.Bot):
             display: str | None = None,
             account_id: str | None = None
     ) -> PartialEpicAccount | None:
-        lookup = account_id or display
-        if lookup is None:
+        account_lookup = account_id or display
+        if account_lookup is None:
             raise FortniteException('An Epic ID or display name is required.')
 
-        entry = self._partial_account_cache.get(lookup)
+        entry = self._partial_account_cache.get(account_lookup)
         if entry is not None:
             return entry.get('account')
 
@@ -246,6 +255,99 @@ class FortniteBot(commands.Bot):
         for discord_id, premium_until in await self.database_client.get_premium_states():
             if premium_until < self.now:
                 await self.database_client.expire_premium(discord_id)
+
+    async def mission_alerts(self) -> list[MissionAlert]:
+        if not self._mission_alerts:
+            await self.refresh_mission_alerts()
+        return self._mission_alerts
+
+    @tasks.loop(time=MISSION_REFRESH_TIME)
+    async def refresh_mission_alerts(self) -> None:
+        self._mission_alerts: list[MissionAlert] = []
+        _temp_fnc_cache: Dict = {}
+
+        logging.info('Fetching new Mission Alerts...')
+
+        for auth_session in self._auth_session_cache.values():
+            try:
+                data: Dict = await auth_session.access_request('get', self.http_client.MISSIONS_URL)
+                break
+            except HTTPException:
+                continue
+        else:
+            logging.error('Unable to fetch today\'s Mission Alerts, postponing...')
+            return
+
+        theaters: List = data.get('theaters')
+        missions: List = data.get('missions')
+        alerts: List = data.get('missionAlerts')
+
+        path: str = '/Game/Balance/DataTables/GameDifficultyGrowthBounds.GameDifficultyGrowthBounds'
+        theater_data: Dict = await self.http_client.get(self.http_client.FNC_BASE_URL + path)
+
+        async def _add_mission_alert(i: int, theater: Dict) -> None:
+
+            theater_id: str = theater.get('theaterId')
+            for _theater in theaters:
+                if _theater.get('uniqueId') == theater_id:
+                    theater_name: str = _theater.get('displayName', {}).get('en', 'Unknown Theater')
+                    break
+            else:
+                theater_name: str = 'Unknown Theater'
+
+            for available_alert in theater.get('availableMissionAlerts'):
+                available_alert: Dict
+
+                tile_index: int = available_alert.get('tileIndex', 0)
+                alert_rewards_data: List = available_alert.get('missionAlertRewards', {}).get('items', [])
+
+                tile_theme_path: str = data['theaters'][i]['tiles'][tile_index]['zoneTheme']
+                _tile_theme_url: str = self.http_client.FNC_BASE_URL + tile_theme_path.split('.')[0]
+
+                tile_theme_data: Dict
+                try:
+                    tile_theme_data = _temp_fnc_cache[_tile_theme_url]
+                except KeyError:
+                    tile_theme_data = _temp_fnc_cache[_tile_theme_url] = await self.http_client.get(_tile_theme_url)
+
+                try:
+                    tile_theme_name: str = tile_theme_data['jsonOutput'][1]['Properties']['ZoneName']['sourceString']
+                except (KeyError, IndexError):
+                    tile_theme_name: str = 'Unknown Tile Theme Name'
+
+                for mission in missions[i].get('availableMissions', {}):
+                    mission: Dict
+
+                    if mission.get('tileIndex') == tile_index:
+                        __theater: str = mission.get('missionDifficultyInfo', {}).get('rowName')
+                        generator: str = mission.get('missionGenerator')
+
+                        for mission_name in lookup['Missions']:
+                            mission_name: str
+
+                            if mission_name in generator:
+                                name = lookup['Missions'][mission_name]
+                                break
+                        else:
+                            name = 'Unknown Mission'
+
+                        try:
+                            power_data: str = \
+                                theater_data['jsonOutput'][0]['Rows'][__theater]['ThreatDisplayName']['sourceString']
+                        except (KeyError, IndexError):
+                            power_data: str = '0'
+
+                        alert_rewards = [MissionAlertReward(reward['itemType'], reward['quantity'])
+                                         for reward in alert_rewards_data]
+                        mission_alert = MissionAlert(name, tile_theme_name, theater_name, power_data, alert_rewards)
+
+                        self._mission_alerts.append(mission_alert)
+                        break
+
+        add_mission_tasks = [_add_mission_alert(_i, _theater) for _i, _theater in enumerate(alerts)]
+        await asyncio.gather(*add_mission_tasks)
+
+        logging.info('Mission Alerts fetched successfully.')
 
     async def setup_hook(self) -> None:
         user = self.user
