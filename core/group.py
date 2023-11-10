@@ -129,6 +129,9 @@ class CustomGroup(app_commands.Group):
         return schematics
 
     def squads_to_embeds(self, squads: list[SurvivorSquad], **kwargs: str | int | Colour) -> list[CustomEmbed]:
+        if not squads:
+            raise FortniteException('This player does not have any survivor squads.')
+
         embeds = []
 
         for squad in squads:
