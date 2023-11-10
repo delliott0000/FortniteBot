@@ -49,6 +49,12 @@ class PartialEpicAccount:
 
         self._icon_url: str | None = None
 
+    def __str__(self) -> str:
+        return self.display
+
+    def __eq__(self, other: PartialEpicAccount) -> bool:
+        return isinstance(other, PartialEpicAccount) and self.id == other.id
+
     async def _raw_stw_data(self, _au: AuthSession) -> Dict:
         if self._stw_raw_cache is None:
             self._stw_raw_cache = await _au.profile_operation(epic_id=self.id)
