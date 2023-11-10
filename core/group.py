@@ -3,33 +3,40 @@ from typing import TYPE_CHECKING
 
 from core.errors import FortniteException
 from fortnite.stw import Survivor
-from components.embed import EmbedField
+from components.embed import EmbedField, CustomEmbed
 from resources.emojis import emojis
 
 from discord import app_commands
 
 if TYPE_CHECKING:
     from core.auth import AuthSession
-    from fortnite.stw import Schematic, MissionAlert
+    from fortnite.stw import Schematic, MissionAlert, SurvivorSquad
     from resources.extras import Account, GenericSurvivor
+
+    from discord import Colour
 
 
 class CustomGroup(app_commands.Group):
 
     @staticmethod
-    def survivors_to_fields(survivors: list[GenericSurvivor], inline: bool = False) -> list[EmbedField]:
+    def survivors_to_fields(
+        survivors: list[GenericSurvivor],
+        show_ids: bool = True,
+        inline: bool = False
+    ) -> list[EmbedField]:
         fields = []
 
         for survivor in survivors:
             extras = emojis['set_bonuses'][survivor.set_bonus_type] if isinstance(survivor, Survivor) else \
                 emojis['lead_survivors'][survivor.preferred_squad_name]
+            sid = f'> {emojis["id"]} **Item ID:** `{survivor.item_id}`\n' if show_ids is True else ''
 
             field = EmbedField(
                 name=f'{survivor.emoji} {emojis["personalities"][survivor.personality]} {extras} {survivor.name}',
                 value=f'> {emojis["level"]} **Level:** `{survivor.level}`\n'
                       f'> {emojis["tiers"][survivor.tier][None]} **Tier:** `{survivor.tier}`\n'
                       f'> {emojis["power"]} **PL:** `{survivor.base_power_level}`\n'
-                      f'> {emojis["id"]} **Item ID:** `{survivor.item_id}`\n'
+                      f'{sid}'
                       f'> {emojis["favourite"]} **Favorite:** '
                       f'{emojis["check" if survivor.favourite is True else "cross"]}',
                 inline=inline)
@@ -39,7 +46,11 @@ class CustomGroup(app_commands.Group):
         return fields
 
     @staticmethod
-    def schematics_to_fields(schematics: list[Schematic], inline: bool = False) -> list[EmbedField]:
+    def schematics_to_fields(
+        schematics: list[Schematic],
+        show_ids: bool = True,
+        inline: bool = False
+    ) -> list[EmbedField]:
         fields = []
 
         for schematic in schematics:
@@ -47,6 +58,7 @@ class CustomGroup(app_commands.Group):
             perks = f'> {emojis["perk"]} **Perks:** ' \
                     f'{"".join([emojis["perk_rarities"][perk.rarity] for perk in schematic.perks])}\n' \
                 if schematic.perks else ''
+            sid = f'> {emojis["id"]} **Item ID:** `{schematic.item_id}`\n' if show_ids is True else ''
 
             field = EmbedField(
                 name=f'{schematic.emoji} {schematic.name}',
@@ -54,7 +66,7 @@ class CustomGroup(app_commands.Group):
                       f'> {emojis["tiers"][schematic.tier][schematic.material]} **Tier:** `{schematic.tier}`\n'
                       f'> {emojis["power"]} **PL:** `{schematic.power_level}`\n'
                       f'{perks}'
-                      f'> {emojis["id"]} **Item ID:** `{schematic.item_id}`\n'
+                      f'{sid}'
                       f'> {emojis["favourite"]} **Favorite:** '
                       f'{emojis["check" if schematic.favourite is True else "cross"]}',
                 inline=inline)
@@ -115,3 +127,32 @@ class CustomGroup(app_commands.Group):
             raise FortniteException(f'Schematic `{name}` not found.')
 
         return schematics
+
+    def squads_to_embeds(self, squads: list[SurvivorSquad], **kwargs: str | int | Colour) -> list[CustomEmbed]:
+        embeds = []
+
+        for squad in squads:
+
+            fort_stats: dict = squad.fort_stats
+            fort_type: str = max(fort_stats, key=fort_stats.get)
+            points: int = fort_stats.get(fort_type, 0)
+
+            embed = CustomEmbed(
+                colour=kwargs.get('colour'),
+                description=f'**IGN:** `{squad.account}`\n'
+                            f'**{emojis["fort_icons"][fort_type]} {fort_type}:** `+{points}`\n')
+            embed.set_author(name=squad.name, icon_url=kwargs.get('icon_url'))
+            embed.set_thumbnail(url=emojis['squads'][squad.name])
+
+            survivors = [squad.lead_survivor] if squad.lead_survivor else []
+            survivors += squad.survivors
+            fields = self.survivors_to_fields(survivors, show_ids=False, inline=True)
+            for field in fields:
+                embed.append_field(field)
+
+            embeds.append(embed)
+
+        for embed in embeds:
+            embed.set_footer(text=f'Page {embeds.index(embed) + 1} of {len(embeds)}')
+
+        return embeds

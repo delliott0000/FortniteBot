@@ -54,7 +54,7 @@ class SurvivorCommands(CustomGroup):
         icon_url = await account.icon_url(auth_session)
         survivors = await self.fetch_survivors(auth_session, account, name, personality)
 
-        fields = self.survivors_to_fields(survivors)
+        fields = self.survivors_to_fields(survivors, show_ids=False)
         embeds = interaction.client.fields_to_embeds(
             fields,
             colour=interaction.client.colour(interaction.guild),

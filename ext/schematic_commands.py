@@ -45,7 +45,7 @@ class SchematicCommands(CustomGroup):
         icon_url = await account.icon_url(auth_session)
         schematics = await self.fetch_schematics(auth_session, account, name)
 
-        fields = self.schematics_to_fields(schematics)
+        fields = self.schematics_to_fields(schematics, show_ids=False)
         embeds = interaction.client.fields_to_embeds(
             fields,
             colour=interaction.client.colour(interaction.guild),
