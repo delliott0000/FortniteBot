@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from resources.extras import FortniteInteraction
 
 
+# noinspection PyUnresolvedReferences
 class ProfileCommands(CustomGroup):
 
     @non_premium_cooldown()
@@ -52,6 +53,7 @@ class ProfileCommands(CustomGroup):
             resources_sublist = [resource for resource in resources if resource.name in resource_list]
             value = '\n'.join(f'> {resource.emoji} **{resource.quantity:,}**' for resource in resources_sublist) or '> `None`'
             embed.add_field(name=category, value=value)
+        embed.insert_field_at(2, name='\u200b', value='\u200b')
 
         await interaction.followup.send(embed=embed)
 
