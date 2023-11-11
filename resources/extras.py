@@ -48,8 +48,19 @@ Personality = Literal[
     'Dreamer',
     'Curious']
 
-
 account_kwargs = {
     'display': 'Search by Epic display name.',
     'epic_id': 'Search by Epic account ID.',
     'user': 'Search by Discord user.'}
+
+resource_categories = {
+    'Perk-Up': ['AMP-UP!', 'FIRE-UP!', 'FROST-UP!', 'Uncommon PERK-UP!', 'Rare PERK-UP!', 'Epic PERK-UP!', 'Legendary PERK-UP!'],
+    'Re-Perk': ['RE-PERK!', 'Core RE-PERK!'],
+    'Evo Materials': ['Pure Drop of Rain', 'Lightning in a Bottle', 'Eye of the Storm', 'Storm Shard'],
+    'Manuals': ['Trap Designs', 'Training Manual', 'Weapon Designs'],
+    'Superchargers': ['Trap Supercharger', 'Weapon Supercharger', 'Hero Supercharger', 'Survivor Supercharger'],
+    'XP': ['Hero XP', 'Survivor XP', 'Schematic XP', 'Venture XP'],
+    'Flux': ['Legendary Flux', 'Epic Flux', 'Rare Flux'],
+    'Vouchers': ['Weapon Research Voucher', 'Hero Recruitment Voucher'],
+    'Currency': ['Gold', 'X-Ray Tickets']
+}

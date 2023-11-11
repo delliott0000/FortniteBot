@@ -6,7 +6,7 @@ from typing import TypedDict
 from weakref import ref, ReferenceType
 
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
-from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero
+from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero, AccountResource
 
 from dateutil import parser
 
@@ -86,6 +86,8 @@ class PartialEpicAccount:
                     item_cls = item_type[1]
 
                     if template_id.startswith(tid_prefix):
+                        if item_cls is AccountResource:
+                            attributes |= {'quantity': item_data.get('quantity', 1)}
                         try:
                             item = item_cls(self, item_id, template_id, attributes)
                         except (UnknownTemplateID, MalformedItemAttributes) as error:
@@ -142,6 +144,11 @@ class PartialEpicAccount:
         heroes = await self._stw_objects(auth_session, 'heroes', ('Hero:hid', Hero))
         heroes.sort(key=lambda hero: hero.power_level, reverse=True)
         return heroes
+
+    async def resources(self, auth_session: AuthSession) -> list[AccountResource]:
+        resources = await self._stw_objects(auth_session, 'resources', ('AccountResource', AccountResource))
+        resources.sort(key=lambda resource: resource.quantity, reverse=True)
+        return resources
 
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
