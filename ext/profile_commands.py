@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 from core.group import CustomGroup
 from core.decorators import is_not_blacklisted, is_logged_in, non_premium_cooldown
 from components.embed import CustomEmbed
+from resources.emojis import emojis
 from resources.extras import account_kwargs, resource_categories
 
 from discord import app_commands, User
@@ -54,6 +55,17 @@ class ProfileCommands(CustomGroup):
             value = '\n'.join(f'> {resource.emoji} **{resource.quantity:,}**' for resource in resources_sublist) or '> `None`'
             embed.add_field(name=category, value=value)
         embed.insert_field_at(2, name='\u200b', value='\u200b')
+
+        try:
+            # Should deal with seasonal tickets changing every few months
+            tickets = next(r for r in resources if ('Ticket' in r.name or r.name == 'Candy') and 'X-Ray' not in r.name)
+            prev_field = embed.fields[-2]
+            embed.set_field_at(
+                -2,
+                name=prev_field.name,
+                value=prev_field.value + f'\n> {emojis["resources"]["Tickets"]} **{tickets.quantity:,}**')
+        except StopIteration:
+            pass
 
         await interaction.followup.send(embed=embed)
 

@@ -62,5 +62,6 @@ resource_categories = {
     'XP': ['Hero XP', 'Survivor XP', 'Schematic XP', 'Venture XP'],
     'Flux': ['Legendary Flux', 'Epic Flux', 'Rare Flux'],
     'Vouchers': ['Weapon Research Voucher', 'Hero Recruitment Voucher'],
-    'Currency': ['Gold', 'X-Ray Tickets']
+    'Currency': ['Gold', 'X-Ray Tickets'],
+    'Llamas': ['Mini Reward Llama', 'Upgrade Llama Token', 'Legendary Troll Stash Llama Token']
 }
