@@ -152,6 +152,9 @@ emojis = {
         'Weapon Research Voucher': '<:WeaponVoucher:1117281774846877746>',
         'Hero Recruitment Voucher': '<:HeroVoucher:1117281786662236271>',
         'Gold': '<:Gold:1117349169477193730>',
-        'X-Ray Tickets': '<:XRayTicket:1117349077043118080>'
+        'X-Ray Tickets': '<:XRayTicket:1117349077043118080>',
+        'Mini Reward Llama': '<:MiniLlama:1172846635739516938>',
+        'Upgrade Llama Token': '<:Upgrade:1172845271609258065>',
+        'Legendary Troll Stash Llama Token': '<:GoldenLlama:1172847419394900018>'
     }
 }
