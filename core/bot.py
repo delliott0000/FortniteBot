@@ -337,7 +337,7 @@ class FortniteBot(commands.Bot):
                         except (KeyError, IndexError):
                             power_data: str = '0'
 
-                        alert_rewards = [MissionAlertReward(reward['itemType'], reward['quantity'])
+                        alert_rewards = [MissionAlertReward(reward['itemType'], reward)
                                          for reward in alert_rewards_data]
                         mission_alert = MissionAlert(name, tile_theme_name, theater_name, power_data, alert_rewards)
 

@@ -359,9 +359,9 @@ class MissionAlertReward(SaveTheWorldItem):
         'quantity',
     )
 
-    def __init__(self, template_id: str, quantity: int) -> None:
-        super().__init__(template_id, {})
-        self.quantity: int = quantity
+    def __init__(self, template_id: str, attributes: Attributes) -> None:
+        super().__init__(template_id, attributes)
+        self.quantity: int = attributes.get('quantity', 1)
 
 
 class AccountResource(AccountBoundMixin, MissionAlertReward):
