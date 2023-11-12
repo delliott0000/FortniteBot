@@ -66,6 +66,8 @@ class FortniteBot(commands.Bot):
             tree_cls=CustomTree
         )
 
+        self.owners: list[User] = []
+
         self.app_commands: list[app_commands.AppCommand] = []
 
         self.http_client: FortniteHTTPClient | None = None
@@ -360,10 +362,10 @@ class FortniteBot(commands.Bot):
 
     async def setup_hook(self) -> None:
         user = self.user
-        owners = [(await self.fetch_user(user_id)).name for user_id in self.owner_ids]
+        self.owners = [await self.fetch_user(user_id) for user_id in self.owner_ids]
 
         logging.info(f'Logging in as {user} (ID: {user.id})...')
-        logging.info(f'Owner(s): {" ".join(owners)}')
+        logging.info(f'Owner(s): {", ".join(owner.name for owner in self.owners)}')
 
         logging.info('Syncing app commands...')
         self.app_commands = await self.tree.sync()
