@@ -61,6 +61,20 @@ def is_premium():
     return app_commands.check(predicate)
 
 
+def is_owner():
+
+    async def predicate(interaction: FortniteInteraction) -> bool:
+        uid = interaction.user.id
+
+        _is_owner = uid in interaction.client.owner_ids
+        if _is_owner is False:
+            raise app_commands.CheckFailure('That command is owner-only.')
+
+        return True
+
+    return app_commands.check(predicate)
+
+
 def non_premium_cooldown():
 
     async def predicate(interaction: FortniteInteraction) -> app_commands.Cooldown | None:
