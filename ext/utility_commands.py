@@ -1,9 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from core.group import CustomGroup
-from core.decorators import is_owner
+from datetime import datetime, timedelta
 
+from core.group import CustomGroup
+from core.decorators import is_owner, is_not_blacklisted, non_premium_cooldown
+from components.embed import CustomEmbed
+
+import psutil
 from discord import app_commands, User
 from discord.utils import format_dt
 
@@ -14,6 +18,52 @@ if TYPE_CHECKING:
 
 # noinspection PyUnresolvedReferences
 class UtilityCommands(CustomGroup):
+
+    @non_premium_cooldown()
+    @is_not_blacklisted()
+    @app_commands.command(description='View some of the bot\'s system information.')
+    async def info(self, interaction: FortniteInteraction) -> None:
+        await interaction.response.defer(thinking=True, ephemeral=True)
+
+        process = psutil.Process()
+
+        converter = 1 / 1024 ** 2
+        unit = 'MB'
+
+        total_memory = round(psutil.virtual_memory().total * converter, 2)
+
+        mem = process.memory_info()
+        mem_mb = round(mem.rss * converter, 2)
+        mem_prcnt = round(mem_mb / total_memory, 2)
+        cpu_prcnt = round(process.cpu_percent(), 2)
+
+        since = datetime.fromtimestamp(process.create_time())
+        uptime = interaction.client.now - since
+        uptime -= timedelta(microseconds=uptime.microseconds)
+
+        embed = CustomEmbed(
+            colour=interaction.client.colour(interaction.guild))
+        embed.set_author(name='Process Info', icon_url=interaction.client.user.avatar)
+
+        embed.add_field(
+            name='Owners',
+            value=f'> {" ".join(owner.mention for owner in interaction.client.owners)}',
+            inline=False)
+        embed.add_field(
+            name='Memory',
+            value=f'> **Usage (%): `{mem_prcnt:,}`**\n'
+                  f'> **Usage ({unit}): `{mem_mb:,}`**\n'
+                  f'> **System Total ({unit}): `{total_memory:,}`**')
+        embed.add_field(
+            name='CPU',
+            value=f'> **Usage (%): `{cpu_prcnt:,}`**')
+        embed.add_field(
+            name='Uptime',
+            value=f'> **Online For: `{uptime}`**\n'
+                  f'> **Since: {format_dt(since)}**',
+            inline=False)
+
+        await interaction.followup.send(embed=embed)
 
     @is_owner()
     @app_commands.describe(
