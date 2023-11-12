@@ -9,6 +9,7 @@ emojis = {
     'red_skull': '<:RedSkull:1115048653439123456>',
     'tile_theme': ':hammer_pick:',
     'clock': ':clock3:',
+    'owner': ':gem:',
     'loot': '<:VictoryCrown:1115057891746000957>',
     'premium': '<:Premium:1116477887554523286>',
     'unknown': '<:Unknown:1115061137759805481>',

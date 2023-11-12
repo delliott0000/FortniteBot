@@ -33,19 +33,21 @@ class HelpCommands(CustomGroup):
                 embed = CustomEmbed(
                     title=f'{group_got.name.capitalize()} Commands',
                     description=f'{emojis["clock"]} **- 15s Cooldown (Non-Premium)**\n'
-                                f'{emojis["premium"]} **- Premium Command**',
+                                f'{emojis["premium"]} **- Premium Command**\n'
+                                f'{emojis["owner"]} **- Owner Only**',
                     colour=interaction.client.colour(interaction.guild))
                 embed.set_author(name='Help Menu', icon_url=interaction.client.user.avatar)
 
                 for command_got in group_got.commands:
                     prem: str = emojis['premium'] if [c for c in command_got.checks if 'is_premium' in str(c)] else ''
                     cool: str = emojis['clock'] if [c for c in command_got.checks if '_cooldown_' in str(c)] else ''
+                    ownr: str = emojis['owner'] if [c for c in command_got.checks if 'is_owner' in str(c)] else ''
 
                     command_synced = next(cmd for cmd in group_synced.options if cmd.name == command_got.name)
                     opts = [f'{self.__opt_map__[opt.required]}<{opt.name}>' for opt in command_synced.options]
 
                     embed.add_field(
-                        name=f'{prem} {cool} {command_synced.mention}',
+                        name=f'{prem} {cool} {ownr} {command_synced.mention}',
                         value=f'> **Description:** `{command_got.description}`\n'
                               f'> **Parameters:** `{" ".join(opts) if opts else "`None`"}`',
                         inline=False)
