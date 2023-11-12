@@ -49,6 +49,7 @@ if __discord__ != '2.3.2':
 class FortniteBot(commands.Bot):
 
     ACCOUNT_CACHE_DURATION: timedelta = timedelta(seconds=900)
+    DURATION_CONVERTER_MAP: dict[str, int] = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800, 'y': 31536000}
     MISSION_REFRESH_TIME: time = time(minute=1)
     UNKNOWN_STR: str = '[UNKNOWN]'
 
@@ -109,6 +110,14 @@ class FortniteBot(commands.Bot):
             title=kwargs.get('title'),
             description=kwargs.get('description'),
             colour=kwargs.get('colour'))
+
+    def string_to_duration(self, string: str) -> timedelta:
+        try:
+            n = int(string[:-1])
+            multiplier = self.DURATION_CONVERTER_MAP[string[-1].lower()]
+        except (ValueError, KeyError):
+            raise ValueError('An invalid duration was specified.')
+        return timedelta(seconds=n * multiplier)
 
     def fields_to_embeds(self, fields: list[EmbedField], **kwargs: str | int | Colour) -> list[CustomEmbed]:
         embed_list: list[CustomEmbed] = [self._new_embed(**kwargs)]
