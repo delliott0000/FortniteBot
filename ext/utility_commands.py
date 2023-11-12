@@ -62,6 +62,9 @@ class UtilityCommands(CustomGroup):
             value=f'> **Online For: `{uptime}`**\n'
                   f'> **Since: {format_dt(since)}**',
             inline=False)
+        embed.add_field(
+            name='Ping',
+            value=f'> **Websocket Latency: `{round(interaction.client.latency, 3):,}MS`**')
 
         await interaction.followup.send(embed=embed)
 
