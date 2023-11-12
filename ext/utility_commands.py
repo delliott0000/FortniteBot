@@ -64,7 +64,7 @@ class UtilityCommands(CustomGroup):
             inline=False)
         embed.add_field(
             name='Ping',
-            value=f'> **Websocket Latency: `{round(interaction.client.latency, 3):,}MS`**')
+            value=f'> **Websocket Latency (MS): `{round(interaction.client.latency, 3):,}`**')
 
         await interaction.followup.send(embed=embed)
 
