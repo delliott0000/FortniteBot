@@ -17,6 +17,7 @@ emojis = {
     'survivor_url': 'https://cdn.discordapp.com/emojis/1110278502302887936.webp?size=160&quality=lossless',
     'schematic_url': 'https://cdn.discordapp.com/emojis/1087123577469415454.webp?size=160&quality=lossless',
     'hero_url': 'https://cdn.discordapp.com/emojis/1117848270316777653.webp?size=160&quality=lossless',
+    'hero_perk': '<:MagnifyingGlass:1173899783627341834>',
     'rarities': {
         'common': '<:CommonSchematic:1087123491897221200>',
         'uncommon': '<:UncommonSchematic:1087123515548913736>',
@@ -157,5 +158,11 @@ emojis = {
         'Mini Reward Llama': '<:MiniLlama:1172846635739516938>',
         'Upgrade Llama Token': '<:Upgrade:1172845271609258065>',
         'Legendary Troll Stash Llama Token': '<:GoldenLlama:1172847419394900018>'
+    },
+    'hero_types': {
+        'Commando': '<:Soldier:1117848270316777653>',
+        'Constructor': '<:Constructor:1173898161991991307>',
+        'Outlander': '<:Outlander:1173898128152334378>',
+        'Ninja': '<:Ninja:1173898144141029456>'
     }
 }
