@@ -34,8 +34,8 @@ class UtilityCommands(CustomGroup):
 
         mem = process.memory_info()
         mem_mb = round(mem.rss * converter, 2)
-        mem_prcnt = round(mem_mb / total_memory, 2)
-        cpu_prcnt = round(process.cpu_percent(), 2)
+        mem_prcnt = round(100 * mem_mb / total_memory, 2)
+        cpu_prcnt = round(100 * process.cpu_percent(), 2)
 
         since = datetime.fromtimestamp(process.create_time())
         uptime = interaction.client.now - since
