@@ -48,7 +48,7 @@ class ProfileCommands(CustomGroup):
             colour=interaction.client.colour(interaction.guild),
             description=f'**IGN:** `{account.display}`')
         embed.set_author(name='Profile Resources', icon_url=icon_url)
-        embed.set_footer(text='* Weapon/Hero Voucher counts may be incorrect due to API issues.')
+        embed.set_footer(text='* Weapon/Hero Voucher counts may be incorrect due to an API issue.')
 
         for category, resource_list in resource_categories.items():
             resources_sublist = [resource for resource in resources if resource.name in resource_list]
@@ -66,6 +66,7 @@ class ProfileCommands(CustomGroup):
                 value=prev_field.value + f'\n> {emojis["resources"]["Tickets"]} **{tickets.quantity:,}**')
         except StopIteration:
             pass
+        embed.add_field(name='\u200b', value='\u200b')
 
         await interaction.followup.send(embed=embed)
 
