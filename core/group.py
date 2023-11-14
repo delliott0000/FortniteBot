@@ -10,13 +10,45 @@ from discord import app_commands
 
 if TYPE_CHECKING:
     from core.auth import AuthSession
-    from fortnite.stw import Schematic, MissionAlert, SurvivorSquad
+    from fortnite.stw import Schematic, MissionAlert, SurvivorSquad, Hero
     from resources.extras import Account, GenericSurvivor
 
     from discord import Colour
 
 
 class CustomGroup(app_commands.Group):
+
+    @staticmethod
+    def heroes_to_fields(
+        heroes: list[Hero],
+        show_ids: bool = True,
+        inline: bool = False
+    ) -> list[EmbedField]:
+        fields = []
+
+        for hero in heroes:
+            hid = f'> {emojis["id"]} **Item ID:** `{hero.item_id}`\n' if show_ids is True else ''
+            hero_type = emojis['hero_types'].get(hero.type, '')
+            hero_perk = f'> {emojis["hero_perk"]} **Standard Perk:**\n' \
+                        f'> **`{hero.support_perk_name}: {hero.support_perk_desc}`**\n' \
+                        f'> {emojis["hero_perk"]} **Commander Perk:**\n' \
+                        f'> **`{hero.commander_perk_name}: {hero.commander_perk_desc}`**' \
+                if show_ids is False else ''
+
+            field = EmbedField(
+                name=f'{hero.emoji} {hero_type} {hero.name}',
+                value=f'> {emojis["level"]} **Level:** `{hero.level}`\n'
+                      f'> {emojis["tiers"][hero.tier][None]} **Tier:** `{hero.tier}`\n'
+                      f'> {emojis["power"]} **PL:** `{hero.power_level}`\n'
+                      f'{hid}'
+                      f'> {emojis["favourite"]} **Favorite:** '
+                      f'{emojis["check" if hero.favourite is True else "cross"]}\n'
+                      f'{hero_perk}',
+                inline=inline)
+
+            fields.append(field)
+
+        return fields
 
     @staticmethod
     def survivors_to_fields(
@@ -97,6 +129,22 @@ class CustomGroup(app_commands.Group):
             fields.append(field)
 
         return fields
+
+    @staticmethod
+    async def fetch_heroes(
+        auth_session: AuthSession,
+        account: Account,
+        name: str,
+        category: app_commands.Choice[str] | None
+    ) -> list[Hero]:
+        heroes = await account.heroes(auth_session)
+        heroes = [hero for hero in heroes if name.lower() in hero.name.lower() and
+                  (not category or category.name == hero.type)]
+
+        if not heroes:
+            raise FortniteException(f'Hero `{name}` not found.')
+
+        return heroes
 
     @staticmethod
     async def fetch_survivors(
