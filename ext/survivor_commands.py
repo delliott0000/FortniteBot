@@ -95,7 +95,7 @@ class SurvivorCommands(CustomGroup):
             colour=interaction.client.colour(interaction.guild),
             description=interaction.user.mention,
             author_name='Upgrade Survivors',
-            author_icon=icon_url,)
+            author_icon=icon_url)
         view = Paginator(interaction, embeds)
         view.add_item(UpgradeSelect(survivors, level, None))
 
