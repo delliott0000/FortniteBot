@@ -63,8 +63,8 @@ class AuthSession:
         self.epic_id: str = data.get('account_id')
         self.access_token: str = data.get('access_token')
         self.refresh_token: str = data.get('refresh_token')
-        self.access_expires: datetime = parser.parse(data.get('expires_at'))
-        self.refresh_expires: datetime = parser.parse(data.get('refresh_expires_at'))
+        self.access_expires: datetime = parser.parse(data.get('expires_at'), ignoretz=True)
+        self.refresh_expires: datetime = parser.parse(data.get('refresh_expires_at'), ignoretz=True)
 
     def _set_cached_account_expiration(self) -> None:
         self._cached_full_account_expires: datetime = self.bot.now + self.bot.ACCOUNT_CACHE_DURATION

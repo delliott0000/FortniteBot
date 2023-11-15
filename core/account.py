@@ -227,7 +227,7 @@ class FullEpicAccount(PartialEpicAccount):
             ('last_login', 'lastLogin')
         ):
             try:
-                self.__setattr__(__attr[0], parser.parse(data.get(__attr[1])))
+                self.__setattr__(__attr[0], parser.parse(data.get(__attr[1]), ignoretz=True))
             except (TypeError, parser.ParserError):
                 pass
 
@@ -259,7 +259,7 @@ class FullEpicAccount(PartialEpicAccount):
                 entry[string] = entry.get(string) or None
 
             try:
-                entry['created'] = parser.parse(entry.get('created'))
+                entry['created'] = parser.parse(entry.get('created'), ignoretz=True)
             except (TypeError, parser.ParserError):
                 entry['created'] = None
 
