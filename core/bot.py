@@ -95,6 +95,10 @@ class FortniteBot(commands.Bot):
                 continue
         return await super().__aexit__(*_)
 
+    @staticmethod
+    def _log_task(task_name: str) -> None:
+        logging.info(f'Task Loop called: {task_name}')
+
     @property
     def now(self) -> datetime:
         return datetime.utcnow()
@@ -194,8 +198,10 @@ class FortniteBot(commands.Bot):
         except (KeyError, AttributeError):
             return
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(minutes=5)
     async def manage_partial_cache(self) -> None:
+        self._log_task('manage_partial_cache')
+
         account_ids: list[str] = []
 
         for account_id, cache_entry in self._partial_account_cache.items():
@@ -218,8 +224,10 @@ class FortniteBot(commands.Bot):
         except KeyError:
             pass
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(minutes=5)
     async def manage_auth_cache(self) -> None:
+        self._log_task('manage_auth_cache')
+
         dead_session_discord_ids: list[int] = []
 
         for discord_id, auth_session in self._auth_session_cache.items():
@@ -261,8 +269,10 @@ class FortniteBot(commands.Bot):
         else:
             return await auth_session.fetch_account(display=display, account_id=epic_id)
 
-    @tasks.loop(minutes=1)
+    @tasks.loop(minutes=5)
     async def manage_data_base(self) -> None:
+        self._log_task('manage_data_base')
+
         for discord_id, premium_until in await self.database_client.get_premium_states():
             if premium_until < self.now:
                 await self.database_client.expire_premium(discord_id)
