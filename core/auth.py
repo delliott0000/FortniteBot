@@ -82,7 +82,7 @@ class AuthSession:
         self._renew_data(data)
 
     async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> Json:
-        headers = {'Authorization': f'bearer {self.access_token}'}
+        headers = kwargs.pop('headers', None) or {'Authorization': f'bearer {self.access_token}'}
 
         try:
             return await self.http_client.request(method, url, headers=headers, **kwargs)
