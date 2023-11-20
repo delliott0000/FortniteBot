@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import os
-import logging
-import asyncio
+from os import listdir
+from typing import ClassVar
+from logging import getLogger
+from asyncio import gather, run
 from datetime import datetime, timedelta, time
 
 from resources.config import TOKEN, OWNER_IDS
@@ -29,6 +30,8 @@ from discord import (
 )
 
 if TYPE_CHECKING:
+    from types import TracebackType
+
     from core.auth import AuthSession
     from core.account import PartialEpicAccount
     from core.cache import PartialAccountCacheEntry
@@ -38,20 +41,31 @@ if TYPE_CHECKING:
     from discord import User, Guild
 
 
+_logger = getLogger(__name__)
+
+
 if __discord__ != '2.3.2':
-    logging.fatal('The incorrect version of discord.py has been installed.')
-    logging.fatal('Current Version: {}'.format(__discord__))
-    logging.fatal('Required: 2.3.2')
+    _logger.fatal('The incorrect version of discord.py has been installed.')
+    _logger.fatal('Current Version: {}'.format(__discord__))
+    _logger.fatal('Required: 2.3.2')
 
     raise SystemExit()
 
 
 class FortniteBot(commands.Bot):
 
-    ACCOUNT_CACHE_DURATION: timedelta = timedelta(seconds=900)
-    DURATION_CONVERTER_MAP: dict[str, int] = {'s': 1, 'm': 60, 'h': 3600, 'd': 86400, 'w': 604800, 'y': 31536000}
-    MISSION_REFRESH_TIME: time = time(minute=1)
-    UNKNOWN_STR: str = '[UNKNOWN]'
+    DURATION_CONVERTER_MAP: ClassVar[dict[str, int]] = {
+        's': 1,
+        'm': 60,
+        'h': 3600,
+        'd': 86400,
+        'w': 604800,
+        'y': 31536000}
+
+    ACCOUNT_CACHE_DURATION: ClassVar[timedelta] = timedelta(seconds=900)
+    MISSION_REFRESH_TIME: ClassVar[time] = time(minute=1)
+
+    UNKNOWN_STR: ClassVar[str] = '[UNKNOWN]'
 
     def __init__(self) -> None:
 
@@ -84,7 +98,12 @@ class FortniteBot(commands.Bot):
 
         self._mission_alerts: list[MissionAlert] = []
 
-    async def __aexit__(self, *_) -> None:
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None
+    ) -> None:
         for task in self._tasks:
             task.cancel()
             task.clear_exception_types()
@@ -93,11 +112,7 @@ class FortniteBot(commands.Bot):
                 await auth_session.kill()
             except HTTPException:
                 continue
-        return await super().__aexit__(*_)
-
-    @staticmethod
-    def _log_task(task_name: str) -> None:
-        logging.info(f'Task Loop called: {task_name}')
+        return await super().__aexit__(exc_type, exc_val, exc_tb)
 
     @property
     def now(self) -> datetime:
@@ -200,8 +215,6 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=5)
     async def manage_partial_cache(self) -> None:
-        self._log_task('manage_partial_cache')
-
         account_ids: list[str] = []
 
         for account_id, cache_entry in self._partial_account_cache.items():
@@ -226,8 +239,6 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=5)
     async def manage_auth_cache(self) -> None:
-        self._log_task('manage_auth_cache')
-
         dead_session_discord_ids: list[int] = []
 
         for discord_id, auth_session in self._auth_session_cache.items():
@@ -236,10 +247,10 @@ class FortniteBot(commands.Bot):
             if auth_session.refresh_expires - self.ACCOUNT_CACHE_DURATION <= self.now:
                 try:
                     await auth_session.renew()
-                    logging.info(f'Auth Session [{auth_session.access_token}] renewed.')
+                    _logger.info(f'Auth Session [{auth_session.access_token}] renewed.')
                     continue
                 except HTTPException:
-                    logging.info(f'Auth Session [{auth_session.access_token}] could not be renewed. Ending session...')
+                    _logger.info(f'Auth Session [{auth_session.access_token}] could not be renewed. Ending session...')
                     await auth_session.kill()
                     dead_session_discord_ids.append(discord_id)
 
@@ -271,8 +282,6 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=5)
     async def manage_data_base(self) -> None:
-        self._log_task('manage_data_base')
-
         for discord_id, premium_until in await self.database_client.get_premium_states():
             if premium_until < self.now:
                 await self.database_client.expire_premium(discord_id)
@@ -287,7 +296,7 @@ class FortniteBot(commands.Bot):
         self._mission_alerts: list[MissionAlert] = []
         _temp_fnc_cache: Dict = {}
 
-        logging.info('Fetching new Mission Alerts...')
+        _logger.info('Fetching new Mission Alerts...')
 
         for auth_session in self._auth_session_cache.values():
             try:
@@ -296,7 +305,7 @@ class FortniteBot(commands.Bot):
             except HTTPException:
                 continue
         else:
-            logging.error('Unable to fetch today\'s Mission Alerts, postponing...')
+            _logger.error('Unable to fetch today\'s Mission Alerts, postponing...')
             return
 
         theaters: List = data.get('theaters')
@@ -366,20 +375,20 @@ class FortniteBot(commands.Bot):
                         break
 
         add_mission_tasks = [_add_mission_alert(_i, _theater) for _i, _theater in enumerate(alerts)]
-        await asyncio.gather(*add_mission_tasks)
+        await gather(*add_mission_tasks)
 
-        logging.info('Mission Alerts fetched successfully.')
+        _logger.info('Mission Alerts fetched successfully.')
 
     async def setup_hook(self) -> None:
         user = self.user
         self.owners = [await self.fetch_user(user_id) for user_id in self.owner_ids]
 
-        logging.info(f'Logging in as {user} (ID: {user.id})...')
-        logging.info(f'Owner(s): {", ".join(owner.name for owner in self.owners)}')
+        _logger.info(f'Logging in as {user} (ID: {user.id})...')
+        _logger.info(f'Owner(s): {", ".join(owner.name for owner in self.owners)}')
 
-        logging.info('Syncing app commands...')
+        _logger.info('Syncing app commands...')
         self.app_commands = await self.tree.sync()
-        logging.info('Done!')
+        _logger.info('Done!')
 
         for task in self._tasks:
             task.add_exception_type(Exception)
@@ -390,22 +399,22 @@ class FortniteBot(commands.Bot):
         async def _runner():
             async with FortniteHTTPClient(self) as self.http_client, DatabaseClient(self) as self.database_client:
                 async with self:
-                    for filename in os.listdir('./ext'):
+                    for filename in listdir('./ext'):
                         if filename.endswith('.py'):
                             try:
                                 await self.load_extension(f'ext.{filename[:-3]}')
                             except (commands.ExtensionFailed, commands.NoEntryPointError) as extension_error:
-                                logging.error(f'Extension {filename} could not be loaded: {extension_error}')
+                                _logger.error(f'Extension {filename} could not be loaded: {extension_error}')
                     try:
                         await self.start(TOKEN)
                     except LoginFailure:
-                        logging.fatal('Invalid token passed.')
+                        _logger.fatal('Invalid token passed.')
                     except PrivilegedIntentsRequired:
-                        logging.fatal('Intents are being requested that have not been enabled in the developer portal.')
+                        _logger.fatal('Intents are being requested that have not been enabled in the developer portal.')
 
         try:
-            asyncio.run(_runner())
+            run(_runner())
         except (KeyboardInterrupt, SystemExit):
-            logging.info('Received signal to terminate bot and event loop.')
+            _logger.info('Received signal to terminate bot and event loop.')
         finally:
-            logging.info('Done. Have a nice day!')
+            _logger.info('Done. Have a nice day!')
