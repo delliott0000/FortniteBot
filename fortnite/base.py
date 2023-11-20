@@ -20,6 +20,12 @@ class AccountBoundMixin(ABC):
         self._account: ReferenceType[Account] = ref(account)
         self.item_id: str = item_id
 
+    def __hash__(self) -> int:
+        return hash(self.item_id)
+
+    def __eq__(self, other: AccountBoundMixin) -> bool:
+        return isinstance(other, AccountBoundMixin) and self.item_id == other.item_id
+
     @property
     def account(self) -> Account:
         return self._account()

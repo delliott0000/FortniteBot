@@ -58,6 +58,9 @@ class SaveTheWorldItem(BaseEntity):
         self.rarity: str = lookup['Items'][lookup_id]['rarity']
         self.favourite: bool = attributes.get('favorite', False)
 
+    def __str__(self) -> str:
+        return self.name
+
     @property
     def emoji(self) -> str:
         return emojis['resources'].get(self.name) or emojis['rarities'].get(self.rarity, '')
@@ -161,7 +164,7 @@ class Schematic(Upgradable):
             return 'Sunbeam'
 
     def conversion_index(self, target_material: Material, target_tier: int = 5) -> int:
-        if self.tier <= 3 and target_tier > 3:
+        if self.tier <= 3 < target_tier:
             return self.__index_mapping__.get(target_material, 1)
         return -1
 
@@ -298,6 +301,9 @@ class SurvivorSquad(AccountBoundMixin):
         self.lead_survivor: LeadSurvivor | None = lead_survivor
         self.survivors: list[Survivor] = survivors.copy() if survivors is not None else []
         self.survivors.sort(key=lambda survivor: survivor.squad_index)
+
+    def __str__(self) -> str:
+        return self.name
 
     @property
     def active_set_bonuses(self) -> list[ActiveSetBonus]:

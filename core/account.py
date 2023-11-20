@@ -49,6 +49,9 @@ class PartialEpicAccount:
 
         self._icon_url: str | None = None
 
+    def __hash__(self) -> int:
+        return hash(self.id)
+
     def __str__(self) -> str:
         return self.display
 
