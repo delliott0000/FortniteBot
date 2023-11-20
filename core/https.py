@@ -1,9 +1,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import logging
-import asyncio
+from collections.abc import Coroutine
+from logging import getLogger
 from base64 import b64encode
+from asyncio import sleep
 
 from core.auth import AuthSession
 from core.errors import (
@@ -16,23 +17,27 @@ from core.errors import (
     ServerError
 )
 
-from aiohttp import (
-    ClientResponseError,
-    ClientResponse,
-    ClientSession
-)
+from aiohttp import ClientSession, ClientResponseError
+from aiohttp.helpers import sentinel
 
 if TYPE_CHECKING:
+    from typing import Self, Any
+    from types import TracebackType
+
     from core.bot import FortniteBot
     from resources.extras import Dict, Json
+
+    from aiohttp import BaseConnector, ClientTimeout, ClientResponse
+
+
+_logger = getLogger(__name__)
 
 
 async def response_to_json(resp: ClientResponse) -> Json:
     try:
         return await resp.json()
     except ClientResponseError:
-        # Theoretically this should only happen if we receive an empty response from Epic Games.
-        # In which case it is appropriate to return an empty dictionary.
+        # This should only happen if we receive an empty response from Epic Games.
         return {}
 
 
@@ -69,24 +74,57 @@ class FortniteHTTPClient:
 
     __slots__ = (
         'bot',
-        '_session'
+        'connector',
+        'timeout',
+        '__session'
     )
 
-    def __init__(self, bot: FortniteBot) -> None:
+    def __init__(
+        self,
+        bot: FortniteBot,
+        *,
+        connector: BaseConnector | None = None,
+        timeout: ClientTimeout | None = None
+    ) -> None:
         self.bot: FortniteBot = bot
-        self._session: ClientSession | None = None
+        self.connector: BaseConnector | None = connector
+        self.timeout: ClientTimeout | None = timeout
 
-    async def __aenter__(self) -> FortniteHTTPClient:
-        self._session = ClientSession()
+        self.__session: ClientSession | None = None
+
+    async def __aenter__(self) -> Self:
+        await self.create_connection()
         return self
 
-    async def __aexit__(self, *_) -> bool:
-        await self._session.close()
-        return False
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException],
+        exc_val: BaseException,
+        exc_tb: TracebackType
+    ) -> None:
+        await self.close_connection()
+
+    @property
+    def is_open(self) -> bool:
+        return self.__session is not None and not self.__session.closed
+
+    async def create_connection(self) -> None:
+        self.__session = ClientSession(
+            connector=self.connector,
+            connector_owner=self.connector is None,
+            timeout=self.timeout or sentinel
+        )
+
+    async def close_connection(self) -> None:
+        if self.__session is not None:
+            await self.__session.close()
 
     async def request(self, method: str, url: str, retries: int = -1, **kwargs) -> Json:
-        async with self._session.request(method, url, **kwargs) as resp:
-            logging.info(f'({resp.status}) {method.upper() + "      "[:6 - len(method)]} {url}')
+        if self.is_open is False:
+            raise RuntimeError('HTTP session is closed.')
+
+        async with self.__session.request(method, url, **kwargs) as resp:
+            _logger.info(f'({resp.status}) {method.upper() + "      "[:6 - len(method)]} {url}')
 
             data = await response_to_json(resp)
 
@@ -97,8 +135,8 @@ class FortniteHTTPClient:
                 retries += 1
                 retry_after = 2 ** retries
 
-                logging.warning(f'We are being rate limited. Retrying in {retry_after} seconds...')
-                await asyncio.sleep(retry_after)
+                _logger.warning(f'We are being rate limited. Retrying in {retry_after} seconds...')
+                await sleep(retry_after)
 
                 return await self.request(method, url, retries=retries, **kwargs)
 
@@ -119,20 +157,20 @@ class FortniteHTTPClient:
 
             raise cls(resp, data)
 
-    async def get(self, url: str, **kwargs) -> Json:
-        return await self.request('get', url, **kwargs)
+    def get(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+        return self.request('get', url, **kwargs)
 
-    async def put(self, url: str, **kwargs) -> Json:
-        return await self.request('put', url, **kwargs)
+    def put(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+        return self.request('put', url, **kwargs)
 
-    async def post(self, url: str, **kwargs) -> Json:
-        return await self.request('post', url, **kwargs)
+    def post(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+        return self.request('post', url, **kwargs)
 
-    async def patch(self, url: str, **kwargs) -> Json:
-        return await self.request('patch', url, **kwargs)
+    def patch(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+        return self.request('patch', url, **kwargs)
 
-    async def delete(self, url: str, **kwargs) -> Json:
-        return await self.request('delete', url, **kwargs)
+    def delete(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+        return self.request('delete', url, **kwargs)
 
     async def renew_auth_session(self, refresh_token: str) -> Dict:
         return await self.post(
