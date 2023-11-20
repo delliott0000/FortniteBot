@@ -3,26 +3,27 @@ from typing import TYPE_CHECKING
 
 from datetime import datetime, timedelta
 
-from aiosqlite import (
-    connect,
-    Connection,
-    Cursor
-)
+from aiosqlite import connect
 
 if TYPE_CHECKING:
+    from typing import ClassVar
+    from types import TracebackType
+
     from core.bot import FortniteBot
+
+    from aiosqlite import Connection, Cursor
 
 
 class DatabaseClient:
 
-    FIELDS: tuple[str, ...] = ('blacklisted', 'premium_until')
-    FORMAT: str = \
+    FIELDS: ClassVar[tuple[str, ...]] = ('blacklisted', 'premium_until')
+    FORMAT: ClassVar[str] = \
         'CREATE TABLE IF NOT EXISTS user_data (' \
         'discord_id INTEGER, '                   \
         'blacklisted INTEGER, '                  \
         'premium_until INTEGER'                  \
         ')'
-    INSERT: str = \
+    INSERT: ClassVar[str] = \
         'INSERT INTO user_data (' \
         'discord_id, '            \
         'blacklisted, '           \
@@ -31,38 +32,42 @@ class DatabaseClient:
 
     __slots__ = (
         'bot',
-        '_connection'
+        '__connection'
     )
 
     def __init__(self, bot: FortniteBot) -> None:
         self.bot: FortniteBot = bot
-        self._connection: Connection | None = None
+        self.__connection: Connection | None = None
 
     async def __aenter__(self) -> DatabaseClient:
-        self._connection = await connect('data.db')
-        await self._connection.execute('PRAGMA journal_mode=wal')
-        await self._connection.execute(self.FORMAT)
-        await self._connection.commit()
+        self.__connection = await connect('data.db')
+        await self.__connection.execute('PRAGMA journal_mode=wal')
+        await self.__connection.execute(self.FORMAT)
+        await self.__connection.commit()
         return self
 
-    async def __aexit__(self, *_) -> bool:
-        await self._connection.commit()
-        await self._connection.close()
-        return False
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None
+    ) -> None:
+        await self.__connection.commit()
+        await self.__connection.close()
 
     @staticmethod
     def _int_to_datetime(integer: int) -> datetime:
         return datetime.fromtimestamp(integer)
 
     async def _insert(self, discord_id: int) -> None:
-        await self._connection.execute(self.INSERT, (discord_id, 0, 0))
-        await self._connection.commit()
+        await self.__connection.execute(self.INSERT, (discord_id, 0, 0))
+        await self.__connection.commit()
 
     async def _get_value(self, discord_id: int, value: str) -> int:
         if value not in self.FIELDS:
             raise ValueError(f'Value must be one of the following: {", ".join(self.FIELDS)}')
 
-        cursor: Cursor = await self._connection.execute(
+        cursor: Cursor = await self.__connection.execute(
             f'SELECT {value} FROM user_data WHERE discord_id = ?',
             (discord_id, )
         )
@@ -89,32 +94,32 @@ class DatabaseClient:
 
     async def toggle_blacklist(self, discord_id: int) -> bool:
         new_value = not await self.is_blacklisted(discord_id)
-        await self._connection.execute(
+        await self.__connection.execute(
             'UPDATE user_data SET blacklisted = ? WHERE discord_id = ?',
             (new_value, discord_id)
         )
-        await self._connection.commit()
+        await self.__connection.commit()
         return new_value
 
     async def add_premium(self, discord_id: int, duration: timedelta) -> datetime:
         until = (await self.premium_until(discord_id) or self.bot.now) + duration
-        await self._connection.execute(
+        await self.__connection.execute(
             'UPDATE user_data SET premium_until = ? WHERE discord_id = ?',
             (round(until.timestamp()), discord_id)
         )
-        await self._connection.commit()
+        await self.__connection.commit()
         return until
 
     async def get_premium_states(self) -> list[tuple[int, datetime]]:
-        cursor: Cursor = await self._connection.execute(
+        cursor: Cursor = await self.__connection.execute(
             'SELECT discord_id, premium_until FROM user_data WHERE premium_until != 0'
         )
         records = await cursor.fetchall()
         return [(record[0], self._int_to_datetime(record[1])) for record in records]
 
     async def expire_premium(self, discord_id: int) -> None:
-        await self._connection.execute(
+        await self.__connection.execute(
             'UPDATE user_data SET premium_until = ? WHERE discord_id = ?',
             (0, discord_id)
         )
-        await self._connection.commit()
+        await self.__connection.commit()
