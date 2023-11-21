@@ -247,10 +247,10 @@ class FortniteBot(commands.Bot):
             if auth_session.refresh_expires - self.ACCOUNT_CACHE_DURATION <= self.now:
                 try:
                     await auth_session.renew()
-                    _logger.info(f'Auth Session [{auth_session.access_token}] renewed.')
+                    _logger.info(f'Auth Session {auth_session.access_token} renewed.')
                     continue
                 except HTTPException:
-                    _logger.info(f'Auth Session [{auth_session.access_token}] could not be renewed. Ending session...')
+                    _logger.info(f'Auth Session {auth_session.access_token} could not be renewed. Ending session...')
                     await auth_session.kill()
                     dead_session_discord_ids.append(discord_id)
 

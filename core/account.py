@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import logging
 from typing import TypedDict
+from logging import getLogger
 from weakref import ref, ReferenceType
 
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
@@ -15,6 +15,9 @@ if TYPE_CHECKING:
 
     from core.auth import AuthSession
     from resources.extras import Dict, List, STWFetchable, GenericSurvivor, FriendType, Attributes
+
+
+_logger = getLogger(__name__)
 
 
 class FriendDict(TypedDict):
@@ -74,9 +77,9 @@ class PartialEpicAccount:
         *item_types: tuple[str, type[STWFetchable]]
     ) -> list[STWFetchable]:
         try:
-            _return = self._stw_obj_cache[cache_location]
+            objects = self._stw_obj_cache[cache_location]
         except KeyError:
-            _return = self._stw_obj_cache[cache_location] = []
+            objects = self._stw_obj_cache[cache_location] = []
 
             raw_items = await self._raw_stw_items(_au)
             for item_id, item_data in raw_items.items():
@@ -94,12 +97,12 @@ class PartialEpicAccount:
                         try:
                             item = item_cls(self, item_id, template_id, attributes)
                         except (UnknownTemplateID, MalformedItemAttributes) as error:
-                            logging.error(error)
+                            _logger.error(error)
                             continue
 
-                        _return.append(item)
+                        objects.append(item)
 
-        return _return
+        return objects
 
     async def schematics(self, auth_session: AuthSession) -> list[Schematic]:
         schematics = await self._stw_objects(auth_session, 'schematics', ('Schematic:sid', Schematic))

@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import logging
+from logging import getLogger
 from datetime import datetime
 
 from core.errors import Unauthorized
@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
     from core.bot import FortniteBot
     from resources.extras import Dict, List, Json
+
+
+_logger = getLogger(__name__)
 
 
 class AuthSession:
@@ -46,10 +49,10 @@ class AuthSession:
         self._set_cached_account_expiration()
 
         self.bot.cache_auth_session(self)
-        logging.info(f'Auth Session [{self.access_token}] created.')
+        _logger.info(f'Auth Session {self.access_token} created.')
 
     def __del__(self) -> None:
-        logging.info(f'Auth Session [{self.access_token}] destroyed.')
+        _logger.info(f'Auth Session {self.access_token} destroyed.')
 
     @property
     def is_active(self) -> bool:
