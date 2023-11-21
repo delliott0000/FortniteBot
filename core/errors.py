@@ -14,14 +14,14 @@ class FortniteException(Exception):
 
 class HTTPException(FortniteException):
 
-    def __init__(self, resp: ClientResponse, data: dict) -> None:
-        self.response = resp
+    def __init__(self, response: ClientResponse, data: dict) -> None:
+        self.response = response
         self.data = data
 
-        self.url: str = str(resp.url)
-        self.method: str = resp.method
-        self.status: int = resp.status
-        self.reason: str = resp.reason
+        self.url: str = str(response.url)
+        self.method: str = response.method
+        self.status: int = response.status
+        self.reason: str = response.reason
 
         self.error_code: str = data.get('errorCode', '[error code not found]')
         self.error_message: str = data.get('errorMessage', '[error message not found]')
