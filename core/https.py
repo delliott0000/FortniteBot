@@ -181,19 +181,19 @@ class FortniteHTTPClient:
             else:
                 raise HTTPException(response, data)
 
-    def get(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+    def get(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)
 
-    def put(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+    def put(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('put', url, **kwargs)
 
-    def post(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+    def post(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('post', url, **kwargs)
 
-    def patch(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+    def patch(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('patch', url, **kwargs)
 
-    def delete(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
+    def delete(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('delete', url, **kwargs)
 
     async def renew_auth_session(self, refresh_token: str) -> Dict:
