@@ -141,7 +141,7 @@ class FortniteHTTPClient:
         if self.__session is not None:
             await self.__session.close()
 
-    async def request(self, method: str, url: str, retries: int = -1, **kwargs) -> Json:
+    async def request(self, method: str, url: str, retries: int = -1, **kwargs: Any) -> Json:
         if self.is_open is False:
             raise RuntimeError('HTTP session is closed.')
 
@@ -152,7 +152,7 @@ class FortniteHTTPClient:
 
             _logger.info(f'({status}) {method.upper() + "      "[:6 - len(method)]} {url}')
 
-            if 200 <= status < 300:
+            if 200 <= status < 400:
                 return data
 
             # To-do: Use `self.retry_config` here to more effectively handle retries.
@@ -167,21 +167,19 @@ class FortniteHTTPClient:
                 return await self.request(method, url, retries=retries, **kwargs)
 
             elif status == 400:
-                cls = BadRequest
+                raise BadRequest(response, data)
             elif status == 401:
-                cls = Unauthorized
+                raise Unauthorized(response, data)
             elif status == 403:
-                cls = Forbidden
+                raise Forbidden(response, data)
             elif status == 404:
-                cls = NotFound
+                raise NotFound(response, data)
             elif status == 429:
-                cls = TooManyRequests
+                raise TooManyRequests(response, data)
             elif status >= 500:
-                cls = ServerError
+                raise ServerError(response, data)
             else:
-                cls = HTTPException
-
-            raise cls(response, data)
+                raise HTTPException(response, data)
 
     def get(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)

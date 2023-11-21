@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from resources.extras import Json
     from fortnite.base import BaseEntity
 
     from aiohttp import ClientResponse
@@ -14,20 +15,17 @@ class FortniteException(Exception):
 
 class HTTPException(FortniteException):
 
-    def __init__(self, response: ClientResponse, data: dict) -> None:
+    def __init__(self, response: ClientResponse, data: Json) -> None:
         self.response = response
-        self.data = data
+        self.data = data.copy()
 
-        self.url: str = str(response.url)
-        self.method: str = response.method
-        self.status: int = response.status
-        self.reason: str = response.reason
-
-        self.error_code: str = data.get('errorCode', '[error code not found]')
-        self.error_message: str = data.get('errorMessage', '[error message not found]')
+        _error_data: dict = data if isinstance(data, dict) else {}
+        self.error_code: str = data.get('errorCode', 'unknown_error_code')
+        self.error_message: str = data.get('errorMessage', 'An error occurred.')
+        self.error_vars: list[str] = data.get('messageVars', [])
 
     def __str__(self) -> str:
-        return f'{self.status} {self.reason} - {self.error_message} ({self.error_code})'
+        return f'{self.response.status} {self.response.reason} - {self.error_message}'
 
 
 class BadRequest(HTTPException):
