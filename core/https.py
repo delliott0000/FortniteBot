@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from collections.abc import Coroutine
+from dataclasses import dataclass
 from logging import getLogger
 from base64 import b64encode
 from asyncio import sleep
@@ -33,15 +34,33 @@ if TYPE_CHECKING:
 _logger = getLogger(__name__)
 
 
-async def response_to_json(resp: ClientResponse) -> Json:
+async def response_to_json(response: ClientResponse) -> Json:
     try:
-        return await resp.json()
+        return await response.json()
     except ClientResponseError:
         # This should only happen if we receive an empty response from Epic Games.
         return {}
 
 
+@dataclass(kw_only=True, slots=True, weakref_slot=True)
+class HTTPRetryConfig:
+
+    max_retries: int = 5
+    max_wait_time: float = 65.0
+
+    handle_429s: bool = True
+    max_retry_after: float = 60.0
+
+    handle_throttles: bool = True
+    backoff_factor: float = 1.5
+    backoff_start: float = 1.0
+    backoff_cap: float = 20
+
+
 class FortniteHTTPClient:
+
+    # To-do: Clear up these messy class attributes
+    # Perhaps add a `Route` class that handles some of the URLs
 
     REQUEST_RETRY_LIMIT: int = 5
 
@@ -74,6 +93,7 @@ class FortniteHTTPClient:
 
     __slots__ = (
         'bot',
+        'retry_config',
         'connector',
         'timeout',
         '__session'
@@ -83,10 +103,12 @@ class FortniteHTTPClient:
         self,
         bot: FortniteBot,
         *,
+        retry_config: HTTPRetryConfig | None = None,
         connector: BaseConnector | None = None,
         timeout: ClientTimeout | None = None
     ) -> None:
         self.bot: FortniteBot = bot
+        self.retry_config: HTTPRetryConfig = retry_config or HTTPRetryConfig()
         self.connector: BaseConnector | None = connector
         self.timeout: ClientTimeout | None = timeout
 
@@ -123,15 +145,19 @@ class FortniteHTTPClient:
         if self.is_open is False:
             raise RuntimeError('HTTP session is closed.')
 
-        async with self.__session.request(method, url, **kwargs) as resp:
-            _logger.info(f'({resp.status}) {method.upper() + "      "[:6 - len(method)]} {url}')
+        async with self.__session.request(method, url, **kwargs) as response:
 
-            data = await response_to_json(resp)
+            data = await response_to_json(response)
+            status = response.status
 
-            if 200 <= resp.status < 300:
+            _logger.info(f'({status}) {method.upper() + "      "[:6 - len(method)]} {url}')
+
+            if 200 <= status < 300:
                 return data
 
-            elif resp.status == 429 and retries < self.REQUEST_RETRY_LIMIT:
+            # To-do: Use `self.retry_config` here to more effectively handle retries.
+
+            elif status == 429 and retries < self.REQUEST_RETRY_LIMIT:
                 retries += 1
                 retry_after = 2 ** retries
 
@@ -140,22 +166,22 @@ class FortniteHTTPClient:
 
                 return await self.request(method, url, retries=retries, **kwargs)
 
-            elif resp.status == 400:
+            elif status == 400:
                 cls = BadRequest
-            elif resp.status == 401:
+            elif status == 401:
                 cls = Unauthorized
-            elif resp.status == 403:
+            elif status == 403:
                 cls = Forbidden
-            elif resp.status == 404:
+            elif status == 404:
                 cls = NotFound
-            elif resp.status == 429:
+            elif status == 429:
                 cls = TooManyRequests
-            elif resp.status >= 500:
+            elif status >= 500:
                 cls = ServerError
             else:
                 cls = HTTPException
 
-            raise cls(resp, data)
+            raise cls(response, data)
 
     def get(self, url: str, **kwargs) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)
