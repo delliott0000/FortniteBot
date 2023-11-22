@@ -8,15 +8,7 @@ from base64 import b64encode
 from asyncio import sleep
 
 from core.auth import AuthSession
-from core.errors import (
-    HTTPException,
-    BadRequest,
-    Unauthorized,
-    Forbidden,
-    NotFound,
-    TooManyRequests,
-    ServerError
-)
+from core.errors import HTTPException
 
 from aiohttp import ClientSession, ClientResponseError
 from aiohttp.helpers import sentinel
@@ -166,20 +158,7 @@ class FortniteHTTPClient:
 
                 return await self.request(method, url, retries=retries, **kwargs)
 
-            elif status == 400:
-                raise BadRequest(response, data)
-            elif status == 401:
-                raise Unauthorized(response, data)
-            elif status == 403:
-                raise Forbidden(response, data)
-            elif status == 404:
-                raise NotFound(response, data)
-            elif status == 429:
-                raise TooManyRequests(response, data)
-            elif status >= 500:
-                raise ServerError(response, data)
-            else:
-                raise HTTPException(response, data)
+            raise HTTPException(response, data)
 
     def get(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from logging import getLogger
 from datetime import datetime
 
-from core.errors import Unauthorized
+from core.errors import HTTPException
 from core.account import PartialEpicAccount, FullEpicAccount
 
 from dateutil import parser
@@ -90,10 +90,10 @@ class AuthSession:
         try:
             return await self.http_client.request(method, url, headers=headers, **kwargs)
 
-        except Unauthorized as unauthorized_error:
+        except HTTPException as error:
 
-            if retry is True or self.is_expired is True:
-                raise unauthorized_error
+            if error.response.status != 401 or retry is True or self.is_expired is True:
+                raise error
 
             await self.renew()
             return await self.access_request(method, url, retry=True, **kwargs)
@@ -102,8 +102,8 @@ class AuthSession:
         try:
             url = self.http_client.BASE_EPIC_URL + '/oauth/sessions/kill/' + self.access_token
             await self.access_request('delete', url)
-        # Session is already expired; do nothing
-        except Unauthorized:
+        # Session is probably already expired; do nothing
+        except HTTPException:
             pass
         self._killed = True
 

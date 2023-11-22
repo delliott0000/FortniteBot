@@ -23,39 +23,11 @@ class HTTPException(FortniteException):
         self.code: str = data.get('errorCode', 'unknown_error_code')
         self.message: str = data.get('errorMessage', 'An error occurred.')
         self.message_vars: list[str] = data.get('messageVars', [])
+        self.originating_service: str | None = data.get('originatingService')
+        self.intent: str | None = data.get('intent')
 
     def __str__(self) -> str:
         return f'{self.response.status} {self.response.reason} - {self.message}'
-
-
-class BadRequest(HTTPException):
-
-    pass
-
-
-class Unauthorized(HTTPException):
-
-    pass
-
-
-class Forbidden(HTTPException):
-
-    pass
-
-
-class NotFound(HTTPException):
-
-    pass
-
-
-class TooManyRequests(HTTPException):
-
-    pass
-
-
-class ServerError(HTTPException):
-
-    pass
 
 
 class FortniteItemException(FortniteException):
