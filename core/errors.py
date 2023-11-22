@@ -20,12 +20,12 @@ class HTTPException(FortniteException):
         self.data = data.copy()
 
         _error_data: dict = data if isinstance(data, dict) else {}
-        self.error_code: str = data.get('errorCode', 'unknown_error_code')
-        self.error_message: str = data.get('errorMessage', 'An error occurred.')
-        self.error_vars: list[str] = data.get('messageVars', [])
+        self.code: str = data.get('errorCode', 'unknown_error_code')
+        self.message: str = data.get('errorMessage', 'An error occurred.')
+        self.message_vars: list[str] = data.get('messageVars', [])
 
     def __str__(self) -> str:
-        return f'{self.response.status} {self.response.reason} - {self.error_message}'
+        return f'{self.response.status} {self.response.reason} - {self.message}'
 
 
 class BadRequest(HTTPException):

@@ -34,14 +34,6 @@ if TYPE_CHECKING:
 _logger = getLogger(__name__)
 
 
-async def response_to_json(response: ClientResponse) -> Json:
-    try:
-        return await response.json()
-    except ClientResponseError:
-        # This should only happen if we receive an empty response from Epic Games.
-        return {}
-
-
 @dataclass(kw_only=True, slots=True, weakref_slot=True)
 class HTTPRetryConfig:
 
@@ -141,13 +133,21 @@ class FortniteHTTPClient:
         if self.__session is not None:
             await self.__session.close()
 
+    @staticmethod
+    async def response_to_json(response: ClientResponse) -> Json:
+        try:
+            return await response.json()
+        except ClientResponseError:
+            # This should only happen if we receive an empty response from Epic Games.
+            return {}
+
     async def request(self, method: str, url: str, retries: int = -1, **kwargs: Any) -> Json:
         if self.is_open is False:
             raise RuntimeError('HTTP session is closed.')
 
         async with self.__session.request(method, url, **kwargs) as response:
 
-            data = await response_to_json(response)
+            data = await self.response_to_json(response)
             status = response.status
 
             _logger.info(f'({status}) {method.upper() + "      "[:6 - len(method)]} {url}')
