@@ -5,7 +5,7 @@ from collections.abc import Coroutine
 from dataclasses import dataclass
 from logging import getLogger
 from base64 import b64encode
-from asyncio import sleep
+from time import time
 
 from core.auth import AuthSession
 from core.errors import HTTPException
@@ -133,32 +133,42 @@ class FortniteHTTPClient:
             # This should only happen if we receive an empty response from Epic Games.
             return {}
 
-    async def request(self, method: str, url: str, retries: int = -1, **kwargs: Any) -> Json:
+    @staticmethod
+    def get_retry_after(error: HTTPException) -> int | None:
+        retry_after = error.response.headers.get('Retry-After')
+        if retry_after is not None:
+            return int(retry_after)
+
+        try:
+            return int(error.message_vars[0])
+        except (IndexError, TypeError, ValueError):
+            return
+
+    async def make_request(self, method: str, url: str, **kwargs: Any) -> Json:
         if self.is_open is False:
             raise RuntimeError('HTTP session is closed.')
 
+        pre_time = time()
         async with self.__session.request(method, url, **kwargs) as response:
+            _logger.info(
+                '%s %s returned %s %s in %.3fs',
+                method.upper(),
+                url,
+                response.status,
+                response.reason,
+                time() - pre_time
+            )
 
             data = await self.response_to_json(response)
-            status = response.status
 
-            _logger.info(f'({status}) {method.upper() + "      "[:6 - len(method)]} {url}')
-
-            if 200 <= status < 400:
+            if 200 <= response.status < 400:
                 return data
 
-            # To-do: Use `self.retry_config` here to more effectively handle retries.
-
-            elif status == 429 and retries < self.REQUEST_RETRY_LIMIT:
-                retries += 1
-                retry_after = 2 ** retries
-
-                _logger.warning(f'We are being rate limited. Retrying in {retry_after} seconds...')
-                await sleep(retry_after)
-
-                return await self.request(method, url, retries=retries, **kwargs)
-
             raise HTTPException(response, data)
+
+    async def request(self, method: str, url: str, **kwargs: Any) -> Json:
+        # To-do: Implement `self.retry_config` here to handle retries.
+        return await self.make_request(method, url, **kwargs)
 
     def get(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)
