@@ -5,6 +5,7 @@ from collections.abc import Coroutine
 from dataclasses import dataclass
 from logging import getLogger
 from base64 import b64encode
+from asyncio import sleep
 from time import time
 
 from core.auth import AuthSession
@@ -32,10 +33,10 @@ class HTTPRetryConfig:
     max_retries: int = 5
     max_wait_time: float = 65.0
 
-    handle_429s: bool = True
+    handle_ratelimits: bool = True
     max_retry_after: float = 60.0
 
-    handle_throttles: bool = True
+    handle_backoffs: bool = True
     backoff_factor: float = 1.5
     backoff_start: float = 1.0
     backoff_cap: float = 20
@@ -167,8 +168,56 @@ class FortniteHTTPClient:
             raise HTTPException(response, data)
 
     async def request(self, method: str, url: str, **kwargs: Any) -> Json:
-        # To-do: Implement `self.retry_config` here to handle retries.
-        return await self.make_request(method, url, **kwargs)
+        config = self.retry_config
+
+        tries = 0
+        total_slept = 0
+        backoff = config.backoff_start
+
+        while True:
+            tries += 1
+            sleep_time = 0
+
+            try:
+                return await self.make_request(method, url, **kwargs)
+
+            except HTTPException as error:
+                if tries >= config.max_retries:
+                    raise error
+
+                if error.code == 'errors.com.epicgames.common.throttled' or error.response.status == 429:
+                    retry_after = self.get_retry_after(error)
+
+                    if retry_after is not None:
+                        if config.handle_ratelimits is True and retry_after <= config.max_retry_after:
+                            sleep_time = retry_after
+
+                    else:
+                        backoff *= config.backoff_factor
+                        if config.handle_backoffs is True and backoff <= config.backoff_cap:
+                            sleep_time = backoff
+
+                elif error.code == 'errors.com.epicgames.common.server_error' or \
+                        error.code == 'errors.com.epicgames.common.concurrent_modification_error' or \
+                        error.response.status >= 500:
+                    sleep_time = 2 * (tries - 1) + 0.5
+
+                if sleep_time > 0:
+                    total_slept += sleep_time
+                    if total_slept > config.max_wait_time:
+                        raise error
+
+                    _logger.debug(
+                        'Retrying %s %s in %.3fs...',
+                        error.response.method,
+                        error.response.url,
+                        sleep_time
+                    )
+
+                    await sleep(sleep_time)
+                    continue
+
+                raise error
 
     def get(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('get', url, **kwargs)
