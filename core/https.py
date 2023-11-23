@@ -47,8 +47,6 @@ class FortniteHTTPClient:
     # To-do: Clear up these messy class attributes
     # Perhaps add a `Route` class that handles some of the URLs
 
-    REQUEST_RETRY_LIMIT: int = 5
-
     # ID and secret for the official Fortnite PC game client
     CLIENT_ID: str = 'ec684b8c687f479fadea3cb2ad83f5c6'
     CLIENT_SECRET: str = 'e1f31c211f28413186262d37a13fc84d'
