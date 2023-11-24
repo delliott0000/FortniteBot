@@ -3,16 +3,14 @@ from typing import TYPE_CHECKING
 
 from collections.abc import Coroutine
 from dataclasses import dataclass
-from urllib.parse import quote
 from logging import getLogger
 from base64 import b64encode
-from typing import ClassVar
 from asyncio import sleep
 from time import time
-from abc import ABC
 
 from core.auth import AuthSession
 from core.errors import HTTPException
+from core.route import Route, EpicGamesService, AccountService
 
 from aiohttp import ClientSession, ClientResponseError
 from aiohttp.helpers import sentinel
@@ -43,72 +41,6 @@ class HTTPRetryConfig:
     backoff_factor: float = 1.5
     backoff_start: float = 1.0
     backoff_cap: float = 20
-
-
-class Route(ABC):
-
-    BASE: ClassVar[str] = ''
-
-    __slots__ = (
-        'path',
-        'kwargs'
-    )
-
-    def __init__(self, path: str, **kwargs: str) -> None:
-        if self.BASE == '':
-            raise ValueError('Route must have a base.')
-
-        self.path: str = path
-        self.kwargs: dict[str, str] = {k: self.quote(v) for k, v in kwargs.items()}
-
-    def __hash__(self) -> int:
-        return hash(self.url)
-
-    def __str__(self) -> str:
-        return self.url
-
-    def __eq__(self, other: Route) -> bool:
-        return isinstance(other, Route) and self.url == other.url
-
-    @staticmethod
-    def quote(string: str) -> str:
-        string = quote(string)
-        string = string.replace('/', '%2F')
-        return string
-
-    @property
-    def url(self) -> str:
-        return self.BASE + self.path.format(**self.kwargs)
-
-
-class EpicGamesService(Route):
-
-    BASE = 'https://www.epicgames.com'
-
-
-class AccountService(Route):
-
-    BASE = 'https://account-public-service-prod.ol.epicgames.com'
-
-
-class FriendsService(Route):
-
-    BASE = 'https://friends-public-service-prod.ol.epicgames.com'
-
-
-class FortniteService(Route):
-
-    BASE = 'https://fngw-mcp-gc-livefn.ol.epicgames.com'
-
-
-class CosmeticService(Route):
-
-    BASE = 'https://fortnite-api.com'
-
-
-class FNCentralService(Route):
-
-    BASE = 'https://fortnitecentral.genxgames.gg'
 
 
 class FortniteHTTPClient:
