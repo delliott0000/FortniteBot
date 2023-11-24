@@ -47,18 +47,6 @@ class FortniteHTTPClient:
 
     URL = Route | str
 
-    # Base URLs for various Epic Games HTTP services
-    BASE_EPIC_URL: str = 'https://account-public-service-prod.ol.epicgames.com/account/api'
-    BASE_FORT_URL: str = 'https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api'
-    BASE_FRIENDS_URL: str = 'https://friends-public-service-prod.ol.epicgames.com/friends/api/v1'
-
-    ACCOUNT_REQUESTS_URL: str = BASE_EPIC_URL + '/public/account/{0}'
-    PROFILE_REQUESTS_URL: str = BASE_FORT_URL + '/game/v2/profile/{0}/{1}/{2}?profileId={3}'
-
-    # Used to fetch the current day's Mission Alerts plus extra related information
-    MISSIONS_URL: str = 'https://fngw-mcp-gc-livefn.ol.epicgames.com/fortnite/api/game/v2/world/info'
-    FNC_BASE_URL: str = 'https://fortnitecentral.genxgames.gg/api/v1/export?path='
-
     __slots__ = (
         'bot',
         'retry_config',

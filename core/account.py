@@ -5,7 +5,7 @@ from typing import TypedDict
 from logging import getLogger
 from weakref import ref, ReferenceType
 
-from core.route import CosmeticService
+from core.route import CosmeticService, FriendsService
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
 from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero, AccountResource
 
@@ -244,8 +244,8 @@ class FullEpicAccount(PartialEpicAccount):
         return self._auth_session()
 
     async def friends_list(self, friend_type: FriendType) -> list[FriendDict]:
-        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/summary'
-        data: Dict = await self.auth_session.access_request('get', url)
+        route = FriendsService('/friends/api/v1/{account_id}/summary', account_id=self.id)
+        data: Dict = await self.auth_session.access_request('get', route)
         friend_type_data: List = data[friend_type]
 
         account_ids: list[str] = [_entry['accountId'] for _entry in friend_type_data]
@@ -274,17 +274,29 @@ class FullEpicAccount(PartialEpicAccount):
         return friend_type_data
 
     async def friend(self, account: PartialEpicAccount) -> None:
-        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
-        await self.auth_session.access_request('post', url)
+        route = FriendsService(
+            '/friends/api/v1/{account_id}/friends/{friend_id}',
+            account_id=self.id,
+            friend_id=account.id)
+        await self.auth_session.access_request('post', route)
 
     async def unfriend(self, account: PartialEpicAccount) -> None:
-        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/friends/{account.id}'
-        await self.auth_session.access_request('delete', url)
+        route = FriendsService(
+            '/friends/api/v1/{account_id}/friends/{friend_id}',
+            account_id=self.id,
+            friend_id=account.id)
+        await self.auth_session.access_request('delete', route)
 
     async def block(self, account: PartialEpicAccount) -> None:
-        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
-        await self.auth_session.access_request('post', url)
+        route = FriendsService(
+            '/friends/api/v1/{account_id}/blocklist/{friend_id}',
+            account_id=self.id,
+            friend_id=account.id)
+        await self.auth_session.access_request('post', route)
 
     async def unblock(self, account: PartialEpicAccount) -> None:
-        url = self.auth_session.http_client.BASE_FRIENDS_URL + f'/{self.id}/blocklist/{account.id}'
-        await self.auth_session.access_request('delete', url)
+        route = FriendsService(
+            '/friends/api/v1/{account_id}/blocklist/{friend_id}',
+            account_id=self.id,
+            friend_id=account.id)
+        await self.auth_session.access_request('delete', route)

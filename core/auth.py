@@ -6,12 +6,14 @@ from datetime import datetime
 
 from core.errors import HTTPException
 from core.account import PartialEpicAccount, FullEpicAccount
+from core.route import AccountService, FortniteService
 
 from dateutil import parser
 
 if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
     from core.bot import FortniteBot
+    from core.route import Route
     from resources.extras import Dict, List, Json
 
 
@@ -84,11 +86,11 @@ class AuthSession:
         data = await self.http_client.renew_auth_session(self.refresh_token)
         self._renew_data(data)
 
-    async def access_request(self, method: str, url: str, retry: bool = False, **kwargs) -> Json:
+    async def access_request(self, method: str, route: Route, retry: bool = False, **kwargs) -> Json:
         headers = kwargs.pop('headers', None) or {'Authorization': f'bearer {self.access_token}'}
 
         try:
-            return await self.http_client.request(method, url, headers=headers, **kwargs)
+            return await self.http_client.request(method, route, headers=headers, **kwargs)
 
         except HTTPException as error:
 
@@ -96,12 +98,14 @@ class AuthSession:
                 raise error
 
             await self.renew()
-            return await self.access_request(method, url, retry=True, **kwargs)
+            return await self.access_request(method, route, retry=True, **kwargs)
 
     async def kill(self) -> None:
         try:
-            url = self.http_client.BASE_EPIC_URL + '/oauth/sessions/kill/' + self.access_token
-            await self.access_request('delete', url)
+            route = AccountService(
+                '/account/api/oauth/sessions/kill/{access_token}',
+                access_token=self.access_token)
+            await self.access_request('delete', route)
         # Session is probably already expired; do nothing
         except HTTPException:
             pass
@@ -109,8 +113,8 @@ class AuthSession:
 
     async def account(self) -> FullEpicAccount:
         if self._account is None or self._cached_full_account_expires < self.bot.now:
-            url: str = self.http_client.BASE_EPIC_URL + '/public/account/' + self.epic_id
-            data: Dict = await self.access_request('get', url)
+            route = AccountService('/account/api/public/account/{account_id}', account_id=self.epic_id)
+            data: Dict = await self.access_request('get', route)
             self._account = FullEpicAccount(self, data)
             self._set_cached_account_expiration()
         return self._account
@@ -124,11 +128,12 @@ class AuthSession:
         if account is not None:
             return account
 
-        url_formatter: str = 'displayName/' if account_id is None else ''
-        lookup: str = account_id or display
-        url: str = self.http_client.ACCOUNT_REQUESTS_URL.format(url_formatter + lookup)
+        if display is not None:
+            route = AccountService('/account/api/public/account/displayName/{display}', display=display)
+        else:
+            route = AccountService('/account/api/public/account/{account_id}', account_id=account_id)
 
-        data: Dict = await self.access_request('get', url)
+        data: Dict = await self.access_request('get', route)
 
         account = PartialEpicAccount(self, data)
         self.bot.cache_partial_account(account)
@@ -151,11 +156,13 @@ class AuthSession:
         if _account_ids:
 
             _account_ids_chunks: list[list[str]] = [_account_ids[i:i + 100] for i in range(0, len(_account_ids), 100)]
+            route = AccountService('/account/api/public/account')
+
             for _account_ids_chunk in _account_ids_chunks:
 
                 data: List = await self.access_request(
                     'get',
-                    self.http_client.ACCOUNT_REQUESTS_URL.format(''),
+                    route,
                     params=[('accountId', _account_id) for _account_id in _account_ids_chunk]
                 )
 
@@ -178,8 +185,11 @@ class AuthSession:
         epic_id = epic_id or self.epic_id
         json = json or {}
 
-        return await self.access_request(
-            method,
-            self.http_client.PROFILE_REQUESTS_URL.format(epic_id, route, operation, profile_id),
-            json=json
-        )
+        route = FortniteService(
+            '/fortnite/api/game/v2/profile/{account_id}/{route}/{operation}?profileId={profile_id}',
+            account_id=epic_id,
+            route=route,
+            operation=operation,
+            profile_id=profile_id)
+
+        return await self.access_request(method, route, json=json)

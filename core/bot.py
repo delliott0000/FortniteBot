@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, time
 from resources.config import TOKEN, OWNER_IDS
 from resources.lookup import lookup
 from core.errors import FortniteException, HTTPException
+from core.route import FortniteService, FNCentralService
 from core.https import FortniteHTTPClient
 from core.database import DatabaseClient
 from core.tree import CustomTree
@@ -294,13 +295,15 @@ class FortniteBot(commands.Bot):
     @tasks.loop(time=MISSION_REFRESH_TIME)
     async def refresh_mission_alerts(self) -> None:
         self._mission_alerts: list[MissionAlert] = []
-        _temp_fnc_cache: Dict = {}
+        _temp_fnc_cache: dict[FNCentralService, Dict] = {}
 
         _logger.info('Fetching new Mission Alerts...')
 
+        mission_route = FortniteService('/fortnite/api/game/v2/world/info')
+
         for auth_session in self._auth_session_cache.values():
             try:
-                data: Dict = await auth_session.access_request('get', self.http_client.MISSIONS_URL)
+                data: Dict = await auth_session.access_request('get', mission_route)
                 break
             except HTTPException:
                 continue
@@ -312,8 +315,9 @@ class FortniteBot(commands.Bot):
         missions: List = data.get('missions')
         alerts: List = data.get('missionAlerts')
 
-        path: str = '/Game/Balance/DataTables/GameDifficultyGrowthBounds.GameDifficultyGrowthBounds'
-        theater_data: Dict = await self.http_client.get(self.http_client.FNC_BASE_URL + path)
+        difficulty_route = FNCentralService(
+            '/api/v1/export?path=/Game/Balance/DataTables/GameDifficultyGrowthBounds.GameDifficultyGrowthBounds')
+        theater_data: Dict = await self.http_client.get(difficulty_route)
 
         async def _add_mission_alert(i: int, theater: Dict) -> None:
 
@@ -332,13 +336,15 @@ class FortniteBot(commands.Bot):
                 alert_rewards_data: List = available_alert.get('missionAlertRewards', {}).get('items', [])
 
                 tile_theme_path: str = data['theaters'][i]['tiles'][tile_index]['zoneTheme']
-                _tile_theme_url: str = self.http_client.FNC_BASE_URL + tile_theme_path.split('.')[0]
+                tile_theme_route = FNCentralService(
+                    '/api/v1/export?path={tile_theme_path}',
+                    tile_theme_path=tile_theme_path.split('.')[0])
 
                 tile_theme_data: Dict
                 try:
-                    tile_theme_data = _temp_fnc_cache[_tile_theme_url]
+                    tile_theme_data = _temp_fnc_cache[tile_theme_route]
                 except KeyError:
-                    tile_theme_data = _temp_fnc_cache[_tile_theme_url] = await self.http_client.get(_tile_theme_url)
+                    tile_theme_data = _temp_fnc_cache[tile_theme_route] = await self.http_client.get(tile_theme_route)
 
                 try:
                     tile_theme_name: str = tile_theme_data['jsonOutput'][1]['Properties']['ZoneName']['sourceString']
