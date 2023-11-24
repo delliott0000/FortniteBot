@@ -14,7 +14,7 @@ class LoginView(CustomView):
 
     def __init__(self, interaction: FortniteInteraction, **kwargs: float | None) -> None:
         super().__init__(interaction, **kwargs)
-        self.add_item(ui.Button(label='Get Code', url=interaction.client.http_client.USER_AUTH_URL))
+        self.add_item(ui.Button(label='Get Code', url=str(interaction.client.http_client.user_auth_path)))
 
     @ui.button(label='Submit Code')
     async def submit_code(self, interaction: FortniteInteraction, _: Button) -> None:

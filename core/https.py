@@ -81,16 +81,39 @@ class HTTPRetryConfig:
     backoff_cap: float = 20
 
 
+class EpicGamesService(Route):
+
+    BASE = 'https://www.epicgames.com'
+
+
+class AccountService(Route):
+
+    BASE = 'https://account-public-service-prod.ol.epicgames.com'
+
+
+class FriendsService(Route):
+
+    BASE = 'https://friends-public-service-prod.ol.epicgames.com'
+
+
+class FortniteService(Route):
+
+    BASE = 'https://fngw-mcp-gc-livefn.ol.epicgames.com'
+
+
+class CosmeticService(Route):
+
+    BASE = 'https://fortnite-api.com'
+
+
+class FNCentralService(Route):
+
+    BASE = 'https://fortnitecentral.genxgames.gg'
+
+
 class FortniteHTTPClient:
 
     URL = Route | str
-
-    # ID and secret for the official Fortnite PC game client
-    CLIENT_ID: str = 'ec684b8c687f479fadea3cb2ad83f5c6'
-    CLIENT_SECRET: str = 'e1f31c211f28413186262d37a13fc84d'
-
-    # URL visited by the user in their browser to obtain an authorization code
-    USER_AUTH_URL: str = f'https://www.epicgames.com/id/api/redirect?clientId={CLIENT_ID}&responseType=code'
 
     # Base URLs for various Epic Games HTTP services
     BASE_EPIC_URL: str = 'https://account-public-service-prod.ol.epicgames.com/account/api'
@@ -99,10 +122,6 @@ class FortniteHTTPClient:
 
     ACCOUNT_REQUESTS_URL: str = BASE_EPIC_URL + '/public/account/{0}'
     PROFILE_REQUESTS_URL: str = BASE_FORT_URL + '/game/v2/profile/{0}/{1}/{2}?profileId={3}'
-
-    # Used to exchange the user's authorization code for a session, and to keep existing sessions alive
-    AUTH_EXCHANGE_URL: str = BASE_EPIC_URL + '/oauth/token'
-    AUTH_EXCHANGE_SECRET: str = b64encode(f'{CLIENT_ID}:{CLIENT_SECRET}'.encode()).decode()
 
     # Miscellaneous URL used to get in-game cosmetics data from an item ID
     # Not a part of Epic Games' API
@@ -117,6 +136,8 @@ class FortniteHTTPClient:
         'retry_config',
         'connector',
         'timeout',
+        '_id',
+        '_secret',
         '__session'
     )
 
@@ -132,6 +153,9 @@ class FortniteHTTPClient:
         self.retry_config: HTTPRetryConfig = retry_config or HTTPRetryConfig()
         self.connector: BaseConnector | None = connector
         self.timeout: ClientTimeout | None = timeout
+
+        self._id: str = 'ec684b8c687f479fadea3cb2ad83f5c6'
+        self._secret: str = 'e1f31c211f28413186262d37a13fc84d'
 
         self.__session: ClientSession | None = None
 
@@ -271,14 +295,26 @@ class FortniteHTTPClient:
     def delete(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
         return self.request('delete', route, **kwargs)
 
+    @property
+    def user_auth_path(self) -> EpicGamesService:
+        return EpicGamesService('/id/api/redirect?clientId={client_id}&responseType=code', client_id=self._id)
+
+    @property
+    def auth_exchange_path(self) -> AccountService:
+        return AccountService('/account/api/oauth/token')
+
+    @property
+    def auth_exchange_secret(self) -> str:
+        return b64encode(f'{self._id}:{self._secret}'.encode()).decode()
+
     async def renew_auth_session(self, refresh_token: str) -> Dict:
         return await self.post(
-            self.AUTH_EXCHANGE_URL,
+            self.auth_exchange_path,
             headers={
                 'Content-Type':
                     'application/x-www-form-urlencoded',
                 'Authorization':
-                    f'basic {self.AUTH_EXCHANGE_SECRET}'
+                    f'basic {self.auth_exchange_secret}'
             },
             data={
                 'grant_type':
@@ -290,12 +326,12 @@ class FortniteHTTPClient:
 
     async def create_auth_session(self, auth_code: str, discord_id: int) -> AuthSession:
         data: Dict = await self.post(
-            self.AUTH_EXCHANGE_URL,
+            self.auth_exchange_path,
             headers={
                 'Content-Type':
                     'application/x-www-form-urlencoded',
                 'Authorization':
-                    f'basic {self.AUTH_EXCHANGE_SECRET}'
+                    f'basic {self.auth_exchange_secret}'
             },
             data={
                 'grant_type':

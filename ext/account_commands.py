@@ -29,7 +29,7 @@ class AccountCommands(CustomGroup):
         embed = CustomEmbed(
             title='__How To Log In__',
             description=f'**• Step 1:** Log into Epic Games on your browser and open '
-                        f'[this link]({interaction.client.http_client.USER_AUTH_URL}) '
+                        f'[this link]({interaction.client.http_client.user_auth_path}) '
                         f'(or click the "Get Code" button below).\n\n'
                         f'**• Step 2:** Copy the 32-digit code labelled "authorizationCode".\n\n'
                         f'**• Step 3:** Click the button labelled "Submit Code". '
