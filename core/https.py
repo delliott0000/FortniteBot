@@ -30,6 +30,21 @@ if TYPE_CHECKING:
 _logger = getLogger(__name__)
 
 
+@dataclass(kw_only=True, slots=True, weakref_slot=True)
+class HTTPRetryConfig:
+
+    max_retries: int = 5
+    max_wait_time: float = 65.0
+
+    handle_ratelimits: bool = True
+    max_retry_after: float = 60.0
+
+    handle_backoffs: bool = True
+    backoff_factor: float = 1.5
+    backoff_start: float = 1.0
+    backoff_cap: float = 20
+
+
 class Route(ABC):
 
     BASE: ClassVar[str] = ''
@@ -64,21 +79,6 @@ class Route(ABC):
     @property
     def url(self) -> str:
         return self.BASE + self.path.format(**self.kwargs)
-
-
-@dataclass(kw_only=True, slots=True, weakref_slot=True)
-class HTTPRetryConfig:
-
-    max_retries: int = 5
-    max_wait_time: float = 65.0
-
-    handle_ratelimits: bool = True
-    max_retry_after: float = 60.0
-
-    handle_backoffs: bool = True
-    backoff_factor: float = 1.5
-    backoff_start: float = 1.0
-    backoff_cap: float = 20
 
 
 class EpicGamesService(Route):
