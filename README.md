@@ -1,7 +1,7 @@
 **This project is a work in progress. As a result, the bot may frequently be offline. Furthermore, some features may be unstable or incomplete!**
 
 # Fortnite Bot
-Fortnite Bot is a Discord companion bot that allows you to remotely access your Epic Games account from Discord.
+Fortnite Bot is a Discord bot that allows you to remotely access your Epic Games account.
 
 # How To Use
 - Follow this [invite link](https://discord.com/api/oauth2/authorize?client_id=1083374667982704710&permissions=67387392&scope=bot) to add the bot to one of your servers.
