@@ -3,10 +3,13 @@ from typing import TYPE_CHECKING
 
 from collections.abc import Coroutine
 from dataclasses import dataclass
+from urllib.parse import quote
 from logging import getLogger
 from base64 import b64encode
+from typing import ClassVar
 from asyncio import sleep
 from time import time
+from abc import ABC
 
 from core.auth import AuthSession
 from core.errors import HTTPException
@@ -27,6 +30,42 @@ if TYPE_CHECKING:
 _logger = getLogger(__name__)
 
 
+class Route(ABC):
+
+    BASE: ClassVar[str] = ''
+
+    __slots__ = (
+        'path',
+        'kwargs'
+    )
+
+    def __init__(self, path: str, **kwargs: str) -> None:
+        if self.BASE == '':
+            raise ValueError('Route must have a base.')
+
+        self.path: str = path
+        self.kwargs: dict[str, str] = {k: self.quote(v) for k, v in kwargs.items()}
+
+    def __hash__(self) -> int:
+        return hash(self.url)
+
+    def __str__(self) -> str:
+        return self.url
+
+    def __eq__(self, other: Route) -> bool:
+        return isinstance(other, Route) and self.url == other.url
+
+    @staticmethod
+    def quote(string: str) -> str:
+        string = quote(string)
+        string = string.replace('/', '%2F')
+        return string
+
+    @property
+    def url(self) -> str:
+        return self.BASE + self.path.format(**self.kwargs)
+
+
 @dataclass(kw_only=True, slots=True, weakref_slot=True)
 class HTTPRetryConfig:
 
@@ -44,8 +83,7 @@ class HTTPRetryConfig:
 
 class FortniteHTTPClient:
 
-    # To-do: Clear up these messy class attributes
-    # Perhaps add a `Route` class that handles some of the URLs
+    URL = Route | str
 
     # ID and secret for the official Fortnite PC game client
     CLIENT_ID: str = 'ec684b8c687f479fadea3cb2ad83f5c6'
@@ -143,16 +181,16 @@ class FortniteHTTPClient:
         except (IndexError, TypeError, ValueError):
             return
 
-    async def make_request(self, method: str, url: str, **kwargs: Any) -> Json:
+    async def make_request(self, method: str, raw_url: str, **kwargs: Any) -> Json:
         if self.is_open is False:
             raise RuntimeError('HTTP session is closed.')
 
         pre_time = time()
-        async with self.__session.request(method, url, **kwargs) as response:
+        async with self.__session.request(method, raw_url, **kwargs) as response:
             _logger.info(
                 '%s %s returned %s %s in %.3fs',
                 method.upper(),
-                url,
+                raw_url,
                 response.status,
                 response.reason,
                 time() - pre_time
@@ -165,7 +203,8 @@ class FortniteHTTPClient:
 
             raise HTTPException(response, data)
 
-    async def request(self, method: str, url: str, **kwargs: Any) -> Json:
+    async def request(self, method: str, route: URL, **kwargs: Any) -> Json:
+        url = str(route)
         config = self.retry_config
 
         tries = 0
@@ -207,8 +246,8 @@ class FortniteHTTPClient:
 
                     _logger.debug(
                         'Retrying %s %s in %.3fs...',
-                        error.response.method,
-                        error.response.url,
+                        method.upper(),
+                        url,
                         sleep_time
                     )
 
@@ -217,20 +256,20 @@ class FortniteHTTPClient:
 
                 raise error
 
-    def get(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
-        return self.request('get', url, **kwargs)
+    def get(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
+        return self.request('get', route, **kwargs)
 
-    def put(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
-        return self.request('put', url, **kwargs)
+    def put(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
+        return self.request('put', route, **kwargs)
 
-    def post(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
-        return self.request('post', url, **kwargs)
+    def post(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
+        return self.request('post', route, **kwargs)
 
-    def patch(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
-        return self.request('patch', url, **kwargs)
+    def patch(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
+        return self.request('patch', route, **kwargs)
 
-    def delete(self, url: str, **kwargs: Any) -> Coroutine[Any, Any, Json]:
-        return self.request('delete', url, **kwargs)
+    def delete(self, route: URL, **kwargs: Any) -> Coroutine[Any, Any, Json]:
+        return self.request('delete', route, **kwargs)
 
     async def renew_auth_session(self, refresh_token: str) -> Dict:
         return await self.post(
