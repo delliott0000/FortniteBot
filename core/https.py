@@ -55,10 +55,6 @@ class FortniteHTTPClient:
     ACCOUNT_REQUESTS_URL: str = BASE_EPIC_URL + '/public/account/{0}'
     PROFILE_REQUESTS_URL: str = BASE_FORT_URL + '/game/v2/profile/{0}/{1}/{2}?profileId={3}'
 
-    # Miscellaneous URL used to get in-game cosmetics data from an item ID
-    # Not a part of Epic Games' API
-    COSMETICS_URL: str = 'https://fortnite-api.com/v2/cosmetics/br/{0}'
-
     # Used to fetch the current day's Mission Alerts plus extra related information
     MISSIONS_URL: str = 'https://fngw-mcp-gc-livefn.ol.epicgames.com/fortnite/api/game/v2/world/info'
     FNC_BASE_URL: str = 'https://fortnitecentral.genxgames.gg/api/v1/export?path='

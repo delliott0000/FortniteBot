@@ -5,6 +5,7 @@ from typing import TypedDict
 from logging import getLogger
 from weakref import ref, ReferenceType
 
+from core.route import CosmeticService
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
 from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero, AccountResource
 
@@ -174,7 +175,8 @@ class PartialEpicAccount:
                     character_id: str = data['attributes']['locker_slots_data']['slots']['Character']['items'][0][16:]
 
                     http = auth_session.http_client
-                    character_data = await http.get(http.COSMETICS_URL.format(character_id))
+                    route = CosmeticService('/v2/cosmetics/br/{character_id}', character_id=character_id)
+                    character_data = await http.get(route)
                     self._icon_url = character_data['data']['images']['icon']
                     break
 
