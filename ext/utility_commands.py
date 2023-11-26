@@ -104,6 +104,16 @@ class UtilityCommands(CustomGroup):
         message = f'**Set blacklist status for {interaction.user.mention} to `{result}`.**'
         await interaction.client.send_response(interaction, message)
 
+    @is_owner()
+    @app_commands.command(description='Kills all active sessions and closes the bot.')
+    async def close(self, interaction: FortniteInteraction) -> None:
+        await interaction.response.defer(thinking=True, ephemeral=True)
+
+        await interaction.client.send_response(
+            interaction,
+            'Access tokens will be killed and the bot closed. Have a nice day!')
+        await interaction.client.close()
+
 
 async def setup(bot: FortniteBot) -> None:
     bot.tree.add_command(UtilityCommands(name='utility'))
