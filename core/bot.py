@@ -5,6 +5,7 @@ from os import listdir
 from typing import ClassVar
 from logging import getLogger
 from asyncio import gather, run
+from collections.abc import Iterable
 from datetime import datetime, timedelta, time
 
 from resources.config import TOKEN, OWNER_IDS
@@ -141,7 +142,11 @@ class FortniteBot(commands.Bot):
             raise ValueError('An invalid duration was specified.')
         return timedelta(seconds=n * multiplier)
 
-    def fields_to_embeds(self, fields: list[EmbedField], **kwargs: str | int | Colour) -> list[CustomEmbed]:
+    def fields_to_embeds(
+        self,
+        fields: Iterable[EmbedField],
+        **kwargs: str | int | Colour
+    ) -> list[CustomEmbed]:
         embed_list: list[CustomEmbed] = [self._new_embed(**kwargs)]
 
         for field in fields:
