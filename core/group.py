@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+from collections.abc import Iterable
+
 from core.errors import FortniteException
 from fortnite.stw import Survivor
 from components.embed import EmbedField, CustomEmbed
@@ -20,12 +22,10 @@ class CustomGroup(app_commands.Group):
 
     @staticmethod
     def heroes_to_fields(
-        heroes: list[Hero],
+        heroes: Iterable[Hero],
         show_ids: bool = True,
         inline: bool = False
-    ) -> list[EmbedField]:
-        fields = []
-
+    ) -> Iterable[EmbedField]:
         for hero in heroes:
             hid = f'> {emojis["id"]} **Item ID:** `{hero.item_id}`\n' if show_ids is True else ''
             hero_type = emojis['hero_types'].get(hero.type, '')
@@ -46,18 +46,14 @@ class CustomGroup(app_commands.Group):
                       f'{hero_perk}',
                 inline=inline)
 
-            fields.append(field)
-
-        return fields
+            yield field
 
     @staticmethod
     def survivors_to_fields(
-        survivors: list[GenericSurvivor],
+        survivors: Iterable[GenericSurvivor],
         show_ids: bool = True,
         inline: bool = False
-    ) -> list[EmbedField]:
-        fields = []
-
+    ) -> Iterable[EmbedField]:
         for survivor in survivors:
             extras = emojis['set_bonuses'][survivor.set_bonus_type] if isinstance(survivor, Survivor) else \
                 emojis['lead_survivors'][survivor.preferred_squad_name]
@@ -73,18 +69,14 @@ class CustomGroup(app_commands.Group):
                       f'{emojis["check" if survivor.favourite is True else "cross"]}',
                 inline=inline)
 
-            fields.append(field)
-
-        return fields
+            yield field
 
     @staticmethod
     def schematics_to_fields(
-        schematics: list[Schematic],
+        schematics: Iterable[Schematic],
         show_ids: bool = True,
         inline: bool = False
-    ) -> list[EmbedField]:
-        fields = []
-
+    ) -> Iterable[EmbedField]:
         for schematic in schematics:
 
             perks = f'> {emojis["perk"]} **Perks:** ' \
@@ -103,14 +95,13 @@ class CustomGroup(app_commands.Group):
                       f'{emojis["check" if schematic.favourite is True else "cross"]}',
                 inline=inline)
 
-            fields.append(field)
-
-        return fields
+            yield field
 
     @staticmethod
-    def mission_alerts_to_fields(mission_alerts: list[MissionAlert], show_theater: bool = False) -> list[EmbedField]:
-        fields = []
-
+    def mission_alerts_to_fields(
+        mission_alerts: Iterable[MissionAlert],
+        show_theater: bool = False
+    ) -> Iterable[EmbedField]:
         for mission_alert in mission_alerts:
 
             rewards_str = '\n'.join(
@@ -126,9 +117,43 @@ class CustomGroup(app_commands.Group):
                       f'> {emojis["loot"]} **Alert Rewards:**\n{rewards_str}',
                 inline=False)
 
-            fields.append(field)
+            yield field
 
-        return fields
+    def squads_to_embeds(
+        self,
+        squads: Iterable[SurvivorSquad],
+        **kwargs: str | int | Colour
+    ) -> list[CustomEmbed]:
+        if not squads:
+            raise FortniteException('This player does not have any survivor squads.')
+
+        embeds = []
+
+        for squad in squads:
+
+            fort_stats: dict = squad.fort_stats
+            fort_type: str = max(fort_stats, key=fort_stats.get)
+            points: int = fort_stats.get(fort_type, 0)
+
+            embed = CustomEmbed(
+                colour=kwargs.get('colour'),
+                description=f'**IGN:** `{squad.account}`\n'
+                            f'**{emojis["fort_icons"][fort_type]} {fort_type}:** `+{points}`\n')
+            embed.set_author(name=squad.name, icon_url=kwargs.get('icon_url'))
+            embed.set_thumbnail(url=emojis['squads'][squad.name])
+
+            survivors = [squad.lead_survivor] if squad.lead_survivor else []
+            survivors += squad.survivors
+            fields = self.survivors_to_fields(survivors, show_ids=False, inline=True)
+            for field in fields:
+                embed.append_field(field)
+
+            embeds.append(embed)
+
+        for embed in embeds:
+            embed.set_footer(text=f'Page {embeds.index(embed) + 1} of {len(embeds)}')
+
+        return embeds
 
     @staticmethod
     async def fetch_heroes(
@@ -175,35 +200,3 @@ class CustomGroup(app_commands.Group):
             raise FortniteException(f'Schematic `{name}` not found.')
 
         return schematics
-
-    def squads_to_embeds(self, squads: list[SurvivorSquad], **kwargs: str | int | Colour) -> list[CustomEmbed]:
-        if not squads:
-            raise FortniteException('This player does not have any survivor squads.')
-
-        embeds = []
-
-        for squad in squads:
-
-            fort_stats: dict = squad.fort_stats
-            fort_type: str = max(fort_stats, key=fort_stats.get)
-            points: int = fort_stats.get(fort_type, 0)
-
-            embed = CustomEmbed(
-                colour=kwargs.get('colour'),
-                description=f'**IGN:** `{squad.account}`\n'
-                            f'**{emojis["fort_icons"][fort_type]} {fort_type}:** `+{points}`\n')
-            embed.set_author(name=squad.name, icon_url=kwargs.get('icon_url'))
-            embed.set_thumbnail(url=emojis['squads'][squad.name])
-
-            survivors = [squad.lead_survivor] if squad.lead_survivor else []
-            survivors += squad.survivors
-            fields = self.survivors_to_fields(survivors, show_ids=False, inline=True)
-            for field in fields:
-                embed.append_field(field)
-
-            embeds.append(embed)
-
-        for embed in embeds:
-            embed.set_footer(text=f'Page {embeds.index(embed) + 1} of {len(embeds)}')
-
-        return embeds
