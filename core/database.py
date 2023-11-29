@@ -2,6 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from datetime import datetime, timedelta
+from collections.abc import AsyncIterable
 
 from aiosqlite import connect
 
@@ -110,12 +111,12 @@ class DatabaseClient:
         await self.__connection.commit()
         return until
 
-    async def get_premium_states(self) -> list[tuple[int, datetime]]:
-        cursor: Cursor = await self.__connection.execute(
-            'SELECT discord_id, premium_until FROM user_data WHERE premium_until != 0'
-        )
-        records = await cursor.fetchall()
-        return [(record[0], self._int_to_datetime(record[1])) for record in records]
+    async def get_premium_states(self) -> AsyncIterable[tuple[int, datetime]]:
+        async with self.__connection.execute(
+                'SELECT discord_id, premium_until FROM user_data WHERE premium_until != 0'
+        ) as cursor:
+            async for record in cursor:
+                yield record[0], self._int_to_datetime(record[1])
 
     async def expire_premium(self, discord_id: int) -> None:
         await self.__connection.execute(

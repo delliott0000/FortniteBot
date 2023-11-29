@@ -288,7 +288,7 @@ class FortniteBot(commands.Bot):
 
     @tasks.loop(minutes=5)
     async def manage_data_base(self) -> None:
-        for discord_id, premium_until in await self.database_client.get_premium_states():
+        async for discord_id, premium_until in self.database_client.get_premium_states():
             if premium_until < self.now:
                 await self.database_client.expire_premium(discord_id)
 
