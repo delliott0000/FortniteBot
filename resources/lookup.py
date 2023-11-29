@@ -1940,6 +1940,16 @@ lookup = {
       "rarity": "epic",
       "type": "weapon"
     },
+    "Schematic:sid_sniper_primal_stinkbow_sr_ore_t01": {
+      "name": "Primal Stink Bow",
+      "rarity": "legendary",
+      "type": "weapon"
+    },
+    "Schematic:sid_edged_icesword_sr_ore_t01": {
+      "name": "Slicicle",
+      "rarity": "legendary",
+      "type": "weapon"
+    },
     "Schematic:sid_pistol_handcannon_de_sr_ore_t01": {
       "name": "Bald Eagle",
       "rarity": "legendary",
