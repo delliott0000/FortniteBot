@@ -5,6 +5,7 @@ from weakref import ref
 from abc import ABC
 
 if TYPE_CHECKING:
+    from typing import Any
     from weakref import ReferenceType
 
     from resources.extras import Account, Attributes
@@ -14,7 +15,7 @@ class AccountBoundMixin(ABC):
 
     __slots__ = ()
 
-    def __init__(self, account: Account, item_id: str, *args, **kwargs) -> None:
+    def __init__(self, account: Account, item_id: str, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
         self._account: ReferenceType[Account] = ref(account)
