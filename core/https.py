@@ -99,7 +99,7 @@ class FortniteHTTPClient:
         )
 
     async def close_connection(self) -> None:
-        if self.__session is not None:
+        if self.is_open is True:
             await self.__session.close()
 
     @staticmethod
