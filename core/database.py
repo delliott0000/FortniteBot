@@ -7,7 +7,7 @@ from collections.abc import AsyncIterable
 from aiosqlite import connect
 
 if TYPE_CHECKING:
-    from typing import ClassVar
+    from typing import ClassVar, Self
     from types import TracebackType
 
     from core.bot import FortniteBot
@@ -40,7 +40,7 @@ class DatabaseClient:
         self.bot: FortniteBot = bot
         self.__connection: Connection | None = None
 
-    async def __aenter__(self) -> DatabaseClient:
+    async def __aenter__(self) -> Self:
         self.__connection = await connect('data.db')
         await self.__connection.execute('PRAGMA journal_mode=wal')
         await self.__connection.execute(self.FORMAT)
