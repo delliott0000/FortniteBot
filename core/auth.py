@@ -51,10 +51,11 @@ class AuthSession:
         self._set_cached_account_expiration()
 
         self.bot.cache_auth_session(self)
-        _logger.info(f'Auth Session {self.access_token} created.')
+
+        self._log_action('initialised')
 
     def __del__(self) -> None:
-        _logger.info(f'Auth Session {self.access_token} destroyed.')
+        self._log_action('destroyed')
 
     @property
     def is_active(self) -> bool:
@@ -63,6 +64,9 @@ class AuthSession:
     @property
     def is_expired(self) -> bool:
         return self._killed or self.refresh_expires < self.bot.now
+
+    def _log_action(self, action: str) -> None:
+        _logger.info('Auth session %s %s. (Account ID: %s)', self.access_token, action, self.epic_id)
 
     def _renew_data(self, data: Dict) -> None:
         self.epic_id: str = data.get('account_id')
@@ -78,13 +82,16 @@ class AuthSession:
         if self._cached_full_account_expires < self.bot.now:
             self._account = None
 
-    async def renew(self) -> None:
-        # Do nothing if access token is already active
-        if self.is_active is True:
+    async def renew(self, *, force: bool = False) -> Dict | None:
+        if self.is_active is True and force is False:
             return
 
         data = await self.http_client.renew_auth_session(self.refresh_token)
+
         self._renew_data(data)
+        self._log_action('renewed')
+
+        return data
 
     async def access_request(self, method: str, route: Route, retry: bool = False, **kwargs) -> Json:
         headers = kwargs.pop('headers', None) or {'Authorization': f'bearer {self.access_token}'}
@@ -98,7 +105,7 @@ class AuthSession:
                 raise error
 
             await self.renew()
-            return await self.access_request(method, route, retry=True, **kwargs)
+            return await self.access_request(method, route, retry=True, headers=headers, **kwargs)
 
     async def kill(self) -> None:
         try:
@@ -106,9 +113,13 @@ class AuthSession:
                 '/account/api/oauth/sessions/kill/{access_token}',
                 access_token=self.access_token)
             await self.access_request('delete', route)
-        # Session is probably already expired; do nothing
+
         except HTTPException:
             pass
+
+        else:
+            self._log_action('killed')
+
         self._killed = True
 
     async def account(self) -> FullEpicAccount:
