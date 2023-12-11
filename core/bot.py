@@ -188,9 +188,9 @@ class FortniteBot(commands.Bot):
         await self.send_response(interaction, f'❌ {message}', colour=Colour.red(), view=view)
 
     def get_partial_account(
-            self,
-            display: str | None = None,
-            account_id: str | None = None
+        self,
+        display: str | None = None,
+        account_id: str | None = None
     ) -> PartialEpicAccount | None:
         account_lookup = account_id or display
         if account_lookup is None:
