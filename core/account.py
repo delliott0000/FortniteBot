@@ -157,8 +157,7 @@ class PartialEpicAccount:
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
             try:
-                data: Dict = await self._raw_stw_data(auth_session)
-                items_data: Dict = data['profileChanges'][0]['profile']['items']
+                items_data: Dict = await self._raw_stw_items(auth_session)
             except (HTTPException, KeyError):
                 return
 
