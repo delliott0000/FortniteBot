@@ -8,8 +8,6 @@ from core.errors import HTTPException
 from core.account import PartialEpicAccount, FullEpicAccount
 from core.route import AccountService, FortniteService
 
-from dateutil import parser
-
 if TYPE_CHECKING:
     from core.https import FortniteHTTPClient
     from core.bot import FortniteBot
@@ -72,8 +70,8 @@ class AuthSession:
         self.epic_id: str = data.get('account_id')
         self.access_token: str = data.get('access_token')
         self.refresh_token: str = data.get('refresh_token')
-        self.access_expires: datetime = parser.parse(data.get('expires_at'), ignoretz=True)
-        self.refresh_expires: datetime = parser.parse(data.get('refresh_expires_at'), ignoretz=True)
+        self.access_expires: datetime = datetime.fromisoformat(data.get('expires_at'))
+        self.refresh_expires: datetime = datetime.fromisoformat(data.get('refresh_expires_at'))
 
     def _set_cached_account_expiration(self) -> None:
         self._cached_full_account_expires: datetime = self.bot.now + self.bot.ACCOUNT_CACHE_DURATION

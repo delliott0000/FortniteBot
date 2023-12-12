@@ -3,17 +3,14 @@ from typing import TYPE_CHECKING
 
 from typing import TypedDict
 from logging import getLogger
+from datetime import datetime, date
 from weakref import ref, ReferenceType
 
 from core.route import CosmeticService, FriendsService
 from core.errors import HTTPException, UnknownTemplateID, MalformedItemAttributes
 from fortnite.stw import Schematic, Survivor, LeadSurvivor, SurvivorSquad, Hero, AccountResource
 
-from dateutil import parser
-
 if TYPE_CHECKING:
-    from datetime import datetime
-
     from core.auth import AuthSession
     from resources.extras import Dict, List, STWFetchable, GenericSurvivor, FriendType, Attributes
 
@@ -225,19 +222,9 @@ class FullEpicAccount(PartialEpicAccount):
         self.failed_logins: int = data.get('failedLoginAttempts', 0)
         self.tfa_enabled: bool | None = data.get('tfaEnabled')
 
-        self.display_last_updated: datetime | None = None
-        self.date_of_birth: datetime | None = None
-        self.last_login: datetime | None = None
-
-        for __attr in (
-            ('display_last_updated', 'lastDisplayNameChange'),
-            ('date_of_birth', 'dateOfBirth'),
-            ('last_login', 'lastLogin')
-        ):
-            try:
-                self.__setattr__(__attr[0], parser.parse(data.get(__attr[1]), ignoretz=True))
-            except (TypeError, parser.ParserError):
-                pass
+        self.display_last_updated: datetime = datetime.fromisoformat(data.get('lastDisplayNameChange'))
+        self.last_login: datetime = datetime.fromisoformat(data.get('lastLogin'))
+        self.date_of_birth: date = date.fromisoformat(data.get('dateOfBirth'))
 
     @property
     def auth_session(self) -> AuthSession:
@@ -267,8 +254,8 @@ class FullEpicAccount(PartialEpicAccount):
                 entry[string] = entry.get(string) or None
 
             try:
-                entry['created'] = parser.parse(entry.get('created'), ignoretz=True)
-            except (TypeError, parser.ParserError):
+                entry['created'] = datetime.fromisoformat(entry.get('created'))
+            except (TypeError, ValueError):
                 entry['created'] = None
 
         return friend_type_data

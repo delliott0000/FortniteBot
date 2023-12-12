@@ -75,17 +75,15 @@ class AccountCommands(CustomGroup):
         embed.set_author(name='Epic Account Info', icon_url=icon_url)
         embed.set_footer(text='Do not share any sensitive information with anyone!')
 
-        _n = '`None`'
-        display_last_updated = _n if account.display_last_updated is None else format_dt(account.display_last_updated)
-        date_of_birth = _n if account.date_of_birth is None else format_dt(account.date_of_birth)
-        last_login = _n if account.last_login is None else format_dt(account.last_login)
+        display_last_updated = format_dt(account.display_last_updated)
+        last_login = format_dt(account.last_login)
 
         embed.add_field(
             name='Personal Details:',
             value=f'> **Name:** `{account.real_name}`\n'
                   f'> **Country:** `{account.country}`\n'
                   f'> **Language:** `{account.language}`\n'
-                  f'> **Date of Birth: {date_of_birth}**\n',
+                  f'> **Date of Birth:** `{account.date_of_birth}`\n',
             inline=False)
         embed.add_field(
             name='Display Name:',

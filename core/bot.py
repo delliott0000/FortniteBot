@@ -6,7 +6,7 @@ from typing import ClassVar
 from logging import getLogger
 from asyncio import gather, run
 from collections.abc import Iterable
-from datetime import datetime, timedelta, time
+from datetime import datetime, timezone, timedelta, time
 
 from resources.config import TOKEN, OWNER_IDS
 from resources.lookup import lookup
@@ -118,7 +118,7 @@ class FortniteBot(commands.Bot):
 
     @property
     def now(self) -> datetime:
-        return datetime.utcnow()
+        return datetime.now(tz=timezone.utc)
 
     @staticmethod
     def colour(guild: Guild | None) -> Colour:

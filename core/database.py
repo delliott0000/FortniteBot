@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from collections.abc import AsyncIterable
 
 from aiosqlite import connect
@@ -58,7 +58,7 @@ class DatabaseClient:
 
     @staticmethod
     def _int_to_datetime(integer: int) -> datetime:
-        return datetime.fromtimestamp(integer)
+        return datetime.fromtimestamp(integer, tz=timezone.utc)
 
     async def _insert(self, discord_id: int) -> None:
         await self.__connection.execute(self.INSERT, (discord_id, 0, 0))
