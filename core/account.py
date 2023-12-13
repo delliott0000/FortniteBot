@@ -37,6 +37,7 @@ class PartialEpicAccount:
         'raw_attributes',
         '_stw_raw_cache',
         '_stw_obj_cache',
+        '_br_raw_cache',
         '_icon_url'
     )
 
@@ -47,6 +48,8 @@ class PartialEpicAccount:
 
         self._stw_raw_cache: Dict | None = None
         self._stw_obj_cache: Dict = {}
+
+        self._br_raw_cache: Dict | None = None
 
         self._icon_url: str | None = None
 
@@ -154,10 +157,24 @@ class PartialEpicAccount:
         resources.sort(key=lambda resource: resource.quantity, reverse=True)
         return resources
 
+    async def _raw_br_data(self, _au: AuthSession) -> Dict:
+        if self._br_raw_cache is None:
+            self._br_raw_cache = await _au.profile_operation(
+                epic_id=self.id,
+                route='client',
+                operation='QueryProfile',
+                profile_id='athena'
+            )
+        return self._br_raw_cache
+
+    async def _raw_br_items(self, _au: AuthSession) -> Dict:
+        data = await self._raw_br_data(_au)
+        return data['profileChanges'][0]['profile']['items']
+
     async def icon_url(self, auth_session: AuthSession) -> str | None:
         if self._icon_url is None:
             try:
-                items_data: Dict = await self._raw_stw_items(auth_session)
+                items_data = await self._raw_br_items(auth_session)
             except (HTTPException, KeyError):
                 return
 
