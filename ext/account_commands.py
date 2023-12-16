@@ -82,8 +82,7 @@ class AccountCommands(CustomGroup):
             name='Personal Details:',
             value=f'> **Name:** `{account.real_name}`\n'
                   f'> **Country:** `{account.country}`\n'
-                  f'> **Language:** `{account.language}`\n'
-                  f'> **Date of Birth:** `{account.date_of_birth}`\n',
+                  f'> **Language:** `{account.language}`\n',
             inline=False)
         embed.add_field(
             name='Display Name:',

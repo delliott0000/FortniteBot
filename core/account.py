@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 
 from typing import TypedDict
 from logging import getLogger
-from datetime import datetime, date
+from datetime import datetime
 from weakref import ref, ReferenceType
 
 from core.route import CosmeticService, FriendsService
@@ -215,7 +215,6 @@ class FullEpicAccount(PartialEpicAccount):
         'failed_logins',
         'tfa_enabled',
         'display_last_updated',
-        'date_of_birth',
         'last_login'
     )
 
@@ -240,7 +239,6 @@ class FullEpicAccount(PartialEpicAccount):
 
         self.display_last_updated: datetime = datetime.fromisoformat(data.get('lastDisplayNameChange'))
         self.last_login: datetime = datetime.fromisoformat(data.get('lastLogin'))
-        self.date_of_birth: date = date.fromisoformat(data.get('dateOfBirth'))
 
     @property
     def auth_session(self) -> AuthSession:
